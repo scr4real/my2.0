@@ -2,17 +2,17 @@
 -- ARQUIVO: BACK/src/main/resources/data.sql
 -- ==================================================================================
 
--- 1. LIMPEZA DA BASE
-DELETE FROM pedido_aviso;
+-- 1. LIMPEZA (Se necessário, já que está em create ele limpa sozinho, mas mal não faz)
 DELETE FROM itens_pedido;
 DELETE FROM pagamentos;
 DELETE FROM pedidos;
 DELETE FROM produtos;
 DELETE FROM categorias;
 DELETE FROM marcas;
+DELETE FROM usuarios;
 
 -- 2. INSERÇÃO DE MARCAS
-INSERT INTO marcas (id, nome) VALUES    
+INSERT INTO marcas (id, nome) VALUES 
 (1, 'Nike'), (2, 'Air Jordan'), (3, 'Adidas'), (4, 'Bape'), (5, 'Asics'),
 (6, 'New Balance'), (7, 'Puma'), (8, 'Timberland'), (9, 'Crocs'),
 (10, 'Louis Vuitton'), (11, 'Dior'), (12, 'Yeezy');
@@ -23,15 +23,7 @@ INSERT INTO categorias (id, nome) VALUES
 (5, 'Jordan'), (6, 'Outros'), (7, 'Acessórios'), (8, 'Casual'), 
 (9, 'Corrida'), (10, 'Botas'), (11, 'Chuteiras'), (12, 'Sandálias');
 
--- 4. INSERÇÃO DE PRODUTOS
--- Sintaxe: (nome, descricao, preco, preco_original, imagem_url, imagem_url_2, imagem_url_3, imagem_url_4, estoque, marca_id, categoria_id, codigo_modelo)
-
-INSERT INTO produtos (nome, descricao, preco, preco_original, imagem_url, imagem_url_2, imagem_url_3, imagem_url_4, estoque, marca_id, categoria_id, codigo_modelo) VALUES
-
-
--- ==================================================================================
--- 5. USUÁRIO ADMIN FIXO (Vinicius)
--- ==================================================================================
+-- 4. USUÁRIO ADMIN (Vinicius)
 INSERT INTO usuarios (nome, email, cpf, telefone, senha, role) VALUES
 ('Vinicius Admin', 
  'vinicius.biancolini.tds24@gmail.com', 
