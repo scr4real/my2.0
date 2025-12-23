@@ -19,10 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const getImageUrl = (path) => {
-        if (!path) return 'FRONT/assets/images/placeholder-product.jpg';
-        if (path.startsWith('http')) return path;
-        return {BASE_URL}/{path};
-    };
+    if (!path) return 'FRONT/assets/images/placeholder-product.jpg';
+    if (path.startsWith('http')) return path;
+    // Remove a barra inicial se existir
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return `${BASE_URL}/${cleanPath}`;
+};
 
     // Renderiza os cards de produto
     const renderProductRow = (productsToRender, containerId) => {

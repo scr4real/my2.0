@@ -79,17 +79,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         func(...args);
                     };
                     clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
+                    timeout = setTimeout(later, wait);  
                 };
             },
 
             formatPrice: (price) => `R$ ${price.toFixed(2).replace('.', ',')}`,
 
-            getImageUrl: (path) => {
-                if (!path) return '/assets/images/placeholder-product.jpg';
-                if (path.startsWith('http')) return path;
-                return {BASE_URL}/{path};
-            },
+                getImageUrl: (path) => {
+                    if (!path) return '/assets/images/placeholder-product.jpg';
+                    if (path.startsWith('http')) return path;
+                    // Remove a barra inicial se existir para evitar duplicação (//)
+                    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+                    return `${BASE_URL}/${cleanPath}`; 
+                },
 
             generateSkeletons: (count) => {
                 return Array.from({ length: count }, (_, index) => `'
