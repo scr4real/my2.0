@@ -1,112 +1,206 @@
-/* Container principal da página de pagamento */
-.pix-container {
+/* FRONT/pagamento/CSS/pagamento.css */
+
+/* Container Principal Centralizado */
+.payment-container {
     max-width: 500px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: var(--color-white);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    text-align: center;
+    margin: 80px auto; /* Margem superior para não colar no topo */
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
 }
 
-.pix-container h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5rem;
-    color: var(--color-primary);
+/* Caixa Branca do Pagamento */
+.payment-box {
+    background-color: #fff; /* ou var(--color-white) se definido no base.css */
+    width: 100%;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid #e1e1e1;
+}
+
+/* Título */
+.payment-box h2 {
+    font-family: 'Bebas Neue', sans-serif; /* Fonte do seu projeto */
+    font-size: 2rem;
+    color: #333;
     margin-bottom: 10px;
 }
 
-.pix-instructions {
-    font-size: 1.1rem;
-    color: var(--color-gray-700);
+.payment-box p {
+    color: #666;
     margin-bottom: 25px;
 }
 
-.pix-instructions strong {
-    color: var(--color-dark);
-}
-
-/* Conteúdo do PIX (QR Code e Copia/Cola) */
-.pix-details-content {
-    width: 100%;
+/* Timer (Reloginho) */
+.timer {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
     margin-bottom: 25px;
+    font-size: 0.9rem;
 }
 
-/* Spinner de carregamento */
-.spinner-container {
-    padding: 40px 0;
-    color: var(--color-gray-600);
-}
-.spinner {
-    width: 48px;
-    height: 48px;
-    border: 5px solid var(--color-gray-200);
-    border-bottom-color: var(--color-primary);
-    border-radius: 50%;
-    display: inline-block;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-    margin-bottom: 15px;
-}
-@keyframes rotation {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+/* Área do QR Code */
+.qr-wrapper {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
 }
 
-/* QR Code */
-.qr-code-canvas {
-    width: 250px !important; /* Força o tamanho do canvas */
-    height: 250px !important;
-    border: 5px solid var(--color-gray-300);
+#qr-code-canvas {
+    border: 4px solid #f0f0f0;
     border-radius: 8px;
-    margin-bottom: 25px;
+    padding: 10px;
 }
 
-/* Copia e Cola */
-.copia-cola-container {
+/* Área Copia e Cola */
+.copy-paste-section {
+    margin: 25px 0;
     text-align: left;
 }
-.copia-cola-container p {
+
+.copy-paste-section label {
+    display: block;
     font-weight: 600;
-    color: var(--color-dark);
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.input-group input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: monospace;
+    background-color: #f9f9f9;
+    color: #555;
+}
+
+.input-group button {
+    padding: 0 20px;
+    background-color: #333; /* Cor escura do tema */
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.input-group button:hover {
+    background-color: #000;
+}
+
+/* Mensagem "Copiado!" */
+.fade-msg {
+    display: block;
+    color: #28a745;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    height: 20px; /* Reserva espaço */
+}
+
+/* Total */
+.total-display {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 20px 0;
+    padding-top: 20px;
+    border-top: 1px dashed #ddd;
+    color: #333;
+}
+
+/* Instruções */
+.instructions {
+    text-align: left;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.instructions p {
     margin-bottom: 8px;
 }
 
-.copia-cola-text {
-    width: 100%;
-    padding: 12px;
-    font-size: 0.9rem;
-    font-family: 'Courier New', Courier, monospace;
-    background-color: var(--color-gray-100);
-    border: 1px solid var(--color-gray-300);
-    border-radius: 4px;
-    margin-bottom: 15px;
-    word-break: break-all; /* Quebra a linha se o código for muito longo */
-    box-sizing: border-box; /* Garante que o padding não estoure a largura */
-}
-
-/* Botão de Copiar */
-.copy-btn {
-    width: 100%;
-    font-size: 1rem;
-    padding: 14px;
-    transition: background-color 0.3s ease;
-}
-.copy-btn .fa-copy, .copy-btn .fa-check, .copy-btn .fa-times {
-    margin-right: 8px;
-}
-
-/* Mensagens de status */
-.waiting-payment {
+/* Botões */
+.btn-secondary, .btn-primary {
+    display: inline-block;
+    text-decoration: none;
+    padding: 12px 30px;
+    border-radius: 6px;
     font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--color-primary);
-    margin-bottom: 10px;
+    transition: 0.3s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.pix-info {
-    font-size: 0.9rem;
-    color: var(--color-gray-600);
-    line-height: 1.5;
-    margin-bottom: 25px;
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: #666;
+}
+
+.btn-secondary:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-primary {
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #218838;
+}
+
+/* Tela de Sucesso */
+.success-icon {
+    font-size: 4rem;
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Responsivo para celular */
+@media (max-width: 600px) {
+    .payment-container {
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+    
+    .payment-box {
+        padding: 25px;
+    }
+    
+    .input-group {
+        flex-direction: column;
+    }
+    
+    .input-group button {
+        padding: 12px;
+    }
 }
