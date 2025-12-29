@@ -32,7 +32,7 @@ public class Pedido {
     @Column(columnDefinition = "TEXT")
     private String pixCopiaECola;
 
-    // NOVO CAMPO: ID do pagamento no Mercado Pago
+    // CORREÇÃO: Alterado de Long para String para compatibilidade com o Repository
     @Column(name = "pagamento_id_externo")
     private String pagamentoIdExterno;
 
@@ -119,11 +119,13 @@ public class Pedido {
         this.pixCopiaECola = pixCopiaECola;
     }
 
-    public Long getPagamentoIdExterno() {
+    // Getter corrigido para retornar String
+    public String getPagamentoIdExterno() {
         return pagamentoIdExterno;
     }
 
-    public void setPagamentoIdExterno(Long pagamentoIdExterno) {
+    // Setter corrigido para receber String
+    public void setPagamentoIdExterno(String pagamentoIdExterno) {
         this.pagamentoIdExterno = pagamentoIdExterno;
     }
 
