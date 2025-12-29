@@ -93,4 +93,15 @@ public class PedidoController {
         pedidoAvisoService.markAvisosAsLido(pedidoId);
         return ResponseEntity.ok().build();
     }
+
+    // --- NOVO: Excluir pedido pendente ---
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluirPedido(@PathVariable Long id, @AuthenticationPrincipal Usuario usuarioLogado) {
+        if (usuarioLogado == null) {
+            return ResponseEntity.status(403).build();
+        }
+        // Valida e exclui no service
+        pedidoService.excluirPedido(id, usuarioLogado.getEmail());
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -746,3 +746,73 @@
         background: transparent !important;
     }
 }
+
+/* === ADIÇÕES: Botões para Pendentes === */
+.pending-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.btn-pay-now {
+    background-color: #00c853;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-pay-now:hover {
+    background-color: #009624;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+}
+
+.btn-cancel-order {
+    background-color: transparent;
+    color: #ff4444;
+    border: 1px solid #ff4444;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.btn-cancel-order:hover {
+    background-color: rgba(255, 68, 68, 0.1);
+    border-color: #d32f2f;
+    color: #d32f2f;
+}
+
+.deleted-msg {
+    text-align: center;
+    color: #ff4444;
+    padding: 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    .pending-actions {
+        flex-direction: column;
+    }
+    .btn-pay-now, .btn-cancel-order {
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -134,4 +134,23 @@ public class PedidoService {
                 .map(pedido -> pedido.getUsuario().getId().equals(usuarioId))
                 .orElse(false);
     }
+
+    // --- NOVO MÉTODO: EXCLUIR PEDIDO ---
+    public void excluirPedido(Long id, String emailUsuario) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        // Segurança: Verifica se o pedido pertence ao usuário logado
+        if (!pedido.getUsuario().getEmail().equals(emailUsuario)) {
+            throw new RuntimeException("Você não tem permissão para excluir este pedido.");
+        }
+
+        // Regra de Negócio: Só pode excluir se estiver PENDENTE
+        // Compara ignorando maiúsculas/minúsculas para garantir
+        if (!"PENDENTE".equalsIgnoreCase(pedido.getStatus())) {
+            throw new RuntimeException("Apenas pedidos pendentes podem ser cancelados.");
+        }
+
+        pedidoRepository.delete(pedido);
+    }
 }

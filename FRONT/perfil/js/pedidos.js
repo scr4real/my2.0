@@ -164,6 +164,34 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { /* Silêncio em erro de check */ }
     };
 
+    // --- FUNÇÃO CANCELAR PEDIDO (NOVO) ---
+    const cancelarPedido = async (id) => {
+        if(!confirm('Tem certeza que deseja cancelar e excluir este pedido pendente? Esta ação não pode ser desfeita.')) return;
+
+        try {
+            // Chama endpoint DELETE
+            await axios.delete(`${BASE_URL}/api/pedidos/${id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            // Feedback Visual
+            const card = document.querySelector(`.order-card[data-order-id="${id}"]`);
+            if(card) {
+                card.innerHTML = '<div class="deleted-msg"><i class="fas fa-check"></i> Pedido Cancelado com Sucesso</div>';
+                setTimeout(() => {
+                    // Recarrega a lista
+                    fetchOrders();
+                }, 1500);
+            } else {
+                fetchOrders();
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert('Erro ao cancelar o pedido. Tente novamente.');
+        }
+    };
+
     // --- BUSCAR PEDIDOS ---
     const fetchOrders = async () => {
         if (!token) {
@@ -177,7 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await axios.get(`${BASE_URL}/api/pedidos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            renderOrders(response.data);
+            // Ordena Recente -> Antigo
+            const sorted = response.data.sort((a,b) => new Date(b.dataPedido) - new Date(a.dataPedido));
+            renderOrders(sorted);
         } catch (error) {
             console.error('Erro ao buscar pedidos:', error);
             ordersContainer.innerHTML = '<p>Não foi possível carregar seus pedidos.</p>';
@@ -197,6 +227,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const statusClass = order.status ? order.status.toLowerCase() : '';
             const formattedDate = new Date(order.dataPedido).toLocaleDateString('pt-BR');
             const formattedTotal = order.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            // --- NOVO: Botões para Pendentes ---
+            let actionButtons = '';
+            if (order.status === 'PENDENTE') {
+                actionButtons = `
+                    <div class="pending-actions">
+                        <a href="../../pagamento/HTML/pagamento.html?id=${order.id}" class="btn-pay-now">
+                            <i class="fas fa-qrcode"></i> Pagar Agora
+                        </a>
+                        <button class="btn-cancel-order" data-id="${order.id}">
+                            <i class="fas fa-trash"></i> Cancelar
+                        </button>
+                    </div>
+                `;
+            }
 
             return `
             <div class="order-card" data-order-id="${order.id}">
@@ -232,6 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="notification-badge hidden"></span>
                     </button>
                 </div>
+                ${actionButtons}
             </div>
         `}).join('');
 
@@ -242,6 +288,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listeners de Clique (Delegação)
     ordersContainer.addEventListener('click', (event) => {
         const target = event.target;
+        
+        // NOVO: Clique no botão cancelar
+        if (target.classList.contains('btn-cancel-order') || target.closest('.btn-cancel-order')) {
+            const btn = target.closest('.btn-cancel-order');
+            const id = btn.dataset.id;
+            cancelarPedido(id);
+            return; // Para não propagar para o card
+        }
+
         const orderCard = target.closest('.order-card');
         if (!orderCard) return;
         
