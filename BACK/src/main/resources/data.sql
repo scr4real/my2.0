@@ -54,6 +54,7 @@ INSERT INTO produtos (
     imagem_url_2,
     imagem_url_3, 
     imagem_url_4
+    
 ) VALUES 
 
 -- PRODUTO 1: Nike Dunk Panda
