@@ -30,4 +30,8 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     @Query("SELECT p.status, COUNT(p) FROM Pedido p GROUP BY p.status")
     List<Object[]> countByStatus();
+
+    // --- NOVO MÉTODO (Necessário para o Webhook funcionar) ---
+    // Isso resolve o erro: cannot find symbol method findByPagamentoIdExterno
+    Pedido findByPagamentoIdExterno(String pagamentoIdExterno);
 }

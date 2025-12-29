@@ -1,46 +1,56 @@
 package com.store.BACK.model;
 
+import jakarta.persistence.*;
+import lombok.Data; // Se usar Lombok
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 @Entity
-@Table(name = "pedido_aviso")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data // O Lombok gera os Getters e Setters automaticamente
 public class PedidoAviso {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String mensagem;
-
-    @Column(name = "imagem_url")
-    private String imagemUrl;
-
-    @Column(name = "data_aviso", nullable = false)
-    private LocalDateTime dataAviso = LocalDateTime.now();
-
-    @Column(nullable = false)
-    private boolean lido = false;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pedido_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
     private Pedido pedido;
+
+    // --- CAMPOS NECESSÁRIOS ---
+    private String titulo;
+    
+    @Column(columnDefinition = "TEXT")
+    private String mensagem;
+    
+    private String imagemUrl;
+    
+    private LocalDateTime dataCriacao; // Usamos dataCriacao no controller
+    
+    // Campo alternativo caso seu banco já use 'dataAviso'
+    // private LocalDateTime dataAviso; 
+
+    private boolean lido = false;
+    
+    // --- GETTERS E SETTERS MANUAIS (Caso o Lombok @Data não esteja funcionando) ---
+    
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+
+    public String getMensagem() { return mensagem; }
+    public void setMensagem(String mensagem) { this.mensagem = mensagem; }
+
+    public LocalDateTime getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+    
+    // Caso precise de compatibilidade com 'getDataAviso'
+    public LocalDateTime getDataAviso() { return dataCriacao; }
+
+    public void setPedido(Pedido pedido) { this.pedido = pedido; }
+    public Pedido getPedido() { return pedido; }
+    
+    public boolean isLido() { return lido; }
+    public void setLido(boolean lido) { this.lido = lido; }
+    
+    public String getImagemUrl() { return imagemUrl; }
+    public void setImagemUrl(String imagemUrl) { this.imagemUrl = imagemUrl; }
 }
