@@ -116,15 +116,59 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSummary();
     };
 
+    // --- FUNÇÕES DE MÁSCARA (VALIDAÇÃO VISUAL) ---
+    
+    // Máscara CPF (000.000.000-00)
+    const mascaraCPF = (value) => {
+        return value
+            .replace(/\D/g, '') // Remove tudo o que não é dígito
+            .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto após o terceiro dígito
+            .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto após o sexto dígito
+            .replace(/(\d{3})(\d{1,2})/, '$1-$2') // Coloca traço antes dos últimos 2 dígitos
+            .replace(/(-\d{2})\d+?$/, '$1'); // Impede digitar mais que o necessário
+    };
+
+    // Máscara Telefone Celular (00) 00000-0000
+    const mascaraTelefone = (value) => {
+        return value
+            .replace(/\D/g, '') // Remove não números
+            .replace(/(\d{2})(\d)/, '($1) $2') // Coloca parênteses
+            .replace(/(\d{5})(\d)/, '$1-$2') // Coloca hífen
+            .replace(/(-\d{4})\d+?$/, '$1'); // Limita o tamanho
+    };
+
+    // Aplica máscaras nos inputs
+    if (cpfEl) {
+        cpfEl.addEventListener('input', (e) => {
+            e.target.value = mascaraCPF(e.target.value);
+        });
+    }
+
+    if (telefoneEl) {
+        telefoneEl.addEventListener('input', (e) => {
+            e.target.value = mascaraTelefone(e.target.value);
+            validatePhone(); // Valida se confere
+        });
+    }
+
+    if (confirmTelEl) {
+        confirmTelEl.addEventListener('input', (e) => {
+            e.target.value = mascaraTelefone(e.target.value);
+            validatePhone(); // Valida se confere
+        });
+    }
+
     const loadAddresses = async () => {
         try {
             const res = await apiClient.get('/usuario/meus-dados');
             const addresses = res.data.enderecos || [];
             
             if (res.data.nome) nomeEl.value = res.data.nome;
-            if (res.data.cpf) cpfEl.value = res.data.cpf;
+            
+            // Aplica máscara se os dados vierem do banco
+            if (res.data.cpf) cpfEl.value = mascaraCPF(res.data.cpf);
             if (res.data.email) emailEl.value = res.data.email;
-            if (res.data.telefone) telefoneEl.value = res.data.telefone;
+            if (res.data.telefone) telefoneEl.value = mascaraTelefone(res.data.telefone);
 
             if (addresses.length === 0) {
                 addressSelectionContainer.innerHTML = `<p>Nenhum endereço. <a href="../../perfil/HTML/perfil.html" style="color:var(--primary)">Cadastrar agora</a></p>`;
@@ -156,8 +200,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         
         if (!selectedAddressId) return alert('Selecione um endereço.');
-        if (telefoneEl.value !== confirmTelEl.value) return alert('Os telefones não conferem.');
-        if (!cpfEl.value) return alert('Por favor, preencha o CPF.');
+        
+        // Remove formatação para comparar apenas os números
+        const telLimpo = telefoneEl.value.replace(/\D/g, '');
+        const confTelLimpo = confirmTelEl.value.replace(/\D/g, '');
+        const cpfLimpo = cpfEl.value.replace(/\D/g, '');
+
+        if (telLimpo !== confTelLimpo) return alert('Os telefones não conferem.');
+        if (telLimpo.length < 10) return alert('Telefone inválido.');
+        if (cpfLimpo.length !== 11) return alert('CPF deve ter 11 dígitos.');
         
         if (!confirmaEnderecoCheckbox.checked) {
             alert('Por favor, confirme se o endereço está correto.');
@@ -169,8 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
             itens: cart.map(i => ({ produtoId: i.id, quantidade: i.quantity, tamanho: i.size })),
             enderecoEntregaId: parseInt(selectedAddressId),
             nomeDestinatario: nomeEl.value,
-            cpfDestinatario: cpfEl.value,
-            telefoneDestinatario: telefoneEl.value,
+            cpfDestinatario: cpfLimpo, // Manda limpo pro backend
+            telefoneDestinatario: telLimpo, // Manda limpo pro backend
             observacoes: obsEl.value,
             comCaixa: document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'true',
             entregaPrioritaria: document.querySelector('input[name="opcaoPrioritaria"]:checked')?.value === 'true',
@@ -209,18 +260,23 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const validatePhone = () => {
         const msg = document.getElementById('phone-match-message');
-        if(telefoneEl.value && confirmTelEl.value) {
-            if(telefoneEl.value === confirmTelEl.value) {
+        const t1 = telefoneEl.value.replace(/\D/g, '');
+        const t2 = confirmTelEl.value.replace(/\D/g, '');
+
+        if(t1 && t2) {
+            if(t1 === t2) {
                 msg.textContent = "Ok!";
-                msg.style.color = "var(--success)";
+                msg.style.color = "var(--success)"; // Verde
             } else {
                 msg.textContent = "Números não conferem";
-                msg.style.color = "var(--error)";
+                msg.style.color = "#ff4444"; // Vermelho
             }
+        } else {
+            msg.textContent = "";
         }
     };
-    telefoneEl.addEventListener('input', validatePhone);
-    confirmTelEl.addEventListener('input', validatePhone);
+
+    // Não precisa adicionar listener aqui pois já adicionei no bloco da máscara acima
 
     loadAddresses();
     renderCart();
