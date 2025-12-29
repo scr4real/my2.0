@@ -70,19 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cpf == '') return false;
         
         // Bloqueia CPFs com todos os números iguais (ex: 111.111.111-11)
-        // Eles passam no cálculo matemático, mas são inválidos.
         if (cpf.length != 11 || 
             /^(\d)\1{10}$/.test(cpf))
                 return false;
         
-        // Validação do 1º Dígito Verificador
+        // Valida 1º Dígito
         let add = 0;
         for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
         let rev = 11 - (add % 11);
         if (rev == 10 || rev == 11) rev = 0;
         if (rev != parseInt(cpf.charAt(9))) return false;
         
-        // Validação do 2º Dígito Verificador
+        // Valida 2º Dígito
         add = 0;
         for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
         rev = 11 - (add % 11);
@@ -176,20 +175,24 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.value = mascaraCPF(e.target.value);
         });
 
-        // FEEDBACK VISUAL: Valida assim que o usuário sai do campo
+        // CORREÇÃO DO BUG "FUNDO BRANCO": 
+        // Agora usamos cores escuras transparentes para não sumir com o texto branco
         cpfEl.addEventListener('blur', (e) => {
             const valorLimpo = e.target.value.replace(/\D/g, '');
             if (valorLimpo.length === 11) {
                 if (validarCPF(valorLimpo)) {
-                    // CPF Válido: Borda Verde
+                    // CPF Válido: Borda Verde, Fundo Verde Escuro Transparente
                     cpfEl.style.borderColor = '#28a745';
-                    cpfEl.style.backgroundColor = '#f8fff9';
+                    cpfEl.style.backgroundColor = 'rgba(40, 167, 69, 0.1)'; 
                 } else {
-                    // CPF Inválido: Borda Vermelha
+                    // CPF Inválido: Borda Vermelha, Fundo Vermelho Escuro Transparente
                     cpfEl.style.borderColor = '#dc3545';
-                    cpfEl.style.backgroundColor = '#fff8f8';
-                    // Opcional: alert('CPF Inválido!');
+                    cpfEl.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
                 }
+            } else {
+                // Reseta se estiver incompleto
+                cpfEl.style.borderColor = '';
+                cpfEl.style.backgroundColor = '';
             }
         });
     }
@@ -261,6 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Validação Rigorosa de CPF
         if (!validarCPF(cpfLimpo)) {
             cpfEl.style.borderColor = '#dc3545';
+            cpfEl.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
             cpfEl.focus();
             return alert('O CPF informado é inválido. Verifique os números.');
         }
