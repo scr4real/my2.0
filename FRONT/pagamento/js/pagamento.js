@@ -67,15 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 3. Desenha o QR Code usando a biblioteca QRious
     function renderizarQRCode(textoPix) {
-        if(qrCanvas) {
-            new QRious({
-                element: qrCanvas,
-                value: textoPix,
-                size: 200,
-                level: 'H'
-            });
-        }
+        if (!qrCanvas) return; 
+        new QRious({
+            element: qrCanvas,
+            value: textoPix,
+            size: 400, // Aumentado de 200 para 400 para garantir alta qualidade
+            level: 'H' 
+        });
     }
 
     window.copiarCodigo = function() {
