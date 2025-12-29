@@ -2,10 +2,12 @@ package com.store.BACK.model;
 
 import jakarta.persistence.*;
 import lombok.Data; // Se usar Lombok
+import lombok.NoArgsConstructor; // Adicione isso se usar Lombok
 import java.time.LocalDateTime;
 
 @Entity
-@Data // O Lombok gera os Getters e Setters automaticamente
+@Data
+@NoArgsConstructor // Gera o construtor vazio obrigatório do JPA
 public class PedidoAviso {
 
     @Id
@@ -16,7 +18,6 @@ public class PedidoAviso {
     @JoinColumn(name = "pedido_id")
     private Pedido pedido;
 
-    // --- CAMPOS NECESSÁRIOS ---
     private String titulo;
     
     @Column(columnDefinition = "TEXT")
@@ -24,15 +25,29 @@ public class PedidoAviso {
     
     private String imagemUrl;
     
-    private LocalDateTime dataCriacao; // Usamos dataCriacao no controller
+    private LocalDateTime dataCriacao;
     
-    // Campo alternativo caso seu banco já use 'dataAviso'
+    // Campo para compatibilidade se seu banco usa dataAviso
     // private LocalDateTime dataAviso; 
 
     private boolean lido = false;
-    
-    // --- GETTERS E SETTERS MANUAIS (Caso o Lombok @Data não esteja funcionando) ---
-    
+
+    // --- CONSTRUTOR MANUAL QUE ESTAVA FALTANDO ---
+    public PedidoAviso(Long id, String titulo, String mensagem, LocalDateTime dataCriacao, boolean lido, Pedido pedido) {
+        this.id = id;
+        this.titulo = titulo;
+        this.mensagem = mensagem;
+        this.dataCriacao = dataCriacao;
+        this.lido = lido;
+        this.pedido = pedido;
+    }
+
+    // --- GETTERS E SETTERS ---
+    // (Se o Lombok @Data não estiver funcionando, mantenha os manuais abaixo)
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
     public String getTitulo() { return titulo; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
 
@@ -42,7 +57,7 @@ public class PedidoAviso {
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
     
-    // Caso precise de compatibilidade com 'getDataAviso'
+    // Método de compatibilidade (se algum lugar chama getDataAviso)
     public LocalDateTime getDataAviso() { return dataCriacao; }
 
     public void setPedido(Pedido pedido) { this.pedido = pedido; }
