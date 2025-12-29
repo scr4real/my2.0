@@ -1,3 +1,4 @@
+// Atualiza visual dos cards de seleção (Frete/Caixa)
 window.updatePreferenceUI = function(input) {
     const name = input.name;
     document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
@@ -8,12 +9,12 @@ window.updatePreferenceUI = function(input) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ELEMENTOS
+    // === ELEMENTOS ===
     const cartItemsContainer = document.getElementById('cart-items-container');
     const checkoutButton = document.getElementById('checkout-button');
     const token = localStorage.getItem('jwtToken');
 
-    // TOTAIS
+    // Totais e Resumo
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryTotal = document.getElementById('summary-total');
     const taxaCaixaEl = document.getElementById('taxaCaixa');
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const prazoCorreiosEl = document.getElementById('prazoCorreios');
     const prazoResidenciaEl = document.getElementById('prazoResidencia');
 
-    // CAMPOS DE DADOS
+    // Formulário
     const addressSelectionContainer = document.getElementById('address-selection');
     const nomeEl = document.getElementById('nomeCompleto');
     const cpfEl = document.getElementById('cpfDestinatario');
@@ -31,16 +32,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const telefoneEl = document.getElementById('telefone');
     const confirmTelEl = document.getElementById('confirmacaoTelefone');
     const obsEl = document.getElementById('observacoes');
+    
+    // Checkboxes Obrigatórios
     const confirmaEnderecoCheckbox = document.getElementById('confirmaEndereco');
+    const confirmaMaioridadeCheckbox = document.getElementById('confirmaMaioridade');
 
     let selectedAddressId = null;
     let currentSubtotal = 0;
 
-    // URL BASE INTELIGENTE
+    // Definição da URL da API
     const BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
         ? 'http://localhost:8080/api'
         : 'https://back-production-e565.up.railway.app/api';
 
+    // Redireciona se não estiver logado
     if (!token) {
         window.location.href = '../../login/HTML/login.html';
         return;
@@ -58,6 +63,36 @@ document.addEventListener('DOMContentLoaded', () => {
         PADRAO: { BR: '15-20 dias', CASA: '23-28 dias' }
     };
 
+    // === FUNÇÃO DE VALIDAÇÃO FORTE DE CPF (MÓDULO 11) ===
+    const validarCPF = (cpf) => {
+        cpf = cpf.replace(/[^\d]+/g, ''); // Limpa pontos e traços
+        
+        if (cpf == '') return false;
+        
+        // Bloqueia CPFs com todos os números iguais (ex: 111.111.111-11)
+        // Eles passam no cálculo matemático, mas são inválidos.
+        if (cpf.length != 11 || 
+            /^(\d)\1{10}$/.test(cpf))
+                return false;
+        
+        // Validação do 1º Dígito Verificador
+        let add = 0;
+        for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
+        let rev = 11 - (add % 11);
+        if (rev == 10 || rev == 11) rev = 0;
+        if (rev != parseInt(cpf.charAt(9))) return false;
+        
+        // Validação do 2º Dígito Verificador
+        add = 0;
+        for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
+        rev = 11 - (add % 11);
+        if (rev == 10 || rev == 11) rev = 0;
+        if (rev != parseInt(cpf.charAt(10))) return false;
+        
+        return true;
+    };
+
+    // === ATUALIZAÇÃO DE RESUMO DE VALORES ===
     const updateSummary = () => {
         const cart = getCart();
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -116,45 +151,60 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSummary();
     };
 
-    // --- FUNÇÕES DE MÁSCARA (VALIDAÇÃO VISUAL) ---
+    // === MÁSCARAS DE INPUT ===
     
-    // Máscara CPF (000.000.000-00)
     const mascaraCPF = (value) => {
         return value
-            .replace(/\D/g, '') // Remove tudo o que não é dígito
-            .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto após o terceiro dígito
-            .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto após o sexto dígito
-            .replace(/(\d{3})(\d{1,2})/, '$1-$2') // Coloca traço antes dos últimos 2 dígitos
-            .replace(/(-\d{2})\d+?$/, '$1'); // Impede digitar mais que o necessário
+            .replace(/\D/g, '') 
+            .replace(/(\d{3})(\d)/, '$1.$2') 
+            .replace(/(\d{3})(\d)/, '$1.$2') 
+            .replace(/(\d{3})(\d{1,2})/, '$1-$2') 
+            .replace(/(-\d{2})\d+?$/, '$1'); 
     };
 
-    // Máscara Telefone Celular (00) 00000-0000
     const mascaraTelefone = (value) => {
         return value
-            .replace(/\D/g, '') // Remove não números
-            .replace(/(\d{2})(\d)/, '($1) $2') // Coloca parênteses
-            .replace(/(\d{5})(\d)/, '$1-$2') // Coloca hífen
-            .replace(/(-\d{4})\d+?$/, '$1'); // Limita o tamanho
+            .replace(/\D/g, '') 
+            .replace(/(\d{2})(\d)/, '($1) $2') 
+            .replace(/(\d{5})(\d)/, '$1-$2') 
+            .replace(/(-\d{4})\d+?$/, '$1'); 
     };
 
-    // Aplica máscaras nos inputs
+    // Eventos de Input (Formatação enquanto digita)
     if (cpfEl) {
         cpfEl.addEventListener('input', (e) => {
             e.target.value = mascaraCPF(e.target.value);
+        });
+
+        // FEEDBACK VISUAL: Valida assim que o usuário sai do campo
+        cpfEl.addEventListener('blur', (e) => {
+            const valorLimpo = e.target.value.replace(/\D/g, '');
+            if (valorLimpo.length === 11) {
+                if (validarCPF(valorLimpo)) {
+                    // CPF Válido: Borda Verde
+                    cpfEl.style.borderColor = '#28a745';
+                    cpfEl.style.backgroundColor = '#f8fff9';
+                } else {
+                    // CPF Inválido: Borda Vermelha
+                    cpfEl.style.borderColor = '#dc3545';
+                    cpfEl.style.backgroundColor = '#fff8f8';
+                    // Opcional: alert('CPF Inválido!');
+                }
+            }
         });
     }
 
     if (telefoneEl) {
         telefoneEl.addEventListener('input', (e) => {
             e.target.value = mascaraTelefone(e.target.value);
-            validatePhone(); // Valida se confere
+            validatePhone(); 
         });
     }
 
     if (confirmTelEl) {
         confirmTelEl.addEventListener('input', (e) => {
             e.target.value = mascaraTelefone(e.target.value);
-            validatePhone(); // Valida se confere
+            validatePhone(); 
         });
     }
 
@@ -164,8 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const addresses = res.data.enderecos || [];
             
             if (res.data.nome) nomeEl.value = res.data.nome;
-            
-            // Aplica máscara se os dados vierem do banco
             if (res.data.cpf) cpfEl.value = mascaraCPF(res.data.cpf);
             if (res.data.email) emailEl.value = res.data.email;
             if (res.data.telefone) telefoneEl.value = mascaraTelefone(res.data.telefone);
@@ -196,23 +244,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // === PROCESSAMENTO DO CHECKOUT ===
     const handleCheckout = async (e) => {
         e.preventDefault();
         
         if (!selectedAddressId) return alert('Selecione um endereço.');
         
-        // Remove formatação para comparar apenas os números
         const telLimpo = telefoneEl.value.replace(/\D/g, '');
         const confTelLimpo = confirmTelEl.value.replace(/\D/g, '');
         const cpfLimpo = cpfEl.value.replace(/\D/g, '');
 
+        // 1. Validação de Telefones
         if (telLimpo !== confTelLimpo) return alert('Os telefones não conferem.');
         if (telLimpo.length < 10) return alert('Telefone inválido.');
-        if (cpfLimpo.length !== 11) return alert('CPF deve ter 11 dígitos.');
+
+        // 2. Validação Rigorosa de CPF
+        if (!validarCPF(cpfLimpo)) {
+            cpfEl.style.borderColor = '#dc3545';
+            cpfEl.focus();
+            return alert('O CPF informado é inválido. Verifique os números.');
+        }
+
+        // 3. Validação da Declaração de Maioridade
+        if (confirmaMaioridadeCheckbox && !confirmaMaioridadeCheckbox.checked) {
+            return alert('Você deve declarar que é maior de 18 anos para continuar.');
+        }
         
+        // 4. Validação da Confirmação de Endereço
         if (!confirmaEnderecoCheckbox.checked) {
-            alert('Por favor, confirme se o endereço está correto.');
-            return;
+            return alert('Por favor, confirme se o endereço está correto.');
         }
 
         const cart = getCart();
@@ -220,8 +280,8 @@ document.addEventListener('DOMContentLoaded', () => {
             itens: cart.map(i => ({ produtoId: i.id, quantidade: i.quantity, tamanho: i.size })),
             enderecoEntregaId: parseInt(selectedAddressId),
             nomeDestinatario: nomeEl.value,
-            cpfDestinatario: cpfLimpo, // Manda limpo pro backend
-            telefoneDestinatario: telLimpo, // Manda limpo pro backend
+            cpfDestinatario: cpfLimpo, 
+            telefoneDestinatario: telLimpo, 
             observacoes: obsEl.value,
             comCaixa: document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'true',
             entregaPrioritaria: document.querySelector('input[name="opcaoPrioritaria"]:checked')?.value === 'true',
@@ -234,14 +294,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const res = await apiClient.post('/pedidos', checkoutData);
             
-            // Sucesso! Limpa carrinho
             localStorage.removeItem('japaUniverseCart');
             if(window.updateCartCounter) window.updateCartCounter();
 
-            // Salva dados temporários (backup)
             sessionStorage.setItem('ultimoPedidoId', res.data.id);
-
-            // Redireciona para o pagamento com o ID na URL
             window.location.href = `../../pagamento/HTML/pagamento.html?id=${res.data.id}`;
 
         } catch (error) {
@@ -266,17 +322,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if(t1 && t2) {
             if(t1 === t2) {
                 msg.textContent = "Ok!";
-                msg.style.color = "var(--success)"; // Verde
+                msg.style.color = "var(--success)"; 
             } else {
                 msg.textContent = "Números não conferem";
-                msg.style.color = "#ff4444"; // Vermelho
+                msg.style.color = "#ff4444"; 
             }
         } else {
             msg.textContent = "";
         }
     };
-
-    // Não precisa adicionar listener aqui pois já adicionei no bloco da máscara acima
 
     loadAddresses();
     renderCart();
