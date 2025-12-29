@@ -1,203 +1,211 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra | Japa Universe</title>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <link rel="stylesheet" href="/FRONT/assets/CSS/base.css">
-    <link rel="stylesheet" href="/FRONT/checkout/CSS/checkout.css">
+    <link rel="stylesheet" href="../../assets/CSS/base.css">
+    <link rel="stylesheet" href="../CSS/checkout.css">
 </head>
 <body>
-
-    <header class="simple-header">
-        <div class="container">
-            <a href="/index.html" class="logo">Japa<span> Universe</span></a>
-            <div class="secure-badge">
-                <i class="fas fa-lock"></i> Compra 100% Segura
-            </div>
-        </div>
-    </header>
-
-    <main class="checkout-container">
-        
-        <div class="checkout-left">
+    <header class="main-header" data-basepath="../.."></header>
+    
+    <div class="page-wrapper">
+        <main class="checkout-container">
+            <h1 class="page-title"> Checkout Seguro</h1>
             
-            <section class="checkout-card">
-                <div class="card-header">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <h2>Endereço de Entrega</h2>
-                </div>
-                <div id="address-selection" class="address-list">
-                    <p class="loading-text">Carregando endereços...</p>
-                </div>
-            </section>
-
-            <section class="checkout-card">
-                <div class="card-header">
-                    <i class="fas fa-user-shield"></i>
-                    <h2>Dados do Destinatário</h2>
-                </div>
+            <form id="checkoutForm" class="checkout-layout">
                 
-                <div class="form-grid">
-                    <div class="form-group full-width">
-                        <label for="nomeCompleto">Nome Completo</label>
-                        <input type="text" id="nomeCompleto" placeholder="Quem vai receber?" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cpfDestinatario">CPF (Para Nota Fiscal)</label>
-                        <input type="text" id="cpfDestinatario" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input type="email" id="email" placeholder="seu@email.com" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="telefone">WhatsApp / Contato</label>
-                        <input type="text" id="telefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirmacaoTelefone">Confirmar WhatsApp</label>
-                        <input type="text" id="confirmacaoTelefone" placeholder="Repita o número" maxlength="15" inputmode="numeric" required>
-                        <div id="phone-match-message" class="validation-message"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="checkout-card">
-                <div class="card-header">
-                    <i class="fas fa-truck"></i>
-                    <h2>Opções de Envio</h2>
-                </div>
-
-                <div class="options-list">
-                    <label class="radio-card selected">
-                        <div class="radio-input">
-                            <input type="radio" name="opcaoCaixa" value="true" checked onchange="updatePreferenceUI(this)">
-                            <span class="custom-radio"></span>
-                        </div>
-                        <div class="radio-content">
-                            <div class="radio-title">Enviar na Caixa (+5%)</div>
-                            <div class="radio-desc">Seu tênis vai protegido na caixa original.</div>
-                        </div>
-                        <div class="radio-icon"><i class="fas fa-box"></i></div>
-                    </label>
-                    <label class="radio-card">
-                        <div class="radio-input">
-                            <input type="radio" name="opcaoCaixa" value="false" onchange="updatePreferenceUI(this)">
-                            <span class="custom-radio"></span>
-                        </div>
-                        <div class="radio-content">
-                            <div class="radio-title">Sem Caixa (Econômico)</div>
-                            <div class="radio-desc">Embalagem plástica segura.</div>
-                        </div>
-                        <div class="radio-icon"><i class="fas fa-box-open"></i></div>
-                    </label>
-
-                    <div class="divider"></div>
-
-                    <label class="radio-card">
-                        <div class="radio-input">
-                            <input type="radio" name="opcaoPrioritaria" value="true" onchange="updatePreferenceUI(this)">
-                            <span class="custom-radio"></span>
-                        </div>
-                        <div class="radio-content">
-                            <div class="radio-title">Entrega Prioritária (+5%)</div>
-                            <div class="radio-desc">Envio expresso e seguro preferencial.</div>
-                        </div>
-                        <div class="radio-icon"><i class="fas fa-stopwatch"></i></div>
-                    </label>
-                    <label class="radio-card selected">
-                        <div class="radio-input">
-                            <input type="radio" name="opcaoPrioritaria" value="false" checked onchange="updatePreferenceUI(this)">
-                            <span class="custom-radio"></span>
-                        </div>
-                        <div class="radio-content">
-                            <div class="radio-title">Envio Padrão</div>
-                            <div class="radio-desc">Prazo normal de entrega.</div>
-                        </div>
-                        <div class="radio-icon"><i class="fas fa-shipping-fast"></i></div>
-                    </label>
-                </div>
-            </section>
-
-            <section class="checkout-card">
-                <div class="card-header">
-                    <i class="fas fa-comment-alt"></i>
-                    <h2>Observações</h2>
-                </div>
-                <textarea id="observacoes" rows="3" placeholder="Alguma instrução especial para a entrega? (Opcional)"></textarea>
-            </section>
-
-        </div>
-
-        <div class="checkout-right">
-            <div class="summary-card sticky-summary">
-                <h3>Resumo do Pedido</h3>
-                
-                <div id="cart-items-container" class="cart-items-list">
-                    </div>
-
-                <div class="summary-details">
-                    <div class="summary-row">
-                        <span>Prazo Brasil:</span>
-                        <span id="prazoCorreios">15-20 dias</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Prazo Sua Casa:</span>
-                        <span id="prazoResidencia">23-28 dias</span>
-                    </div>
+                <div class="checkout-main-content">
                     
-                    <div class="divider"></div>
+                    <section class="checkout-card">
+                        <div class="card-header">
+                            <i class="fas fa-user-circle"></i>
+                            <h2>Dados Pessoais</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="nomeCompleto">Nome Completo</label>
+                                <input type="text" id="nomeCompleto" placeholder="Ex: João da Silva" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cpfDestinatario">CPF (Para Nota Fiscal)</label>
+                                <input type="text" id="cpfDestinatario" placeholder="000.000.000-00" required>
+                            </div>
 
-                    <div class="summary-row">
-                        <span>Subtotal:</span>
-                        <span id="summary-subtotal">R$ 0,00</span>
-                    </div>
-                    <div class="summary-row hidden" id="row-taxa-caixa">
-                        <span>Caixa Personalizada:</span>
-                        <span id="taxaCaixa">+ R$ 0,00</span>
-                    </div>
-                    <div class="summary-row hidden" id="row-taxa-prioridade">
-                        <span>Entrega Prioritária:</span>
-                        <span id="taxaPrioritaria">+ R$ 0,00</span>
-                    </div>
-                    
-                    <div class="summary-row total-row">
-                        <span>Total:</span>
-                        <span id="summary-total">R$ 0,00</span>
-                    </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="email">E-mail</label>
+                                    <input type="email" id="email" placeholder="seu@email.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="telefone">WhatsApp</label>
+                                    <input type="text" id="telefone" placeholder="(00) 00000-0000" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="confirmacaoTelefone">Confirmar WhatsApp</label>
+                                <input type="text" id="confirmacaoTelefone" placeholder="Repita o número" required>
+                                <div id="phone-match-message" class="validation-message"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="checkout-card">
+                        <div class="card-header">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h2>Endereço de Entrega</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="address-selection" class="address-list-container">
+                                <p class="loading-text">Carregando seus endereços...</p>
+                            </div>
+
+                            <div class="address-confirmation-box">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="confirmaEndereco" required>
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-text">Confirmo que o endereço selecionado acima está correto e atualizado.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="checkout-card preferences-section">
+                        <div class="card-header">
+                            <i class="fas fa-box-open"></i>
+                            <h2>Preferências de Envio</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="preference-group">
+                                <h3 class="pref-title">Embalagem</h3>
+                                <div class="radio-grid">
+                                    <label class="radio-card selected">
+                                        <input type="radio" name="opcaoCaixa" value="false" checked onchange="updatePreferenceUI(this)">
+                                        <div class="radio-content">
+                                            <span class="radio-title">Padrão</span>
+                                            <span class="radio-desc">Saco de envio seguro (Grátis)</span>
+                                        </div>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="opcaoCaixa" value="true" onchange="updatePreferenceUI(this)">
+                                        <div class="radio-content">
+                                            <span class="radio-title">Caixa Original</span>
+                                            <span class="radio-desc">+5% do valor</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <div class="preference-group">
+                                <h3 class="pref-title">Velocidade</h3>
+                                <div class="radio-grid">
+                                    <label class="radio-card selected">
+                                        <input type="radio" name="opcaoPrioritaria" value="false" checked onchange="updatePreferenceUI(this)">
+                                        <div class="radio-content">
+                                            <span class="radio-title">Normal</span>
+                                            <span class="radio-desc">Prazo padrão</span>
+                                        </div>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="opcaoPrioritaria" value="true" onchange="updatePreferenceUI(this)">
+                                        <div class="radio-content">
+                                            <span class="radio-title">Prioritária</span>
+                                            <span class="radio-desc">Envio Expresso (+5%)</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="checkout-card">
+                        <div class="card-header">
+                            <i class="fas fa-wallet"></i>
+                            <h2>Pagamento</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="payment-method-fixed">
+                                <div class="payment-icon">
+                                    <i class="fa-brands fa-pix"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <h3>PIX </h3>
+                                    <p>Use o app do seu banco para escanear o QR Code na próxima tela.</p>
+                                </div>
+                                <div class="payment-check">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 20px;">
+                                <label for="observacoes">Observações (Opcional)</label>
+                                <textarea id="observacoes" rows="2" placeholder="Algum detalhe extra sobre a entrega?"></textarea>
+                            </div>
+                        </div>
+                    </section>
                 </div>
 
-                <div class="confirmation-check">
-                    <label>
-                        <input type="checkbox" id="confirmaEndereco">
-                        Confirmo que o endereço de entrega está correto.
-                    </label>
-                </div>
+                <aside class="checkout-sidebar">
+                    <div class="order-summary-card">
+                        <h2>Resumo do Pedido</h2>
+                        
+                        <div class="summary-items-list" id="cart-items-container"></div>
+                        
+                        <div class="summary-totals">
+                            <div class="total-row">
+                                <span>Subtotal</span>
+                                <span id="summary-subtotal">R$ 0,00</span>
+                            </div>
+                            <div class="total-row option-row hidden" id="row-taxa-caixa">
+                                <span>Caixa Original (+5%)</span>
+                                <span id="taxaCaixa">R$ 0,00</span>
+                            </div>
+                            <div class="total-row option-row hidden" id="row-taxa-prioridade">
+                                <span>Entrega Prioritária (+5%)</span>
+                                <span id="taxaPrioritaria">R$ 0,00</span>
+                            </div>
+                            <div class="total-row final-total">
+                                <span>Total</span>
+                                <span id="summary-total">R$ 0,00</span>
+                            </div>
+                        </div>
 
-                <button id="checkout-button" class="btn-checkout">
-                    Finalizar Compra <i class="fas fa-arrow-right"></i>
-                </button>
+                        <div class="delivery-estimates">
+                            <div class="estimate-item">
+                                <i class="fas fa-plane-arrival"></i>
+                                <span id="prazoCorreios">Brasil: 15-20 dias</span>
+                            </div>
+                            <div class="estimate-item">
+                                <i class="fas fa-home"></i>
+                                <span id="prazoResidencia">Sua Casa: 23-28 dias</span>
+                            </div>
+                        </div>
 
-                <div class="secure-footer">
-                    <i class="fas fa-lock"></i> Seus dados estão protegidos.
-                </div>
-            </div>
-        </div>
-
-    </main>
-
+                        <button type="submit" class="btn-finish-checkout" id="checkout-button">
+                            Finalizar Compra <i class="fas fa-arrow-right"></i>
+                        </button>
+                        
+                        <p class="secure-badge"><i class="fas fa-shield-alt"></i> Compra 100% Segura</p>
+                    </div>
+                </aside>
+            </form>
+        </main>
+        
+        <footer class="main-footer" style="margin-top: 50px;"></footer>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="/FRONT/checkout/js/checkout.js"></script>
+    <script src="../../assets/js/header.js"></script>
+    <script src="../../assets/js/cart-utils.js"></script> 
+    <script src="../js/checkout.js"></script>
 </body>
 </html>
