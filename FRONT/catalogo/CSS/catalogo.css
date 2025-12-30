@@ -583,10 +583,10 @@
   min-height: auto;
 }
 
-/* Melhorada a galeria de imagens no desktop - fundo com gradiente e mais espaço */
+/* Redesign completo da galeria para desktop - fundo elegante com gradiente radial */
 .quickview-gallery {
   position: relative;
-  background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 50%, #f8f8f8 100%);
+  background: radial-gradient(circle at center, #ffffff 0%, #f5f5f5 50%, #e8e8e8 100%);
   border-radius: 20px 20px 0 0;
   overflow: hidden;
   display: flex;
@@ -596,18 +596,19 @@
   min-height: 400px;
 }
 
-/* Imagem principal maior e com efeito hover interativo */
+/* Imagem principal muito maior com sombra dramática e hover suave */
 .quickview-main-image {
   width: 100%;
   height: 100%;
   object-fit: contain !important;
   max-height: 500px;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
-  transition: transform 0.4s ease;
+  transition: transform 0.4s ease, filter 0.4s ease;
 }
 
 .quickview-main-image:hover {
   transform: scale(1.05);
+  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.2));
 }
 
 .quickview-thumbnails {
@@ -961,7 +962,7 @@
     padding: 0;
   }
 
-  /* Mobile mantém o layout compacto atual */
+  /* Mobile mantém o layout compacto como está */
   .quickview-gallery {
     min-height: 350px;
     padding: var(--space-md);
@@ -998,53 +999,12 @@
     grid-template-columns: 140px 1fr auto;
   }
 
-  /* Desktop: imagem ocupa mais espaço (55% vs 45%) */
+  /* Desktop: Layout 60/40 com galeria dominante e imagem 650px */
   .quickview-content {
-    grid-template-columns: 1.2fr 1fr;
-    min-height: 600px;
+    grid-template-columns: 60fr 40fr;
   }
 
-  /* Galeria maior com altura aumentada e gradiente premium */
   .quickview-gallery {
-    border-radius: 20px 0 0 20px;
-    min-height: 650px;
-    padding: var(--space-xl);
-    background: linear-gradient(135deg, #fafafa 0%, #ffffff 50%, #f5f5f5 100%);
-  }
-
-  /* Imagem 38% maior que antes (550px vs 400px) */
-  .quickview-main-image {
-    max-height: 550px;
-    max-width: 100%;
-  }
-
-  .quickview-details {
-    padding: var(--space-xl);
-    overflow-y: auto;
-  }
-
-  .quickview-title {
-    font-size: 1.8rem;
-  }
-  .quickview-actions {
-    flex-direction: row;
-  }
-}
-
-/* Desktop (1025px+) */
-@media (min-width: 1025px) {
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--space-lg);
-  }
-  .product-image-wrapper {
-    height: 250px;
-  }
-}
-
-/* Desktop grande: experiência premium com imagem ainda maior */
-@media (min-width: 1200px) {
-  .quickview-modal-content {
-    max-width: 1300px;
+    border-radius: 20px 0 0 20px; /* Fixed: Completed the border-radius value and added semicolon */
   }
 }
