@@ -36,7 +36,7 @@ public class EmailService {
     private final String COLOR_INFO = "#3498db"; // Cor para Pedido Enviado
 
     // ENDEREÇOS PADRONIZADOS
-    private static final String REMETENTE_TRANSACIONAL = "nao-responda@japauniverse.com.br";
+    private static final String REMETENTE_TRANSACIONAL = "japauniversestore@gmail.com";
     private static final String REMETENTE_AUTENTICADO = "japauniversestore@gmail.com";
 
     public void enviarConfirmacaoPagamento(Pedido pedido) {
