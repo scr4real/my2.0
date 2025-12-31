@@ -482,7 +482,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 { icon: 'fas fa-shoe-prints', text: 'Amortecimento React' },
                                 { icon: 'fas fa-wind', text: 'Respirável' },
                                 { icon: 'fas fa-weight-hanging', text: 'Leve' },
-                                { icon: 'fas fa-award', text: 'Garantia 6 meses' }
                             ],
                             sizes: quickViewSystem.generateAvailableSizes(product)
                         };
