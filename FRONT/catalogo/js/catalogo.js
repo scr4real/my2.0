@@ -300,57 +300,53 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             
             createProductCard: (product, index) => {
-                const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
-                const discountPercent = hasDiscount ? 
-                    Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
+    const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
+    const discountPercent = hasDiscount ? 
+        Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
+    
+    return `
+        <div class="product-card" data-id="${product.id}" style="--delay: ${index}">
+            <div class="product-badges">
+                ${product.isNew ? '<span class="badge new">Novo</span>' : ''}
+                ${hasDiscount ? `<span class="badge sale">-${discountPercent}%</span>` : ''}
+                ${product.isLimited ? '<span class="badge limited">Limited</span>' : ''}
+            </div>
+            
+            <a href="/FRONT/produto/HTML/produto.html?id=${product.id}" class="product-card-link">
+                <div class="product-image-wrapper">
+                    <img src="${utils.getImageUrl(product.imagemUrl)}" 
+                         alt="${product.nome}"
+                         loading="${index < 8 ? 'eager' : 'lazy'}">
+                </div>
+            </a>
+            
+            <div class="product-info">
+                <h3 class="product-name">${product.nome}</h3>
                 
-                return `
-                    <div class="product-card" data-id="${product.id}" style="--delay: ${index}">
-                        <div class="product-badges">
-                            ${product.isNew ? '<span class="badge new">Novo</span>' : ''}
-                            ${hasDiscount ? `<span class="badge sale">-${discountPercent}%</span>` : ''}
-                            ${product.isLimited ? '<span class="badge limited">Limited</span>' : ''}
-                        </div>
-                        
-                        <a href="/FRONT/produto/HTML/produto.html?id=${product.id}" class="product-card-link">
-                            <div class="product-image-wrapper">
-                                <img src="${utils.getImageUrl(product.imagemUrl)}" 
-                                     alt="${product.nome}"
-                                     loading="${index < 8 ? 'eager' : 'lazy'}">
-                            </div>
-                        </a>
-                        
-                        <div class="product-info">
-                            <span class="product-brand">${product.marca.nome}</span>
-                            <h3 class="product-name">${product.nome}</h3>
-                            
-                            <div class="product-price">
-                                <span class="current-price">${utils.formatPrice(product.preco)}</span>
-                                ${hasDiscount ? `
-                                    <span class="original-price">${utils.formatPrice(product.precoOriginal)}</span>
-                                    <span class="discount">-${discountPercent}%</span>
-                                ` : ''}
-                            </div>
-                            
-                            <div class="shipping-tag">Frete Grátis</div>
-                        </div>
-                        
-                        <div class="product-footer">
-                            <button class="btn btn-primary add-to-cart-btn" 
-                                    data-product-id="${product.id}" 
-                                    data-product-name="${product.nome}"
-                                    ${product.estoque <= 0 ? 'disabled' : ''}>
-                                <span class="btn-text">
-                                    ${product.estoque <= 0 ? 'Esgotado' : 'Adicionar ao Carrinho'}
-                                </span>
-                                <span class="btn-loading">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            },
+                <div class="product-price">
+                    <span class="current-price">${utils.formatPrice(product.preco)}</span>
+                    ${hasDiscount ? `
+                        <span class="original-price">${utils.formatPrice(product.precoOriginal)}</span>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <div class="product-footer">
+                <button class="btn btn-primary add-to-cart-btn" 
+                        data-product-id="${product.id}" 
+                        data-product-name="${product.nome}"
+                        ${product.estoque <= 0 ? 'disabled' : ''}>
+                    <span class="btn-text">
+                        ${product.estoque <= 0 ? 'Esgotado' : 'Adicionar'}
+                    </span>
+                    <span class="btn-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+    `;
+},
             
             addProductEventListeners: () => {
                 // Botões "Adicionar ao Carrinho" - ABRE O QUICK VIEW
