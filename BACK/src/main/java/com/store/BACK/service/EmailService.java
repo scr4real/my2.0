@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class EmailService {
 
-    // ✅ Alterado: Usando JavaMailSender para enviar pelo Gmail e aparecer o avatar
+    // ✅ Injeta o disparador do Spring que usa seu application.properties
     private final JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
@@ -37,27 +37,29 @@ public class EmailService {
     private final String COLOR_ERROR = "#f56565";
     private final String COLOR_INFO = "#3498db";
 
-    // ✅ Remetente agora é o seu Gmail oficial
-    private final String REMETENTE_PADRAO = "Japa Universe <japauniversestore@gmail.com>";
-
-    // Método auxiliar para manter o envio idêntico ao que o Resend fazia
-    private void enviarPeloGmail(String to, String subject, String html) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(REMETENTE_PADRAO);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(html, true);
-            mailSender.send(message);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Erro ao enviar email via Gmail: " + e.getMessage());
-        }
-    }
+    // ✅ Remetente definido como seu e-mail oficial para puxar a foto do avatar
+    private static final String REMETENTE_NOME = "Japa Universe";
 
     public void enviarConfirmacaoPagamento(Pedido pedido) {
         enviarPedidoRecebido(pedido);
+    }
+
+    // --- MÉTODO AUXILIAR DE ENVIO (Substitui a lógica do Resend) ---
+    private void dispararEmail(String to, String subject, String htmlContent) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(REMETENTE_GMAIL, REMETENTE_NOME);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar email pelo Gmail: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     // 1. PEDIDO RECEBIDO
@@ -82,7 +84,7 @@ public class EmailService {
                         buildSuporteFooter();
 
         String finalHtml = getBaseTemplate(bodyContent, "Pedido Recebido #" + pedido.getId());
-        enviarPeloGmail(pedido.getUsuario().getEmail(), "⏳ Pedido Recebido - Aguardando Pagamento Japa Universe #" + pedido.getId(), finalHtml);
+        dispararEmail(pedido.getUsuario().getEmail(), "⏳ Pedido Recebido - Aguardando Pagamento Japa Universe #" + pedido.getId(), finalHtml);
     }
 
     // 2. PAGAMENTO CONFIRMADO
@@ -106,7 +108,7 @@ public class EmailService {
                         buildSuporteFooter();
 
         String finalHtml = getBaseTemplate(bodyContent, "Pagamento Confirmado #" + pedido.getId());
-        enviarPeloGmail(pedido.getUsuario().getEmail(), "✅ Pagamento Confirmado - Japa Universe #" + pedido.getId(), finalHtml);
+        dispararEmail(pedido.getUsuario().getEmail(), "✅ Pagamento Confirmado - Japa Universe #" + pedido.getId(), finalHtml);
     }
 
     // 3. PEDIDO ENVIADO
@@ -140,7 +142,7 @@ public class EmailService {
                         buildSuporteFooter();
 
         String finalHtml = getBaseTemplate(bodyContent, "Pedido Enviado #" + pedido.getId());
-        enviarPeloGmail(pedido.getUsuario().getEmail(), "🚚 Seu Pedido Foi Enviado - Japa Universe #" + pedido.getId(), finalHtml);
+        dispararEmail(pedido.getUsuario().getEmail(), "🚚 Seu Pedido Foi Enviado - Japa Universe #" + pedido.getId(), finalHtml);
     }
 
     // 4. PEDIDO ENTREGUE
@@ -164,7 +166,7 @@ public class EmailService {
                         buildSuporteFooter();
 
         String finalHtml = getBaseTemplate(bodyContent, "Pedido Entregue #" + pedido.getId());
-        enviarPeloGmail(pedido.getUsuario().getEmail(), "🎁 Seu Pedido Foi Entregue - Japa Universe #" + pedido.getId(), finalHtml);
+        dispararEmail(pedido.getUsuario().getEmail(), "🎁 Seu Pedido Foi Entregue - Japa Universe #" + pedido.getId(), finalHtml);
     }
 
     // 5. PEDIDO CANCELADO
@@ -188,7 +190,7 @@ public class EmailService {
                         buildSuporteFooter();
 
         String finalHtml = getBaseTemplate(bodyContent, "Pedido Cancelado #" + pedido.getId());
-        enviarPeloGmail(pedido.getUsuario().getEmail(), "🚫 Pedido Cancelado - Japa Universe #" + pedido.getId(), finalHtml);
+        dispararEmail(pedido.getUsuario().getEmail(), "🚫 Pedido Cancelado - Japa Universe #" + pedido.getId(), finalHtml);
     }
 
     // --- REDEFINIÇÃO DE SENHA ---
@@ -210,9 +212,10 @@ public class EmailService {
                         "</div>";
 
         String finalHtml = getBaseTemplate(bodyContent, "Redefinição de Senha");
-        enviarPeloGmail(to, "🔐 Redefinição de Senha - Japa Universe", finalHtml);
+        dispararEmail(to, "🔐 Redefinição de Senha - Japa Universe", finalHtml);
     }
 
+    // --- MÉTODOS AUXILIARES: HTML ---
     private String buildItensHtml(Pedido pedido) {
         StringBuilder itensHtml = new StringBuilder();
         itensHtml.append("<table width='100%' cellpadding='12' cellspacing='0' style='border-collapse: separate; border-spacing: 0; margin: 20px 0; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);'>");
@@ -226,10 +229,7 @@ public class EmailService {
                 .append("<tbody>");
 
         for (ItemPedido item : pedido.getItens()) {
-            String precoItem = String.format("%.2f", item.getPrecoUnitario());
             BigDecimal totalItemValue = item.getPrecoUnitario().multiply(BigDecimal.valueOf(item.getQuantidade()));
-            String totalItem = String.format("%.2f", totalItemValue);
-
             itensHtml.append("<tr style='background-color: white; border-bottom: 1px solid ").append(COLOR_BORDER).append(";'>")
                     .append("<td style='padding: 12px; color: ").append(COLOR_TEXT).append(";'>")
                     .append("<div style='font-weight: 600; margin-bottom: 4px;'>").append(item.getProduto().getNome()).append("</div>")
@@ -237,8 +237,7 @@ public class EmailService {
                     .append("</td>")
                     .append("<td align='center' style='padding: 12px; color: ").append(COLOR_TEXT).append("; font-weight: 500;'>").append(item.getQuantidade()).append("</td>")
                     .append("<td align='right' style='padding: 12px; color: ").append(COLOR_TEXT).append(";'>")
-                    .append("<div style='font-weight: 600;'>R$ ").append(totalItem).append("</div>")
-                    .append("<div style='font-size: 12px; color: ").append(COLOR_TEXT_LIGHT).append(";'>R$ ").append(precoItem).append(" un</div>")
+                    .append("<div style='font-weight: 600;'>R$ ").append(String.format("%.2f", totalItemValue)).append("</div>")
                     .append("</td>")
                     .append("</tr>");
         }
@@ -267,32 +266,15 @@ public class EmailService {
     }
 
     private String getBaseTemplate(String content, String pageTitle) {
-        return "<!DOCTYPE html>" +
-                "<html lang='pt-BR'>" +
-                "<head>" +
-                "<meta charset='UTF-8'>" +
-                "<title>" + pageTitle + "</title>" +
-                "</head>" +
+        return "<!DOCTYPE html><html lang='pt-BR'><head><meta charset='UTF-8'><title>" + pageTitle + "</title></head>" +
                 "<body style='margin: 0; padding: 0; background-color: " + COLOR_BG + "; font-family: sans-serif; line-height: 1.6; color: " + COLOR_TEXT + ";'>" +
-                "<table width='100%' cellspacing='0' cellpadding='0' border='0' style='background-color: " + COLOR_BG + ";'>" +
-                "<tr>" +
-                "<td align='center' style='padding: 40px 20px;'>" +
-                "<table width='100%' max-width='600' cellspacing='0' cellpadding='0' border='0' style='background-color: " + COLOR_CARD + "; border-radius: 12px; overflow: hidden; border: 1px solid " + COLOR_BORDER + ";'>" +
-                "<tr>" +
-                "<td style='background: #121212; padding: 30px 20px; text-align: center;'>" +
+                "<table role='presentation' width='100%' cellspacing='0' cellpadding='0' border='0' style='background-color: " + COLOR_BG + ";'>" +
+                "<tr><td align='center' style='padding: 40px 20px;'>" +
+                "<table role='presentation' width='100%' max-width='600' cellspacing='0' cellpadding='0' border='0' style='background-color: " + COLOR_CARD + "; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid " + COLOR_BORDER + ";'>" +
+                "<tr><td style='background: #121212; padding: 30px 20px; text-align: center;'>" +
                 "<h1 style='color: " + COLOR_PRIMARY + "; margin: 0; letter-spacing: 3px; font-size: 32px;'>JAPA UNIVERSE</h1>" +
-                "</td>" +
-                "</tr>" +
-                "<tr>" +
-                "<td style='padding: 40px 30px;'>" +
-                content +
-                "</td>" +
-                "</tr>" +
-                "</table>" +
-                "</td>" +
-                "</tr>" +
-                "</table>" +
-                "</body>" +
-                "</html>";
+                "</td></tr>" +
+                "<tr><td style='padding: 40px 30px;'>" + content + "</td></tr>" +
+                "</table></td></tr></table></body></html>";
     }
 }
