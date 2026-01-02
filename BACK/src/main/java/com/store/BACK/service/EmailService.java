@@ -17,27 +17,24 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class EmailService {
 
-    // Injeta a chave do arquivo application.properties ou variáveis de ambiente
     @Value("${resend.api.key}")
     private String resendApiKey;
 
-    // Sistema de cores profissionais da marca
+    // Cores da marca
     private final String COLOR_PRIMARY = "#ff7a00";
     private final String COLOR_PRIMARY_LIGHT = "#ff9a3d";
-    private final String COLOR_PRIMARY_DARK = "#e56a00";
     private final String COLOR_BG = "#f8f9fa";
     private final String COLOR_CARD = "#ffffff";
     private final String COLOR_TEXT = "#2d3748";
     private final String COLOR_TEXT_LIGHT = "#718096";
     private final String COLOR_BORDER = "#e2e8f0";
     private final String COLOR_SUCCESS = "#48bb78";
-    private final String COLOR_WARNING = "#ed8936"; // Cor para Aguardando Pagamento/Atenção
+    private final String COLOR_WARNING = "#ed8936";
     private final String COLOR_ERROR = "#f56565";
-    private final String COLOR_INFO = "#3498db"; // Cor para Pedido Enviado
+    private final String COLOR_INFO = "#3498db";
 
-    // IMPORTANTE: No Resend (modo gratuito/teste), você deve usar o domínio deles.
-    // Quando você configurar seu domínio próprio no painel do Resend, pode mudar para "contato@japauniverse.com.br"
-    private static final String REMETENTE_PADRAO = "Japa Universe <onboarding@resend.dev>";
+    // ✅ AQUI ESTÁ A MUDANÇA IMPORTANTE: Seu domínio oficial
+    private static final String REMETENTE_PADRAO = "Japa Universe <nao-responda@japauniverse.com.br>";
 
     public void enviarConfirmacaoPagamento(Pedido pedido) {
         enviarPedidoRecebido(pedido);
@@ -63,31 +60,9 @@ public class EmailService {
                             "<p style='color: " + COLOR_TEXT_LIGHT + "; margin: 0; font-size: 16px;'>Obrigado pela sua compra, " + pedido.getUsuario().getNome() + "!</p>" +
                             "<p style='color: " + COLOR_TEXT_LIGHT + "; margin-top: 10px; font-size: 15px;'>Seu pedido foi registrado e estamos aguardando a confirmação do seu pagamento (PIX).</p>" +
                             "</div>" +
-
-                            "<div style='background: linear-gradient(135deg, " + COLOR_PRIMARY + ", " + COLOR_PRIMARY_LIGHT + "); padding: 20px; border-radius: 12px; margin: 25px 0; text-align: center; color: white;'>" +
-                            "<div style='font-size: 13px; opacity: 0.9; margin-bottom: 5px;'>NÚMERO DO PEDIDO</div>" +
-                            "<div style='font-size: 24px; font-weight: 700; letter-spacing: 1px;'>#" + pedido.getId() + "</div>" +
-                            "</div>" +
-
-                            "<div style='display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0;'>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Data do Pedido</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_TEXT + ";'>" + dataPedido + "</div>" +
-                            "</div>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Status Atual</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_WARNING + ";'>Aguardando Pagamento</div>" +
-                            "</div>" +
-                            "</div>" +
-
-                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Resumo do Pedido</h3>" +
+                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Resumo do Pedido #" + pedido.getId() + "</h3>" +
                             itensHtml +
                             enderecoHtml +
-
-                            "<div style='text-align: center; margin: 40px 0 20px;'>" +
-                            "<a href='http://localhost:5500/FRONT/pagamento/HTML/pagamento.html?id=" + pedido.getId() + "' style='display: inline-block; background: linear-gradient(135deg, " + COLOR_PRIMARY + ", " + COLOR_PRIMARY_LIGHT + "); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3); transition: all 0.3s ease;'>Acessar Página de Pagamento</a>" +
-                            "</div>" +
-
                             buildSuporteFooter();
 
             String finalHtml = getBaseTemplate(bodyContent, "Pedido Recebido #" + pedido.getId());
@@ -100,11 +75,10 @@ public class EmailService {
                     .build();
 
             resend.emails().send(request);
-            System.out.println(">>> E-mail Pedido Recebido enviado para: " + pedido.getUsuario().getEmail());
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de confirmação de pedido via Resend", e);
+            System.err.println("Erro ao enviar email (Resend): " + e.getMessage());
         }
     }
 
@@ -125,40 +99,11 @@ public class EmailService {
                             "<span style='color: white; font-size: 24px;'>✓</span>" +
                             "</div>" +
                             "<h1 style='color: " + COLOR_TEXT + "; margin: 0 0 10px 0; font-size: 28px;'>Pagamento Confirmado!</h1>" +
-                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin: 0; font-size: 16px;'>Recebemos a confirmação do seu pagamento, " + pedido.getUsuario().getNome() + "!</p>" +
-                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin-top: 10px; font-size: 15px;'>Seu pedido agora está sendo processado para envio.</p>" +
+                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin: 0; font-size: 16px;'>Pagamento confirmado, " + pedido.getUsuario().getNome() + "!</p>" +
                             "</div>" +
-
-                            "<div style='background: linear-gradient(135deg, " + COLOR_PRIMARY + ", " + COLOR_PRIMARY_LIGHT + "); padding: 20px; border-radius: 12px; margin: 25px 0; text-align: center; color: white;'>" +
-                            "<div style='font-size: 13px; opacity: 0.9; margin-bottom: 5px;'>NÚMERO DO PEDIDO</div>" +
-                            "<div style='font-size: 24px; font-weight: 700; letter-spacing: 1px;'>#" + pedido.getId() + "</div>" +
-                            "</div>" +
-
-                            "<div style='display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0;'>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Data do Pedido</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_TEXT + ";'>" + dataPedido + "</div>" +
-                            "</div>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Status Atual</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_SUCCESS + ";'>Pagamento Confirmado!</div>" +
-                            "</div>" +
-                            "</div>" +
-
-                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Itens Pagos</h3>" +
+                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Itens Pagos #" + pedido.getId() + "</h3>" +
                             itensHtml +
                             enderecoHtml +
-
-                            "<div style='text-align: center; margin: 40px 0 20px;'>" +
-                            "<a href='http://localhost:5500/FRONT/perfil/HTML/pedidos.html' style='display: inline-block; background: linear-gradient(135deg, " + COLOR_PRIMARY + ", " + COLOR_PRIMARY_LIGHT + "); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3); transition: all 0.3s ease;'>Acompanhar Pedido (Em Preparação)</a>" +
-                            "</div>" +
-
-                            "<div style='text-align: center; margin-top: 30px; padding: 20px; border: 1px solid " + COLOR_BORDER + "; border-radius: 8px; background-color: #f0f8ff;'>" +
-                            "<p style='color: " + COLOR_TEXT + "; font-size: 15px; margin: 0; font-weight: 500;'>" +
-                            "Receberá atualizações sobre o seu pedido tanto por e-mail quanto na aba <span style='font-weight: 700; color: " + COLOR_PRIMARY + ";'>'Avisos'</span> dentro da sua página de pedidos na loja. Obrigado por comprar na Japa Universe!" +
-                            "</p>" +
-                            "</div>" +
-
                             buildSuporteFooter();
 
             String finalHtml = getBaseTemplate(bodyContent, "Pagamento Confirmado #" + pedido.getId());
@@ -171,11 +116,9 @@ public class EmailService {
                     .build();
 
             resend.emails().send(request);
-            System.out.println(">>> E-mail Pagamento Confirmado enviado para: " + pedido.getUsuario().getEmail());
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de confirmação de pagamento via Resend", e);
         }
     }
 
@@ -189,14 +132,13 @@ public class EmailService {
 
             String itensHtml = buildItensHtml(pedido);
             String enderecoHtml = buildEnderecoHtml(pedido);
-
-            // Link de rastreio
+            
             String rastreioHtml = "";
             if (pedido.getCodigoRastreio() != null && !pedido.getCodigoRastreio().isEmpty()) {
-                rastreioHtml = "<div style='background: #e3f2fd; border: 1px solid " + COLOR_INFO + "; border-radius: 8px; padding: 20px; margin: 25px 0; text-align: center;'>" +
-                        "<h3 style='margin: 0 0 10px 0; color: " + COLOR_INFO + ";'>Seu Pedido Foi Enviado!</h3>" +
-                        "<p style='margin: 0 0 15px 0; font-size: 0.95rem; color: " + COLOR_TEXT + ";'>Código de Rastreio: <strong>" + pedido.getCodigoRastreio() + "</strong></p>" +
-                        "<a href='" + pedido.getLinkRastreio() + "' style='display: inline-block; background-color: " + COLOR_INFO + "; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; margin-top: 10px;'>RASTREAR PEDIDO</a>" +
+                 rastreioHtml = "<div style='background: #e3f2fd; border: 1px solid " + COLOR_INFO + "; border-radius: 8px; padding: 20px; margin: 25px 0; text-align: center;'>" +
+                        "<h3 style='margin: 0 0 10px 0; color: " + COLOR_INFO + ";'>Código de Rastreio</h3>" +
+                        "<p><strong>" + pedido.getCodigoRastreio() + "</strong></p>" +
+                        "<a href='" + pedido.getLinkRastreio() + "' style='background-color: " + COLOR_INFO + "; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>RASTREAR</a>" +
                         "</div>";
             }
 
@@ -205,28 +147,13 @@ public class EmailService {
                             "<div style='background-color: " + COLOR_INFO + "; width: 60px; height: 60px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 15px;'>" +
                             "<span style='color: white; font-size: 24px;'>🚚</span>" +
                             "</div>" +
-                            "<h1 style='color: " + COLOR_TEXT + "; margin: 0 0 10px 0; font-size: 28px;'>Seu Pedido Foi Enviado!</h1>" +
-                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin: 0; font-size: 16px;'>Olá, " + pedido.getUsuario().getNome() + "!</p>" +
-                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin-top: 10px; font-size: 15px;'>Seu pedido está a caminho! Confira os detalhes abaixo.</p>" +
+                            "<h1 style='color: " + COLOR_TEXT + "; margin: 0 0 10px 0; font-size: 28px;'>Pedido Enviado!</h1>" +
+                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin: 0; font-size: 16px;'>Seu pedido está a caminho, " + pedido.getUsuario().getNome() + "!</p>" +
                             "</div>" +
-
                             rastreioHtml +
-
-                            "<div style='display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0;'>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Data do Pedido</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_TEXT + ";'>" + dataPedido + "</div>" +
-                            "</div>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Status Atual</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_INFO + ";'>EM TRÂNSITO</div>" +
-                            "</div>" +
-                            "</div>" +
-
-                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Itens Enviados</h3>" +
+                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Itens Enviados #" + pedido.getId() + "</h3>" +
                             itensHtml +
                             enderecoHtml +
-
                             buildSuporteFooter();
 
             String finalHtml = getBaseTemplate(bodyContent, "Pedido Enviado #" + pedido.getId());
@@ -239,11 +166,9 @@ public class EmailService {
                     .build();
 
             resend.emails().send(request);
-            System.out.println(">>> E-mail Pedido Enviado enviado para: " + pedido.getUsuario().getEmail());
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de pedido enviado via Resend", e);
         }
     }
 
@@ -251,10 +176,8 @@ public class EmailService {
     @Async
     @Transactional
     public void enviarPedidoEntregue(Pedido pedido) {
-        try {
+         try {
             Resend resend = new Resend(resendApiKey);
-            String dataPedido = pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"));
-
             String itensHtml = buildItensHtml(pedido);
             String enderecoHtml = buildEnderecoHtml(pedido);
 
@@ -264,25 +187,11 @@ public class EmailService {
                             "<span style='color: white; font-size: 24px;'>🎁</span>" +
                             "</div>" +
                             "<h1 style='color: " + COLOR_TEXT + "; margin: 0 0 10px 0; font-size: 28px;'>Pedido Entregue!</h1>" +
-                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin: 0; font-size: 16px;'>Olá, " + pedido.getUsuario().getNome() + "!</p>" +
-                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin-top: 10px; font-size: 15px;'>Seu pedido foi entregue com sucesso. Esperamos que goste!</p>" +
+                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin: 0; font-size: 16px;'>Esperamos que goste, " + pedido.getUsuario().getNome() + "!</p>" +
                             "</div>" +
-
-                            "<div style='display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0;'>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Data do Pedido</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_TEXT + ";'>" + dataPedido + "</div>" +
-                            "</div>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Status Atual</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_SUCCESS + ";'>ENTREGUE</div>" +
-                            "</div>" +
-                            "</div>" +
-
-                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Itens Entregues</h3>" +
+                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Itens Entregues #" + pedido.getId() + "</h3>" +
                             itensHtml +
                             enderecoHtml +
-
                             buildSuporteFooter();
 
             String finalHtml = getBaseTemplate(bodyContent, "Pedido Entregue #" + pedido.getId());
@@ -295,11 +204,8 @@ public class EmailService {
                     .build();
 
             resend.emails().send(request);
-            System.out.println(">>> E-mail Pedido Entregue enviado para: " + pedido.getUsuario().getEmail());
-
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de pedido entregue via Resend", e);
         }
     }
 
@@ -309,8 +215,6 @@ public class EmailService {
     public void enviarPedidoCancelado(Pedido pedido) {
         try {
             Resend resend = new Resend(resendApiKey);
-            String dataPedido = pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm"));
-
             String itensHtml = buildItensHtml(pedido);
             String enderecoHtml = buildEnderecoHtml(pedido);
 
@@ -320,25 +224,11 @@ public class EmailService {
                             "<span style='color: white; font-size: 24px;'>✕</span>" +
                             "</div>" +
                             "<h1 style='color: " + COLOR_TEXT + "; margin: 0 0 10px 0; font-size: 28px;'>Pedido Cancelado</h1>" +
-                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin: 0; font-size: 16px;'>Olá, " + pedido.getUsuario().getNome() + ".</p>" +
-                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin-top: 10px; font-size: 15px;'>Informamos que seu pedido foi cancelado. Se tiver dúvidas, entre em contato.</p>" +
+                            "<p style='color: " + COLOR_TEXT_LIGHT + "; margin: 0; font-size: 16px;'>Seu pedido foi cancelado.</p>" +
                             "</div>" +
-
-                            "<div style='display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0;'>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Data do Pedido</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_TEXT + ";'>" + dataPedido + "</div>" +
-                            "</div>" +
-                            "<div style='background-color: " + COLOR_BG + "; padding: 15px; border-radius: 8px; text-align: center;'>" +
-                            "<div style='font-size: 13px; color: " + COLOR_TEXT_LIGHT + "; margin-bottom: 5px;'>Status Atual</div>" +
-                            "<div style='font-weight: 600; color: " + COLOR_ERROR + ";'>CANCELADO</div>" +
-                            "</div>" +
-                            "</div>" +
-
-                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Resumo do Pedido</h3>" +
+                            "<h3 style='color: " + COLOR_TEXT + "; margin: 30px 0 15px 0; font-size: 18px; border-bottom: 2px solid " + COLOR_BORDER + "; padding-bottom: 8px;'>Resumo #" + pedido.getId() + "</h3>" +
                             itensHtml +
                             enderecoHtml +
-
                             buildSuporteFooter();
 
             String finalHtml = getBaseTemplate(bodyContent, "Pedido Cancelado #" + pedido.getId());
@@ -351,11 +241,8 @@ public class EmailService {
                     .build();
 
             resend.emails().send(request);
-            System.out.println(">>> E-mail Pedido Cancelado enviado para: " + pedido.getUsuario().getEmail());
-
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de pedido cancelado via Resend", e);
         }
     }
 
@@ -365,8 +252,10 @@ public class EmailService {
         try {
             Resend resend = new Resend(resendApiKey);
             
-            // ATENÇÃO: Se estiver em produção, altere este URL para o seu domínio real
-            String url = "http://127.0.0.1:5500/FRONT/login/HTML/nova-senha.html?token=" + token;
+            // ATENÇÃO: Link apontando para o seu FRONTEND real (ajuste se não for localhost)
+            String url = "https://japauniverse.com.br/login/HTML/nova-senha.html?token=" + token;
+            // Se estiver testando localmente, pode manter: 
+            // String url = "http://127.0.0.1:5500/FRONT/login/HTML/nova-senha.html?token=" + token;
 
             String bodyContent =
                     "<div style='text-align: center; margin-bottom: 30px;'>" +
@@ -387,11 +276,6 @@ public class EmailService {
                             "<span style='font-size: 16px;'>⚠️</span>" +
                             "<span><strong>Importante:</strong> Se não foi você que solicitou esta redefinição, ignore este e-mail. O link expira em 1 hora.</span>" +
                             "</p>" +
-                            "</div>" +
-
-                            "<div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid " + COLOR_BORDER + ";'>" +
-                            "<p style='color: " + COLOR_TEXT_LIGHT + "; font-size: 13px; margin: 5px 0;'>Caso o botão não funcione, copie e cole este link no seu navegador:</p>" +
-                            "<p style='background-color: " + COLOR_BG + "; padding: 10px; border-radius: 6px; word-break: break-all; font-size: 12px; color: " + COLOR_TEXT + "; margin: 10px 0;'>" + url + "</p>" +
                             "</div>";
 
             String finalHtml = getBaseTemplate(bodyContent, "Redefinição de Senha");
@@ -408,12 +292,11 @@ public class EmailService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Falha ao enviar e-mail de redefinição via Resend", e);
+            System.err.println("Erro ao enviar e-mail via Resend: " + e.getMessage());
         }
     }
 
-    // --- MÉTODOS AUXILIARES: HTML (MANTIDOS ORIGINAIS) ---
-
+    // --- MÉTODOS AUXILIARES: HTML (MANTIDOS) ---
     private String buildItensHtml(Pedido pedido) {
         StringBuilder itensHtml = new StringBuilder();
         itensHtml.append("<table width='100%' cellpadding='12' cellspacing='0' style='border-collapse: separate; border-spacing: 0; margin: 20px 0; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);'>");
@@ -428,7 +311,6 @@ public class EmailService {
 
         for (ItemPedido item : pedido.getItens()) {
             String precoItem = String.format("%.2f", item.getPrecoUnitario());
-            // Usar multiply() para BigDecimal
             BigDecimal totalItemValue = item.getPrecoUnitario().multiply(BigDecimal.valueOf(item.getQuantidade()));
             String totalItem = String.format("%.2f", totalItemValue);
 
@@ -444,13 +326,10 @@ public class EmailService {
                     .append("</td>")
                     .append("</tr>");
         }
-
-        // Linha do total
         itensHtml.append("<tr style='background-color: ").append(COLOR_BG).append(";'>")
                 .append("<td colspan='2' align='right' style='padding: 12px; font-weight: 600; color: ").append(COLOR_TEXT).append(";'>Total:</td>")
                 .append("<td align='right' style='padding: 12px; font-weight: 700; font-size: 16px; color: ").append(COLOR_PRIMARY).append(";'>R$ ").append(String.format("%.2f", pedido.getValorTotal())).append("</td>")
                 .append("</tr>");
-
         itensHtml.append("</tbody></table>");
         return itensHtml.toString();
     }
@@ -488,23 +367,20 @@ public class EmailService {
                 "<td align='center' style='padding: 40px 20px;'>" +
                 // Container Principal
                 "<table role='presentation' width='100%' max-width='600' cellspacing='0' cellpadding='0' border='0' style='background-color: " + COLOR_CARD + "; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid " + COLOR_BORDER + ";'>" +
-
-                // Header Profissional
+                // Header
                 "<tr>" +
                 "<td style='background: linear-gradient(135deg, #121212, #1a1a1a); padding: 30px 20px; text-align: center;'>" +
                 "<h1 style='color: " + COLOR_PRIMARY + "; margin: 0; font-family: 'Bebas Neue', sans-serif; letter-spacing: 3px; font-size: 32px; font-weight: 400;'>JAPA UNIVERSE</h1>" +
                 "<p style='color: rgba(255,255,255,0.7); margin: 8px 0 0 0; font-size: 14px; letter-spacing: 1px;'>STYLE • CULTURE • IDENTITY</p>" +
                 "</td>" +
                 "</tr>" +
-
-                // Conteúdo Dinâmico
+                // Conteúdo
                 "<tr>" +
                 "<td style='padding: 40px 30px;'>" +
                 content +
                 "</td>" +
                 "</tr>" +
-
-                // Footer Profissional
+                // Footer
                 "<tr>" +
                 "<td style='background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 25px 20px; text-align: center; border-top: 1px solid " + COLOR_BORDER + ";'>" +
                 "<table role='presentation' width='100%' cellspacing='0' cellpadding='0' border='0'>" +
@@ -526,7 +402,6 @@ public class EmailService {
                 "</table>" +
                 "</td>" +
                 "</tr>" +
-
                 "</table>" +
                 "</td>" +
                 "</tr>" +
