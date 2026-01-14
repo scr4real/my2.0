@@ -36,39 +36,48 @@ INSERT INTO _usuario (nome, email, cpf, telefone, senha, role) VALUES -- <--- CO
  -- ==================================================================================
 -- ARQUIVO: BACK/src/main/resources/data.sql
 -- ==================================================================================
+-- Inserção dos produtos Nike Air Max 95
+-- Certifique-se de que a tabela se chama 'produto' ou altere o comando abaixo.
 
--- ... (Mantenha os DELETEs e os INSERTS de Marcas/Categorias/Usuarios que já fizemos) ...
+INSERT INTO produto (nome, descricao_cor, imagem_url, preco, categoria, parcelamento) VALUES 
+-- Linha 1
+('Nike Air Max 95', 'Black Volt / Preto e Neon Escuro', '/uploads/95/1.png', 1199.90, 'airmax95', '12x de R$ 99,99'),
+('Nike Air Max 95 OG', 'Neon Yellow / Cinza e Neon Clássico', '/uploads/95/2.png', 1299.90, 'airmax95', '12x de R$ 108,32'),
+('Nike Air Max 95', 'Anatomy of Air / Vermelho e Bege', '/uploads/95/3.png', 1199.90, 'airmax95', '12x de R$ 99,99'),
+('Nike Air Max 95', 'Iridescent Purple / Roxo Metálico', '/uploads/95/4.png', 1149.90, 'airmax95', '12x de R$ 95,82'),
+('Nike Air Max 95', 'Dark Grey Green / Cinza Escuro e Verde', '/uploads/95/5.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95 Essential', 'Anthracite / Cinza Chumbo', '/uploads/95/6.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95', 'Neutral Olive Orange / Verde Oliva e Laranja', '/uploads/95/7.png', 1149.90, 'airmax95', '12x de R$ 95,82'),
+('Nike Air Max 95', 'Black Royal Blue / Preto e Azul Real', '/uploads/95/8.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95', 'Grey Red / Cinza e Vermelho', '/uploads/95/9.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
 
--- 5. INSERÇÃO DE PRODUTOS (COM IMAGENS LOCAIS)
+-- Linha 2
+('Nike Air Max 95', 'Rough Green / Verde Militar e Amarelo', '/uploads/95/10.png', 1199.90, 'airmax95', '12x de R$ 99,99'),
+('Nike Air Max 95', 'Black Pink Outline / Preto com Detalhe Rosa', '/uploads/95/11.png', 1149.90, 'airmax95', '12x de R$ 95,82'),
+('Nike Air Max 95', 'Triple Black Leather / Preto Couro', '/uploads/95/12.png', 1299.90, 'airmax95', '12x de R$ 108,32'),
+('Nike Air Max 95', 'White Solar Red / Branco e Vermelho Solar', '/uploads/95/13.png', 1199.90, 'airmax95', '12x de R$ 99,99'),
+('Nike Air Max 95', 'Black Blue Gradient / Preto Degradê Azul', '/uploads/95/14.png', 1149.90, 'airmax95', '12x de R$ 95,82'),
+('Nike Air Max 95', 'Black Yellow / Preto e Amarelo', '/uploads/95/15.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95', 'Black Navy Green / Preto Azul e Verde', '/uploads/95/16.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95', 'Grey Volt / Cinza e Verde Lima', '/uploads/95/17.png', 1199.90, 'airmax95', '12x de R$ 99,99'),
+('Nike Air Max 95', 'Cool Grey / Cinza Clássico', '/uploads/95/18.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
 
-INSERT INTO produtos (
-    nome, 
-    descricao, 
-    preco, 
-    preco_original, 
-    estoque, 
-    marca_id, 
-    categoria_id, 
-    codigo_modelo, 
-    imagem_url,   
-    imagem_url_2,
-    imagem_url_3, 
-    imagem_url_4
-    
-) VALUES 
+-- Linha 3
+('Nike Air Max 95', 'Pink Oxford / Rosa e Cinza Claro', '/uploads/95/19.png', 1199.90, 'airmax95', '12x de R$ 99,99'),
+('Nike Air Max 95 OG', 'Solar Red / Cinza e Vermelho Solar', '/uploads/95/20.png', 1299.90, 'airmax95', '12x de R$ 108,32'),
+('Nike Air Max 95', 'Crystal Blue / Cinza e Azul Cristal', '/uploads/95/21.png', 1299.90, 'airmax95', '12x de R$ 108,32'),
+('Nike Air Max 95', 'Pure Platinum / Branco e Platina', '/uploads/95/22.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95', 'Dark Grey Yellow / Cinza Escuro e Amarelo', '/uploads/95/23.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95', 'Oreo / Preto e Branco Mesclado', '/uploads/95/24.png', 1149.90, 'airmax95', '12x de R$ 95,82'),
+('Nike Air Max 95 Essential', 'Triple Black / Totalmente Preto', '/uploads/95/25.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95 x CDG', 'Comme des Garçons White / Branco Desconstruído', '/uploads/95/26.png', 2499.90, 'airmax95', '12x de R$ 208,32'),
+('Nike Air Max 95 x CDG', 'Comme des Garçons Black / Preto Desconstruído', '/uploads/95/27.png', 2499.90, 'airmax95', '12x de R$ 208,32'),
 
--- PRODUTO 1: Nike Dunk Panda
-(
-    'Nike Dunk Low Panda',
-    'O clássico preto e branco que combina com tudo.',
-    899.90,
-    1199.90,
-    50,
-    1, -- Marca Nike
-    4, -- Categoria Dunk
-    'NIKE_DUNK_PANDA',
-    'uploads/dnBlack.webp',  
-    'uploads/nike-panda-costas.jpg',
-    NULL,
-    NULL
-);
+-- Linha 4 e Finais
+('Nike Air Max 95', 'White Mint / Branco e Verde Menta', '/uploads/95/28.png', 1149.90, 'airmax95', '12x de R$ 95,82'),
+('Nike Air Max 95 Essential', 'Triple White / Totalmente Branco', '/uploads/95/29.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95', 'Aluminium Blue / Degradê Azul Claro', '/uploads/95/30.png', 1199.90, 'airmax95', '12x de R$ 99,99'),
+('Nike Air Max 95', 'White Black Logo / Branco com Logo Preto', '/uploads/95/31.png', 1099.90, 'airmax95', '12x de R$ 91,65'),
+('Nike Air Max 95 Premium', 'Summit White / Branco Premium', '/uploads/95/32.png', 1249.90, 'airmax95', '12x de R$ 104,15'),
+('Nike Air Max 95', 'Midnight Navy / Azul Marinho', '/uploads/95/azulescuro.png', 1149.90, 'airmax95', '12x de R$ 95,82'),
+('Nike Air Max 95', 'Bred / Preto e Vermelho', '/uploads/95/pretovermelho.png', 1149.90, 'airmax95', '12x de R$ 95,82');
