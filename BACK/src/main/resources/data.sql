@@ -2,11 +2,12 @@
 -- ARQUIVO: BACK/src/main/resources/data.sql
 -- ==================================================================================
 
--- 1. LIMPEZA DE DADOS
+-- 1. LIMPEZA DE DADOS (A ORDEM É CRUCIAL PARA NÃO DAR ERRO 502)
 DELETE FROM itens_pedido;
 DELETE FROM pagamentos;
 DELETE FROM pedido_aviso;
 DELETE FROM pedidos;
+DELETE FROM enderecos; -- <--- ESSA LINHA FALTAVA E CAUSAVA O CRASH
 DELETE FROM produtos;
 DELETE FROM categorias;
 DELETE FROM marcas;
@@ -67,11 +68,11 @@ INSERT INTO categorias (id, nome) VALUES
 (36, 'Nike Vomero 5'),
 (37, 'Nocta Hot Step 2'),
 (38, 'Nike P-6000'),
-(39, 'Puma 180'),      -- NOVO
-(40, 'Nike Shox'),     -- NOVO
-(41, 'Yeezy Slide'),   -- NOVO
-(42, 'Puma Suede'),    -- NOVO
-(43, 'Air Max TN3');   -- NOVO
+(39, 'Puma 180'),
+(40, 'Nike Shox'),
+(41, 'Yeezy Slide'),
+(42, 'Puma Suede'),
+(43, 'Air Max TN3');
 
 -- 4. USUÁRIO ADMIN
 INSERT INTO _usuario (nome, email, cpf, telefone, senha, role) VALUES 
