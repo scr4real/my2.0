@@ -2,12 +2,12 @@
 -- ARQUIVO: BACK/src/main/resources/data.sql
 -- ==================================================================================
 
--- 1. LIMPEZA DE DADOS (A ORDEM É CRUCIAL PARA NÃO DAR ERRO 502)
+-- 1. LIMPEZA DE DADOS (A ORDEM É CRUCIAL)
 DELETE FROM itens_pedido;
 DELETE FROM pagamentos;
 DELETE FROM pedido_aviso;
 DELETE FROM pedidos;
-DELETE FROM enderecos; -- <--- ESSA LINHA FALTAVA E CAUSAVA O CRASH
+DELETE FROM enderecos; -- Essencial para não travar ao deletar usuários
 DELETE FROM produtos;
 DELETE FROM categorias;
 DELETE FROM marcas;
@@ -29,6 +29,7 @@ INSERT INTO marcas (id, nome) VALUES
 (12, 'Yeezy');
 
 -- 3. INSERÇÃO DE CATEGORIAS
+-- OBS: Removido ID 25 pois era duplicata de 'Air Max DN' (ID 2)
 INSERT INTO categorias (id, nome) VALUES 
 (1, 'Air Max 95'), 
 (2, 'Air Max DN'), 
@@ -54,7 +55,7 @@ INSERT INTO categorias (id, nome) VALUES
 (22, 'Crocs Bape'),
 (23, 'Crocs McQueen'),
 (24, 'Dior B30'),
-(25, 'Air Max DN'),
+-- (25, 'Air Max DN') -> REMOVIDO (DUPLICATA)
 (26, 'Air Max DN8'),
 (27, 'Air Max Drift'),
 (28, 'Nike Dunk'),
@@ -232,15 +233,15 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 ('Dior B30', 'White Mesh / Branco', '/uploads/diorb30/13.png', 5999.90, 24, 2, 11, 'B30'),
 ('Dior B30', 'Navy Blue / Azul Marinho', '/uploads/diorb30/14.png', 5999.90, 24, 2, 11, 'B30');
 
--- --- LOTE 14: AIR MAX DN ---
+-- --- LOTE 14: AIR MAX DN (CORRIGIDO PARA USAR ID 2) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Max DN', 'Sail / Branco Creme', '/uploads/dn/1.png', 1299.90, 25, 8, 1, 'DN'),
-('Nike Air Max DN', 'Volt / Verde Neon', '/uploads/dn/2.png', 1299.90, 25, 8, 1, 'DN'),
-('Nike Air Max DN', 'Black Anthracite / Preto', '/uploads/dn/3.png', 1299.90, 25, 8, 1, 'DN'),
-('Nike Air Max DN', 'Pure Platinum / Prata', '/uploads/dn/4.png', 1299.90, 25, 8, 1, 'DN'),
-('Nike Air Max DN', 'Black White / Preto e Branco', '/uploads/dn/5.png', 1299.90, 25, 8, 1, 'DN'),
-('Nike Air Max DN', 'Supreme Black / Preto Supreme', '/uploads/dn/6.png', 1599.90, 25, 5, 1, 'DN'),
-('Nike Air Max DN', 'Hyper Violet / Preto e Roxo', '/uploads/dn/7.png', 1299.90, 25, 8, 1, 'DN');
+('Nike Air Max DN', 'Sail / Branco Creme', '/uploads/dn/1.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN', 'Volt / Verde Neon', '/uploads/dn/2.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN', 'Black Anthracite / Preto', '/uploads/dn/3.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN', 'Pure Platinum / Prata', '/uploads/dn/4.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN', 'Black White / Preto e Branco', '/uploads/dn/5.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN', 'Supreme Black / Preto Supreme', '/uploads/dn/6.png', 1599.90, 2, 5, 1, 'DN'),
+('Nike Air Max DN', 'Hyper Violet / Preto e Roxo', '/uploads/dn/7.png', 1299.90, 2, 8, 1, 'DN');
 
 -- --- LOTE 15: AIR MAX DN8 ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
