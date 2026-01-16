@@ -1,11 +1,3 @@
-Perfeito! Vou pegar o seu código JS original e adicionar apenas a lógica de paginação, sem mexer na estrutura que você já tinha.
-O que eu fiz:
- * Adicionei currentPage e itemsPerPage: 12 no state.
- * Adicionei a função renderPagination para criar os botões (1, 2, 3...).
- * Modifiquei a função renderProducts para exibir apenas 12 produtos por vez, baseados na página atual.
- * Criei a função goToPage para trocar de página.
- * Mantive todo o seu sistema de filtros, busca e quick view intactos.
-Aqui está o código completo do catalogo.js:
 document.addEventListener('DOMContentLoaded', () => {
     const BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://back-production-e565.up.railway.app';
     const API_URL = `${BASE_URL}/api/produtos`;
@@ -406,4 +398,279 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="btn-loading">
                                     <i class="fas fa-spinner fa-spin"></i>
                                 </span>
-             
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            addProductEventListeners: () => {
+                document.querySelectorAll('.add-to-cart-btn:not([disabled])').forEach(button => {
+                    if (button.dataset.listenerAdded) return;
+                    button.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const productId = button.dataset.productId;
+                        quickViewSystem.openQuickView(productId);
+                        button.dataset.listenerAdded = 'true';
+                    });
+                });
+
+                if (state.currentView === 'list') {
+                    document.querySelectorAll('.product-card').forEach(card => {
+                        const link = card.querySelector('.product-card-link');
+                        if (link) {
+                            card.querySelectorAll('.product-image-wrapper, .product-info').forEach(el => {
+                                el.style.cursor = 'pointer';
+                                el.addEventListener('click', (e) => {
+                                    if (!e.target.closest('.add-to-cart-btn')) window.location.href = link.href;
+                                });
+                            });
+                        }
+                    });
+                }
+            }
+        };
+
+        // ===== SISTEMA QUICK VIEW =====
+        const quickViewSystem = {
+            openQuickView: async (productId) => {
+                const product = state.allProducts.find(p => p.id === parseInt(productId));
+                if (!product) {
+                    quickViewSystem.showError('Produto não encontrado.');
+                    return;
+                }
+
+                quickViewProduct = product;
+                selectedSize = null;
+                
+                quickViewSystem.showSkeleton();
+                quickViewElements.overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+                try {
+                    await quickViewSystem.loadProductDetails(product);
+                } catch (error) {
+                    console.error('Erro ao carregar detalhes do produto:', error);
+                    quickViewSystem.showError('Erro ao carregar detalhes do produto.');
+                }
+            },
+
+            showSkeleton: () => {
+                quickViewElements.content.innerHTML = `
+                    <div class="quickview-skeleton">
+                        <div class="quickview-skeleton-image skeleton"></div>
+                        <div class="quickview-skeleton-details">
+                            <div class="quickview-skeleton-text short skeleton"></div>
+                            <div class="quickview-skeleton-text long skeleton"></div>
+                            <div class="quickview-skeleton-text medium skeleton"></div>
+                            <div class="quickview-skeleton-price skeleton"></div>
+                            <div class="quickview-skeleton-text long skeleton"></div>
+                            <div class="quickview-skeleton-text long skeleton"></div>
+                            <div class="quickview-skeleton-text long skeleton"></div>
+                            <div class="quickview-skeleton-button skeleton"></div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            loadProductDetails: async (product) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const productDetails = {
+                            ...product,
+                            description: product.descricao || "Tênis premium com tecnologia de amortecimento avançada.",
+                            images: [product.imagemUrl, product.imagemUrl, product.imagemUrl],
+                            features: [
+                                { icon: 'fas fa-shoe-prints', text: 'Amortecimento React' },
+                                { icon: 'fas fa-wind', text: 'Respirável' },
+                                { icon: 'fas fa-weight-hanging', text: 'Leve' },
+                            ],
+                            sizes: quickViewSystem.generateAvailableSizes(product)
+                        };
+                        quickViewSystem.renderProductDetails(productDetails);
+                        resolve(productDetails);
+                    }, 500);
+                });
+            },
+
+            renderProductDetails: (product) => {
+                const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
+                const discountPercent = hasDiscount ? Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
+
+                quickViewElements.content.innerHTML = `
+                    <div class="quickview-gallery">
+                        <img src="${utils.getImageUrl(product.images[0])}" class="quickview-main-image" id="quickviewMainImage">
+                        <div class="quickview-thumbnails">
+                            ${product.images.map((image, index) => `
+                                <img src="${utils.getImageUrl(image)}" class="quickview-thumbnail ${index === 0 ? 'active' : ''}" data-image-index="${index}">
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="quickview-details">
+                        <div class="quickview-brand">${product.marca.nome}</div>
+                        <h1 class="quickview-title">${product.nome}</h1>
+                        <div class="quickview-price">
+                            <span class="quickview-current-price">${utils.formatPrice(product.preco)}</span>
+                            ${hasDiscount ? `<span class="quickview-original-price">${utils.formatPrice(product.precoOriginal)}</span>` : ''}
+                        </div>
+                        <div class="quickview-shipping"><i class="fas fa-shipping-fast"></i><span>Frete Grátis</span></div>
+                        <p class="quickview-description">${product.description}</p>
+                        <div class="quickview-size-section">
+                            <div class="quickview-size-title">Selecione o Tamanho:</div>
+                            <div class="quickview-size-options" id="quickviewSizeOptions">
+                                ${Object.keys(product.sizes).map(s => `<div class="quickview-size-option" data-size="${s}">${s}</div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="quickview-actions">
+                            <button class="btn btn-primary quickview-add-to-cart" id="quickviewAddToCart" disabled>Adicionar ao Carrinho</button>
+                        </div>
+                    </div>
+                `;
+                quickViewSystem.addGalleryEventListeners();
+                quickViewSystem.addModalEventListeners();
+            },
+
+            addGalleryEventListeners: () => {
+                const thumbnails = document.querySelectorAll('.quickview-thumbnail');
+                const mainImage = document.getElementById('quickviewMainImage');
+                thumbnails.forEach(thumb => {
+                    thumb.addEventListener('click', () => {
+                        thumbnails.forEach(t => t.classList.remove('active'));
+                        thumb.classList.add('active');
+                        mainImage.src = thumb.src;
+                    });
+                });
+            },
+
+            addModalEventListeners: () => {
+                document.querySelectorAll('.quickview-size-option:not(.disabled)').forEach(opt => opt.addEventListener('click', () => quickViewSystem.selectSize(opt)));
+                const btn = document.getElementById('quickviewAddToCart');
+                if(btn) btn.addEventListener('click', quickViewSystem.addToCartFromQuickView);
+            },
+
+            selectSize: (el) => {
+                document.querySelectorAll('.quickview-size-option').forEach(o => o.classList.remove('selected'));
+                el.classList.add('selected');
+                selectedSize = el.dataset.size;
+                document.getElementById('quickviewAddToCart').disabled = false;
+            },
+
+            addToCartFromQuickView: () => {
+                if(!selectedSize) { showNotification('Selecione um tamanho', 'error'); return; }
+                if(typeof window.addToCart === 'function') {
+                    window.addToCart({ id: quickViewProduct.id.toString(), name: quickViewProduct.nome, price: quickViewProduct.preco, image: utils.getImageUrl(quickViewProduct.imagemUrl), size: selectedSize, quantity: 1 });
+                    quickViewSystem.closeQuickView();
+                    showNotification('Adicionado ao carrinho!');
+                }
+            },
+
+            closeQuickView: () => {
+                quickViewElements.overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            },
+
+            showError: (msg) => {
+                quickViewElements.content.innerHTML = `<div class="quickview-error">${msg}</div>`;
+            },
+            
+            generateAvailableSizes: (product) => {
+                const sizes = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45'];
+                const av = {};
+                sizes.forEach(s => av[s] = Math.floor(Math.random() * 5) + 1);
+                return av;
+            }
+        };
+
+        // ===== SISTEMA DE VIEW =====
+        const viewSystem = {
+            switchView: (viewType) => {
+                state.currentView = viewType;
+                elements.grid.setAttribute('data-view', viewType);
+                elements.viewButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.view === viewType);
+                });
+                localStorage.setItem('catalogViewPreference', viewType);
+                setTimeout(() => renderSystem.addProductEventListeners(), 100);
+            },
+            loadViewPreference: () => {
+                const savedView = localStorage.getItem('catalogViewPreference') || 'grid';
+                viewSystem.switchView(savedView);
+            }
+        };
+
+        // ===== INICIALIZAÇÃO =====
+        const init = {
+            setupEventListeners: () => {
+                elements.searchInput.addEventListener('input', utils.debounce((e) => {
+                    state.filters.search = e.target.value.trim();
+                    filterSystem.applyFilters();
+                    renderSystem.renderProducts();
+                }, 300));
+
+                elements.searchClear.addEventListener('click', () => {
+                    state.filters.search = '';
+                    elements.searchInput.value = '';
+                    filterSystem.applyFilters();
+                    renderSystem.renderProducts();
+                });
+
+                ['brandFilter', 'categoryFilter', 'priceFilter', 'sortFilter'].forEach(id => {
+                    elements[id].addEventListener('change', (e) => {
+                        state.filters[id.replace('Filter', '')] = e.target.value;
+                        filterSystem.applyFilters();
+                        renderSystem.renderProducts();
+                    });
+                });
+
+                elements.viewButtons.forEach(btn => {
+                    btn.addEventListener('click', () => viewSystem.switchView(btn.dataset.view));
+                });
+
+                if (elements.clearFiltersBtn) {
+                    elements.clearFiltersBtn.addEventListener('click', filterSystem.clearAllFilters);
+                }
+
+                quickViewElements.closeBtn.addEventListener('click', quickViewSystem.closeQuickView);
+                quickViewElements.overlay.addEventListener('click', (e) => {
+                    if (e.target === quickViewElements.overlay) quickViewSystem.closeQuickView();
+                });
+            },
+            
+            fetchProducts: async () => {
+                state.isLoading = true;
+                elements.grid.innerHTML = utils.generateSkeletons(12);
+                elements.loadingState.style.display = 'block';
+                
+                try {
+                    const response = await axios.get(API_URL);
+                    state.allProducts = response.data.map(product => ({
+                        ...product,
+                        isNew: Math.random() > 0.7,
+                        isLimited: Math.random() > 0.8,
+                        categoria: product.categoria?.nome || 'Casual',
+                        precoOriginal: product.preco * 1.2
+                    }));
+                    
+                    filterSystem.applyFilters();
+                    renderSystem.renderProducts();
+                } catch (error) {
+                    console.error('Erro ao carregar produtos:', error);
+                    elements.grid.innerHTML = '<div class="error-state">Erro ao carregar.</div>';
+                } finally {
+                    state.isLoading = false;
+                    elements.loadingState.style.display = 'none';
+                }
+            },
+            
+            start: () => {
+                init.setupEventListeners();
+                viewSystem.loadViewPreference();
+                init.fetchProducts();
+                window.catalogApp = { state, filterSystem, renderSystem, quickViewSystem, showNotification, removeFilter: filterSystem.removeFilter };
+            }
+        };
+
+        init.start();
+    }
+});
