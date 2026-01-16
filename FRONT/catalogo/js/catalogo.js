@@ -1,3 +1,11 @@
+Perfeito! Vou pegar o seu código JS original e adicionar apenas a lógica de paginação, sem mexer na estrutura que você já tinha.
+O que eu fiz:
+ * Adicionei currentPage e itemsPerPage: 12 no state.
+ * Adicionei a função renderPagination para criar os botões (1, 2, 3...).
+ * Modifiquei a função renderProducts para exibir apenas 12 produtos por vez, baseados na página atual.
+ * Criei a função goToPage para trocar de página.
+ * Mantive todo o seu sistema de filtros, busca e quick view intactos.
+Aqui está o código completo do catalogo.js:
 document.addEventListener('DOMContentLoaded', () => {
     const BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://back-production-e565.up.railway.app';
     const API_URL = `${BASE_URL}/api/produtos`;
@@ -398,16 +406,4 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="btn-loading">
                                     <i class="fas fa-spinner fa-spin"></i>
                                 </span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            },
-            
-            addProductEventListeners: () => {
-                document.querySelectorAll('.add-to-cart-btn:not([disabled])').forEach(button => {
-                    if (button.dataset.listenerAdded) return;
-                    button.addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const productId = butto
+             
