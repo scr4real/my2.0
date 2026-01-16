@@ -85,16 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             formatPrice: (price) => `R$ ${price.toFixed(2).replace('.', ',')}`,
 
-                getImageUrl: (path) => {
-                    if (!path) return '/assets/images/placeholder-product.jpg';
-                    if (path.startsWith('http')) return path;
-                    // Remove a barra inicial se existir para evitar duplicação (//)
-                    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-                    return `${BASE_URL}/${cleanPath}`; 
-                },
+            getImageUrl: (path) => {
+                if (!path) return '/assets/images/placeholder-product.jpg';
+                if (path.startsWith('http')) return path;
+                // Remove a barra inicial se existir para evitar duplicação (//)
+                const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+                return `${BASE_URL}/${cleanPath}`; 
+            },
 
             generateSkeletons: (count) => {
-                return Array.from({ length: count }, (_, index) => `'
+                return Array.from({ length: count }, (_, index) => `
                     <div class="product-card skeleton-card" style="--delay: ${index}">
                         <div class="product-image-wrapper skeleton skeleton-image"></div>
                         <div class="product-info">
@@ -300,53 +300,58 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             
             createProductCard: (product, index) => {
-    const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
-    const discountPercent = hasDiscount ? 
-        Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
-    
-    return `
-        <div class="product-card" data-id="${product.id}" style="--delay: ${index}">
-            <div class="product-badges">
-                ${product.isNew ? '<span class="badge new">Novo</span>' : ''}
-                ${hasDiscount ? `<span class="badge sale">-${discountPercent}%</span>` : ''}
-                ${product.isLimited ? '<span class="badge limited">Limited</span>' : ''}
-            </div>
-            
-            <a href="/FRONT/produto/HTML/produto.html?id=${product.id}" class="product-card-link">
-                <div class="product-image-wrapper">
-                    <img src="${utils.getImageUrl(product.imagemUrl)}" 
-                         alt="${product.nome}"
-                         loading="${index < 8 ? 'eager' : 'lazy'}">
-                </div>
-            </a>
-            
-            <div class="product-info">
-                <h3 class="product-name">${product.nome}</h3>
+                const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
+                const discountPercent = hasDiscount ? 
+                    Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
                 
-                <div class="product-price">
-                    <span class="current-price">${utils.formatPrice(product.preco)}</span>
-                    ${hasDiscount ? `
-                        <span class="original-price">${utils.formatPrice(product.precoOriginal)}</span>
-                    ` : ''}
-                </div>
-            </div>
-            
-            <div class="product-footer">
-                <button class="btn btn-primary add-to-cart-btn" 
-                        data-product-id="${product.id}" 
-                        data-product-name="${product.nome}"
-                        ${product.estoque <= 0 ? 'disabled' : ''}>
-                    <span class="btn-text">
-                        ${product.estoque <= 0 ? 'Esgotado' : 'Adicionar'}
-                    </span>
-                    <span class="btn-loading">
-                        <i class="fas fa-spinner fa-spin"></i>
-                    </span>
-                </button>
-            </div>
-        </div>
-    `;
-},
+                // GARANTE QUE A DESCRIÇÃO "MARKETING" SEJA EXIBIDA
+                const descricaoTexto = product.descricao || "Estilo premium e conforto para o seu dia a dia.";
+
+                return `
+                    <div class="product-card" data-id="${product.id}" style="--delay: ${index}">
+                        <div class="product-badges">
+                            ${product.isNew ? '<span class="badge new">Novo</span>' : ''}
+                            ${hasDiscount ? `<span class="badge sale">-${discountPercent}%</span>` : ''}
+                            ${product.isLimited ? '<span class="badge limited">Limited</span>' : ''}
+                        </div>
+                        
+                        <a href="/FRONT/produto/HTML/produto.html?id=${product.id}" class="product-card-link">
+                            <div class="product-image-wrapper">
+                                <img src="${utils.getImageUrl(product.imagemUrl)}" 
+                                     alt="${product.nome}"
+                                     loading="${index < 8 ? 'eager' : 'lazy'}">
+                            </div>
+                        </a>
+                        
+                        <div class="product-info">
+                            <h3 class="product-name">${product.nome}</h3>
+                            
+                            <p class="product-description-text">${descricaoTexto}</p>
+                            
+                            <div class="product-price">
+                                <span class="current-price">${utils.formatPrice(product.preco)}</span>
+                                ${hasDiscount ? `
+                                    <span class="original-price">${utils.formatPrice(product.precoOriginal)}</span>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="product-footer">
+                            <button class="btn btn-primary add-to-cart-btn" 
+                                    data-product-id="${product.id}" 
+                                    data-product-name="${product.nome}"
+                                    ${product.estoque <= 0 ? 'disabled' : ''}>
+                                <span class="btn-text">
+                                    ${product.estoque <= 0 ? 'Esgotado' : 'Comprar'}
+                                </span>
+                                <span class="btn-loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
             
             addProductEventListeners: () => {
                 // Botões "Adicionar ao Carrinho" - ABRE O QUICK VIEW
