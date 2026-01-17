@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let state = {
             allProducts: [],
             filteredProducts: [],
-            currentPage: 1,      // NOVA VARIAVEL: Página Atual
-            itemsPerPage: 12,    // NOVA VARIAVEL: Itens por página
+            currentPage: 1,      // Página Atual
+            itemsPerPage: 12,    // Itens por página
             currentView: 'grid',
             filters: {
                 search: '',
@@ -25,9 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // ===== ELEMENTOS DO DOM =====
         const elements = {
             grid,
-            // Alterado de loadMoreBtn para paginationContainer se você mudou o HTML, 
-            // senão ele vai procurar onde injetar os números.
-            // Recomendo ter um <div id="pagination-controls"></div> no lugar do botão carregar mais.
             paginationContainer: document.getElementById('pagination-controls') || document.querySelector('.catalog-footer'),
             searchInput: document.getElementById('searchInput'),
             searchClear: document.getElementById('searchClear'),
@@ -42,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             viewButtons: document.querySelectorAll('.view-btn')
         };
 
-        // ===== QUICK VIEW MODAL (AGORA É O MODAL PRINCIPAL) =====
+        // ===== QUICK VIEW MODAL =====
         const quickViewElements = {
             overlay: document.getElementById('quickViewModal'),
             content: document.getElementById('quickViewContent'),
@@ -116,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // ===== SISTEMA DE FILTROS AVANÇADOS =====
+        // ===== SISTEMA DE FILTROS =====
         const filterSystem = {
             applyFilters: () => {
                 let filtered = [...state.allProducts];
@@ -126,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     filtered = filtered.filter(product => 
                         product.nome.toLowerCase().includes(searchTerm) ||
                         product.marca.nome.toLowerCase().includes(searchTerm) ||
-                        product.categoria?.toLowerCase().includes(searchTerm) ||
                         product.descricao?.toLowerCase().includes(searchTerm)
                     );
                 }
@@ -152,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 filtered = filterSystem.sortProducts(filtered);
                 state.filteredProducts = filtered;
-                state.currentPage = 1; // Reseta para página 1 ao filtrar
+                state.currentPage = 1; 
                 
                 filterSystem.updateActiveFilters();
                 filterSystem.updateFormElements();
@@ -264,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ===== SISTEMA DE RENDERIZAÇÃO E PAGINAÇÃO =====
         const renderSystem = {
             renderProducts: () => {
-                // LÓGICA DE PAGINAÇÃO
+                // Paginação
                 const startIndex = (state.currentPage - 1) * state.itemsPerPage;
                 const endIndex = startIndex + state.itemsPerPage;
                 const productsToShow = state.filteredProducts.slice(startIndex, endIndex);
@@ -273,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     elements.grid.innerHTML = utils.generateSkeletons(12);
                     elements.loadingState.style.display = 'block';
                     elements.emptyState.style.display = 'none';
+                    if (elements.paginationContainer) elements.paginationContainer.innerHTML = '';
                     return;
                 }
                 
@@ -290,12 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderSystem.createProductCard(product, index)
                 ).join('');
                 
-                // RENDERIZA OS BOTÕES DE PAGINAÇÃO
                 renderSystem.renderPagination();
                 renderSystem.addProductEventListeners();
-
-                // Scroll suave para o topo do grid ao mudar de página
-                // elements.grid.scrollIntoView({ behavior: 'smooth' });
             },
 
             renderPagination: () => {
@@ -319,20 +312,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 `;
 
-                // Números das páginas
-                for (let i = 1; i <= totalPages; i++) {
-                    // Lógica para mostrar ... se tiver muitas páginas
-                    if (i === 1 || i === totalPages || (i >= state.currentPage - 1 && i <= state.currentPage + 1)) {
-                        paginationHtml += `
-                            <button class="page-btn ${i === state.currentPage ? 'active' : ''}" 
-                                    onclick="catalogApp.renderSystem.goToPage(${i})"
-                                    style="padding: 8px 12px; background: ${i === state.currentPage ? '#FF6600' : 'transparent'}; border: 1px solid ${i === state.currentPage ? '#FF6600' : '#444'}; color: ${i === state.currentPage ? '#000' : '#fff'}; cursor: pointer; border-radius: 6px; font-weight: bold;">
-                                ${i}
-                            </button>
-                        `;
-                    } else if (i === state.currentPage - 2 || i === state.currentPage + 2) {
-                        paginationHtml += `<span style="color: #666; padding: 8px;">...</span>`;
-                    }
+                // Lógica de páginas (1 ... 4 5 6 ... 10)
+                let startPage = Math.max(1, state.currentPage - 2);
+                let endPage = Math.min(totalPages, startPage + 4);
+                
+                if (endPage - startPage < 4) {
+                    startPage = Math.max(1, endPage - 4);
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationHtml += `
+                        <button class="page-btn ${i === state.currentPage ? 'active' : ''}" 
+                                onclick="catalogApp.renderSystem.goToPage(${i})"
+                                style="padding: 8px 12px; background: ${i === state.currentPage ? '#FF6600' : 'transparent'}; border: 1px solid ${i === state.currentPage ? '#FF6600' : '#444'}; color: ${i === state.currentPage ? '#000' : '#fff'}; cursor: pointer; border-radius: 6px; font-weight: bold;">
+                            ${i}
+                        </button>
+                    `;
                 }
 
                 // Botão Próximo
@@ -360,8 +355,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const discountPercent = hasDiscount ? 
                     Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
                 
-                const descricaoTexto = product.descricao || "Estilo premium e conforto para o seu dia a dia.";
-
                 return `
                     <div class="product-card" data-id="${product.id}" style="--delay: ${index}">
                         <div class="product-badges">
@@ -380,10 +373,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         <div class="product-info">
                             <h3 class="product-name">${product.nome}</h3>
-                            <p class="product-description-text">${descricaoTexto}</p>
+                            
+                            <div class="product-shipping-tag">
+                                <i class="fas fa-truck"></i>
+                                <span>Frete Grátis</span>
+                            </div>
+                            
                             <div class="product-price">
                                 <span class="current-price">${utils.formatPrice(product.preco)}</span>
-                                ${hasDiscount ? `<span class="original-price">${utils.formatPrice(product.precoOriginal)}</span>` : ''}
+                                ${hasDiscount ? `
+                                    <span class="original-price">${utils.formatPrice(product.precoOriginal)}</span>
+                                ` : ''}
                             </div>
                         </div>
                         
