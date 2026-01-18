@@ -258,13 +258,17 @@
 
 /* --- ÁREA DA IMAGEM (FLUTUANTE) --- */
 .product-image-wrapper {
-    position: relative;
-    background: transparent; /* FUNDO TRANSPARENTE (Crucial) */
-    height: 220px; /* Altura generosa para o tênis */
+    height: 300px; /* Pode manter ou aumentar para 320px se quiser */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    position: relative;
+    overflow: visible;
+    background-color: transparent;
+    
+    /* AQUI ESTÁ O SEGREDO: Padding 0 */
+    padding: 0; 
+    
     flex-shrink: 0;
     cursor: pointer;
 }
@@ -273,10 +277,12 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    /* Sombra projetada no contorno do objeto (Drop Shadow) */
     filter: drop-shadow(0px 12px 15px rgba(0, 0, 0, 0.5));
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     will-change: transform;
+
+    /* AQUI: Aumenta a imagem em 15% para preencher bem o card */
+    transform: scale(1.15); 
 }
 
 /* Animação do Tênis no Hover */
@@ -325,27 +331,27 @@
 }
 
 .product-shipping-tag i {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
 }
 
 .product-price {
     margin-top: auto;
     display: flex;
     align-items: baseline;
-    gap: 10px;
-    padding-top: 10px;
+    gap: 9px;
+    padding-top: 3px;
     border-top: 1px solid rgba(255,255,255,0.05); /* Divisor sutil */
 }
 
 .current-price {
-    font-size: 1.3rem;
-    font-weight: 800;
+    font-size: 0.9rem;
+    font-weight: 700;
     color: var(--brand-orange); /* Preço Laranja Neon */
     text-shadow: 0 0 15px rgba(255, 102, 0, 0.2);
 }
 
 .original-price {
-    font-size: 0.9rem;
+    font-size: 0.rem;
     color: #555;
     text-decoration: line-through;
 }
@@ -533,7 +539,25 @@
 @media (max-width: 768px) {
     .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .product-card { min-height: 400px; }
-    .product-image-wrapper { height: 160px; padding: 10px; }
+  .product-image-wrapper {
+    height: 180px !important; 
+    
+    /* AQUI: Remove qualquer borda interna no celular */
+    padding: 0 !important; 
+    
+    margin: 0 !important;
+    background-color: transparent !important; 
+  }
+
+  .product-image-wrapper img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.5));
+    
+    /* AQUI: Aumenta a imagem no celular também */
+    transform: scale(1.15); 
+  }
     .product-name { font-size: 0.8rem; height: 2.6em; }
     .add-to-cart-btn { padding: 8px; font-size: 0.7rem; min-height: 35px; }
     .quickview-content { grid-template-columns: 1fr; }
