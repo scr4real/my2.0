@@ -541,7 +541,7 @@
     height: 180px !important; 
     
     /* AQUI: Remove qualquer borda interna no celular */
-    padding: 5 !important; 
+    padding: 7 !important; 
     
     margin: 0 !important;
     background-color: transparent !important; 
@@ -554,7 +554,7 @@
     filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.5));
     
     /* AQUI: Aumenta a imagem no celular também */
-    transform: scale(1.15); 
+    transform: scale(1.10); 
   }
     .product-name { font-size: 1.0rem; height: 2.8em; }
     .add-to-cart-btn { padding: 8px; font-size: 0.7rem; min-height: 35px; }
