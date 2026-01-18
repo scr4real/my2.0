@@ -260,6 +260,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
                 const discountPercent = hasDiscount ? Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
                 
+                // === OTIMIZAÇÃO: Prioriza o carregamento das 6 primeiras imagens ===
+                const isCritical = index < 6;
+                const loadingAttr = isCritical ? 'eager' : 'lazy';
+                const priorityAttr = isCritical ? 'high' : 'auto';
+
                 return `
                     <div class="product-card" data-id="${product.id}" style="--delay: ${index}">
                         <div class="product-badges">
@@ -272,7 +277,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="product-image-wrapper">
                                 <img src="${utils.getImageUrl(product.imagemUrl)}" 
                                      alt="${product.nome}"
-                                     loading="lazy">
+                                     loading="${loadingAttr}"
+                                     fetchpriority="${priorityAttr}"
+                                     decoding="async">
                             </div>
                         </a>
                         
@@ -322,18 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     });
                 }
-            },
-            
-            loadMoreProducts: () => {
-                // Função legada mantida para evitar erros se o botão antigo existir
-                if (state.isLoading || !state.hasMore) return;
-                state.isLoading = true;
-                setTimeout(() => {
-                    state.displayedCount += 12;
-                    state.hasMore = state.displayedCount < state.filteredProducts.length;
-                    state.isLoading = false;
-                    renderSystem.renderProducts();
-                }, 800);
             }
         };
 
@@ -362,13 +357,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     quickViewSystem.renderProductDetails(details);
                     resolve(details);
-                }, 500));
+                }, 300));
             },
             renderProductDetails: (product) => {
                 const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
                 const discountPercent = hasDiscount ? Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
                 quickViewElements.content.innerHTML = `
-                    <div class="quickview-gallery"><img src="${utils.getImageUrl(product.images[0])}" class="quickview-main-image" id="quickviewMainImage"><div class="quickview-thumbnails">${product.images.map((image, index) => `<img src="${utils.getImageUrl(image)}" class="quickview-thumbnail ${index === 0 ? 'active' : ''}" data-image-index="${index}">`).join('')}</div></div>
+                    <div class="quickview-gallery"><img src="${utils.getImageUrl(product.images[0])}" class="quickview-main-image" id="quickviewMainImage" loading="eager"><div class="quickview-thumbnails">${product.images.map((image, index) => `<img src="${utils.getImageUrl(image)}" class="quickview-thumbnail ${index === 0 ? 'active' : ''}" data-image-index="${index}">`).join('')}</div></div>
                     <div class="quickview-details">
                         <div class="quickview-brand">${product.marca.nome}</div>
                         <h1 class="quickview-title">${product.nome}</h1>

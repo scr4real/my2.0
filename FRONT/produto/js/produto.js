@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const activeClass = index === 0 ? 'active' : '';
                 return `
                     <div class="thumbnail-item ${activeClass}" onmouseover="updateMainImage('${fullUrl}', this)">
-                        <img src="${fullUrl}" alt="Foto ${index + 1}">
+                        <img src="${fullUrl}" alt="Foto ${index + 1}" loading="lazy">
                     </div>
                 `;
             }).join('');
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const variationsList = variations.map(v => {
                 const isActive = v.id == product.id ? 'active-variant' : '';
                 const vImage = getImageUrl(v.imagemUrl);
-                return `<a href="?id=${v.id}" class="variant-option ${isActive}" title="${v.nome}"><img src="${vImage}" alt="${v.nome}"></a>`;
+                return `<a href="?id=${v.id}" class="variant-option ${isActive}" title="${v.nome}"><img src="${vImage}" alt="${v.nome}" loading="lazy"></a>`;
             }).join('');
             variationsHTML = `<div class="variations-selector"><h3>Outras Cores:</h3><div class="variations-list">${variationsList}</div></div>`;
         }
@@ -92,7 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="product-images">
                     <div class="thumbnail-gallery">${thumbnailsHTML}</div>
                     <div class="main-image-container">
-                        <img src="${imageUrl}" alt="${product.nome}" id="main-product-image">
+                        <img src="${imageUrl}" 
+                             alt="${product.nome}" 
+                             id="main-product-image"
+                             loading="eager"
+                             fetchpriority="high"
+                             decoding="async">
                     </div>
                 </div>
 
@@ -169,17 +174,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if(section) section.style.display = 'block';
 
-        grid.innerHTML = products.map(product => {
+        grid.innerHTML = products.map((product, index) => {
             const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
             const discountPercentage = hasDiscount ? Math.round(((product.precoOriginal - product.preco) / product.precoOriginal) * 100) : 0;
             const imageUrl = getImageUrl(product.imagemUrl);
             const productUrl = `/FRONT/produto/HTML/produto.html?id=${product.id}`;
 
+            // OTIMIZAÇÃO: As primeiras 4 imagens relacionadas carregam mais rápido
+            const isPriority = index < 4;
+            const loadingMode = isPriority ? 'eager' : 'lazy';
+
             return `
             <div class="swiper-slide">
                 <a href="${productUrl}" class="related-product-card">
                     <div class="related-product-image-wrapper">
-                        <img src="${imageUrl}" alt="${product.nome}">
+                        <img src="${imageUrl}" 
+                             alt="${product.nome}"
+                             loading="${loadingMode}"
+                             decoding="async">
                         ${hasDiscount ? `<div class="related-discount-badge">-${discountPercentage}%</div>` : ''}
                     </div>
                     

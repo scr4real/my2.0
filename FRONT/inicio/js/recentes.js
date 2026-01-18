@@ -2,17 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://back-production-e565.up.railway.app';
     const API_URL = `${BASE_URL}/api/produtos`; 
 
-    // Mapeamento das seções - ATUALIZADO COM A NOVA ORDEM SOLICITADA
-    // O containerId mantém o nome antigo do HTML para não quebrar o layout,
-    // mas o categoryName busca os produtos corretos no banco.
+    // Mapeamento das seções - ATUALIZADO PARA AS CATEGORIAS SOLICITADAS
     const sectionsToBuild = [
-        // 1º Linha: Air Max TN (No container products-95)
         { categoryName: "Air Max TN", containerId: "products-95", swiperClass: ".collection-swiper-95", prev: ".collection-prev-95", next: ".collection-next-95" },
-        
-        // 2º Linha: Asics Gel NYC (No container products-dn)
         { categoryName: "Asics Gel NYC", containerId: "products-dn", swiperClass: ".collection-swiper-dn", prev: ".collection-prev-dn", next: ".collection-next-dn" },
-        
-        // 3º Linha: Bape Sta (No container products-tn)
         { categoryName: "Bape Sta", containerId: "products-tn", swiperClass: ".collection-swiper-tn", prev: ".collection-prev-tn", next: ".collection-next-tn" },
     ];
 
@@ -31,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${BASE_URL}/${cleanPath}`;
     };
 
-    // Renderiza os cards de produto (ATUALIZADO COM LIMITAÇÃO E BOTÃO VER TODOS)
+    // Renderiza os cards de produto (OTIMIZADO)
     const renderProductRow = (productsToRender, containerId, categoryName) => {
         const container = document.getElementById(containerId);
         if (!container) {
@@ -40,15 +33,28 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (productsToRender && productsToRender.length > 0) {
-            // LIMITAÇÃO: Pega apenas os 5 primeiros produtos
+            // LIMITAÇÃO: 5 Produtos
             const limitedProducts = productsToRender.slice(0, 5);
 
-            let htmlContent = limitedProducts.map(product => `
+            let htmlContent = limitedProducts.map((product, index) => {
+                // OTIMIZAÇÃO DE PERFORMANCE:
+                // As 4 primeiras imagens carregam instantaneamente com prioridade alta.
+                // Isso elimina o "piscar" ou demora no carregamento inicial.
+                const isPriority = index < 4;
+                const loadingAttr = isPriority ? 'eager' : 'lazy';
+                const priorityAttr = isPriority ? 'high' : 'auto';
+
+                return `
                 <div class="swiper-slide">
                     <div class="product-card" data-id="${product.id}">
                         <a href="/FRONT/produto/HTML/produto.html?id=${product.id}" class="product-card-link">
                             <div class="product-image-wrapper">
-                                <img src="${getImageUrl(product.imagemUrl)}" alt="${product.nome || 'Nome do produto'}" loading="lazy">
+                                <img src="${getImageUrl(product.imagemUrl)}" 
+                                     alt="${product.nome || 'Nome do produto'}"
+                                     loading="${loadingAttr}"
+                                     fetchpriority="${priorityAttr}"
+                                     decoding="async"
+                                     width="300" height="300">
                             </div>
                             <div class="product-info">
                                 <span class="product-brand">${product.marca?.nome || 'Japa Universe'}</span>
@@ -65,11 +71,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         </button>
                     </div>
                 </div>
-            `).join("");
+            `}).join("");
 
-            // SE TIVER MAIS DE 5 PRODUTOS NO TOTAL (OU SE QUISERMOS SEMPRE MOSTRAR O BOTÃO)
-            // Adiciona o card "Ver Todos" no final
-            // Link redireciona para o catálogo filtrando pela busca (simulando filtro de categoria)
+            // BOTÃO VER TODOS
             const seeAllLink = `/FRONT/catalogo/HTML/catalogo.html?search=${encodeURIComponent(categoryName)}`;
             
             htmlContent += `
@@ -179,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             sectionsToBuild.forEach((section) => {
                 const filteredProducts = allProducts.filter(p => p.categoria?.nome === section.categoryName);
-                // Passa o categoryName para criar o link do botão "Ver Todos"
+                // Passamos o categoryName para criar o link correto do botão "Ver Todos"
                 renderProductRow(filteredProducts, section.containerId, section.categoryName);
                 initSwiper(section.swiperClass, section.prev, section.next);
             });
