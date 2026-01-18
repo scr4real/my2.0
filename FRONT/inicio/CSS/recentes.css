@@ -222,7 +222,7 @@
   50% { transform: scale(1.05); }
 }
 
-/* ===== CONTAINER DA IMAGEM (ATUALIZADO FLUTUANTE) ===== */
+/* ===== CONTAINER DA IMAGEM (ATUALIZADO 10px) ===== */
 .product-image-wrapper {
   height: 300px;
   display: flex;
@@ -232,8 +232,8 @@
   overflow: visible; /* Permite sombra */
   background-color: transparent; /* SEM FUNDO BRANCO! */
   
-  /* PADDING AJUSTADO PARA 3PX */
-  padding: 100px; 
+  /* PADDING AJUSTADO PARA 10PX */
+  padding: 10px; 
   
   flex-shrink: 0;
   cursor: pointer;
@@ -424,12 +424,12 @@
     background: var(--card-bg-gradient);
   }
 
-  /* === CORREÇÃO DAS IMAGENS NO MOBILE === */
+  /* === CORREÇÃO DAS IMAGENS NO MOBILE (10px padding) === */
   .product-image-wrapper {
     height: 180px !important;
     
-    /* PADDING 3PX NO MOBILE */
-    padding: 100px !important; 
+    /* AQUI ESTÁ O PADDING 10PX NO MOBILE */
+    padding: 10px !important; 
     
     margin: 0 !important;
     background-color: transparent !important; /* IMPORTANTE: Transparente no mobile também */

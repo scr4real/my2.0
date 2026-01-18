@@ -267,7 +267,7 @@
     background-color: transparent;
     
     /* AQUI ESTÁ O SEGREDO: Padding 0 */
-    padding: 0; 
+    padding: 4px; 
     
     flex-shrink: 0;
     cursor: pointer;
@@ -543,7 +543,7 @@
     height: 180px !important; 
     
     /* AQUI: Remove qualquer borda interna no celular */
-    padding: 0 !important; 
+    padding: 5 !important; 
     
     margin: 0 !important;
     background-color: transparent !important; 
