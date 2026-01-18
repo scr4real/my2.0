@@ -186,14 +186,12 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 ('Asics Gel-NYC', 'Suavidade e estilo. Edição Pink Cream.', '/uploads/asycsnyc/15.png', 1399.90, 18, 5, 5, 'GELNYC');
 
 -- --- LOTE 8: ASICS KAYANO 14 ---
-INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
+INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES
 ('Asics Gel-Kayano 14', 'O retorno da lenda da corrida. Edição Cream Silver.', '/uploads/asycskayano/1.png', 1499.90, 19, 5, 5, 'KAYANO14'),
 ('Asics Gel-Kayano 14', 'Design técnico e visual anos 2000. Edição White Blue.', '/uploads/asycskayano/2.png', 1499.90, 19, 5, 5, 'KAYANO14'),
 ('Asics Gel-Kayano 14', 'Estética metálica inconfundível. Edição Silver Cream.', '/uploads/asycskayano/3.png', 1499.90, 19, 5, 5, 'KAYANO14'),
 ('Asics Gel-Kayano 14', 'Minimalismo com performance. Edição White Black.', '/uploads/asycskayano/4.png', 1499.90, 19, 5, 5, 'KAYANO14'),
 ('Asics Gel-Kayano 14', 'Toque feminino com alta tecnologia. Edição White Pink.', '/uploads/asycskayano/5.png', 1499.90, 19, 5, 5, 'KAYANO14'),
-('Asics Gel-Kayano 14', 'Brilho máximo e estilo Y2K. Edição Metallic Silver.', '/uploads/asycskayano/6.png', 1499.90, 19, 5, 5, 'KAYANO14'),
-('Asics Gel-Kayano 14', 'Ousado e agressivo. Edição Black Silver.', '/uploads/asycskayano/7.png', 1499.90, 19, 5, 5, 'KAYANO14');
 
 -- --- LOTE 9: BAPE STA ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
@@ -283,7 +281,6 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 ('Nike Dunk Low', 'Homenagem às cores universitárias. Edição University Blue.', '/uploads/dunk/4.png', 999.90, 28, 8, 1, 'DUNK'),
 ('Nike Dunk Low', 'O fenômeno das ruas. O clássico Panda Preto e Branco.', '/uploads/dunk/5.png', 999.90, 28, 15, 1, 'DUNK'),
 ('Nike Dunk Low', 'Vermelho vibrante e estilo retro. Edição Gym Red.', '/uploads/dunk/6.png', 899.90, 28, 8, 1, 'DUNK'),
-('Nike Dunk Low', 'Invertendo o clássico. Edição Reverse Panda.', '/uploads/dunk/7.png', 899.90, 28, 10, 1, 'DUNK');
 
 -- --- LOTE 18: NIKE NOCTA GLIDE ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
