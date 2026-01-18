@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   /**
    * Módulo de Carregamento (ULTRA RÁPIDO)
-   * Libera a tela assim que a estrutura carrega, sem esperar imagens pesadas.
    */
   const LoadingModule = (() => {
     const loadingOverlay = document.querySelector(".loading-overlay");
@@ -9,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function hideLoader() {
       if (loadingOverlay && !loadingOverlay.classList.contains('hidden')) {
         loadingOverlay.style.opacity = "0";
-        loadingOverlay.classList.add('hidden'); // Marca para não rodar 2x
+        loadingOverlay.classList.add('hidden'); 
         setTimeout(() => {
           loadingOverlay.style.display = "none";
         }, 500);
@@ -18,23 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function init() {
       if (loadingOverlay) {
-        // Remove o loader assim que o DOM estiver interativo (muito antes das imagens)
-        // Adiciona um timeout de segurança de 2s caso algo trave
-        const safetyTimeout = setTimeout(hideLoader, 2000);
-
-        if (document.readyState === 'interactive' || document.readyState === 'complete') {
-            hideLoader();
-            clearTimeout(safetyTimeout);
-        } else {
-            window.addEventListener('DOMContentLoaded', () => {
-                hideLoader();
-                clearTimeout(safetyTimeout);
-            });
-            window.addEventListener('load', () => {
-                hideLoader();
-                clearTimeout(safetyTimeout);
-            });
-        }
+        // Remove o loader IMEDIATAMENTE após o HTML estar pronto
+        // Não espera as imagens carregarem.
+        hideLoader();
+        
+        // Fallback de segurança (caso o DOM não esteja pronto por algum motivo)
+        setTimeout(hideLoader, 2000);
       }
     }
     return { init };
@@ -63,14 +51,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const AnimationModule = (() => {
     function init() {
       if (typeof gsap === "undefined") return;
-      
       const elementsToAnimate = document.querySelectorAll(".gsap-fade-up");
       if (elementsToAnimate.length > 0) {
           gsap.from(".gsap-fade-up", {
-              duration: 0.8, // Mais rápido
+              duration: 0.8,
               y: 30,
               opacity: 0,
-              delay: 0.1, 
+              delay: 0.1,
               ease: "power2.out",
               stagger: 0.1,
           });
@@ -163,14 +150,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const addToCart = (product) => {
         if (!product || !product.id || !product.size) return;
-        
         const existing = cart.findIndex(item => item.id === product.id && item.size === product.size);
         if (existing > -1) cart[existing].quantity = (cart[existing].quantity || 0) + 1;
         else cart.push({ ...product, quantity: 1 });
-        
         saveCart();
         updateCart();
-        
         if (cartModal && !cartModal.classList.contains('active')) toggleModal();
         else updateCartInfo();
     };
@@ -179,11 +163,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const target = e.target;
         const cartItemEl = target.closest('.cart-item');
         if (!cartItemEl) return;
-
         const id = cartItemEl.dataset.id;
         const size = cartItemEl.dataset.size;
         const idx = cart.findIndex(item => item.id === id && item.size === size);
-        
         if (idx === -1) return;
 
         if (target.classList.contains('quantity-increase')) cart[idx].quantity++;
@@ -197,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
              if (!isNaN(val) && val >= 1) cart[idx].quantity = val;
              else target.value = cart[idx].quantity || 1; 
         }
-
         saveCart();
         renderCartItems(); 
         updateCartInfo(); 
@@ -207,7 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.addEventListener('click', (e) => {
             if (e.target.closest('#cartButton')) toggleModal();
         });
-        
         if (closeButton) closeButton.addEventListener("click", toggleModal);
         if (overlay) overlay.addEventListener("click", toggleModal);
         if (cartItemsContainer) {
@@ -216,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (e.target.classList.contains('quantity-input')) handleCartActions(e);
             });
         }
-        
         if (checkoutBtn) {
             checkoutBtn.addEventListener('click', () => {
                 const basePath = document.querySelector('header.main-header')?.dataset?.basepath || '';
@@ -224,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.location.href = `${cleanPath}/FRONT/checkout/HTML/checkout.html`;
             });
         }
-        
         window.addToCart = addToCart;
         window.updateCartCounter = updateCartInfo; 
         updateCartInfo(); 
@@ -242,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Módulo Quick View
    */
   const QuickViewModule = (() => {
-    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8080/api' : 'https://back-production-e565.up.railway.app/api';
+    const API_BASE = window.location.hostname.includes('localhost') ? 'http://localhost:8080/api' : 'https://back-production-e565.up.railway.app/api';
     
     const elements = {
         overlay: document.getElementById('quickViewModal'),
@@ -257,7 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const quickView = {
         open: async (id) => {
             if (!elements.overlay) return;
-            
             elements.overlay.classList.add('quickview-modal-overlay', 'active');
             document.body.style.overflow = 'hidden';
             quickView.renderSkeleton();
@@ -268,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 quickView.render(currentProduct);
             } catch (e) {
                 console.error(e);
-                elements.content.innerHTML = `<div class="quickview-error"><p>Erro ao carregar.</p><button class="btn" onclick="window.quickViewApp.close()">Fechar</button></div>`;
+                elements.content.innerHTML = `<div class="quickview-error"><p>Erro ao carregar.</p><button onclick="window.quickViewApp.closeQuickView()">Fechar</button></div>`;
             }
         },
 
@@ -278,7 +255,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         render: (p) => {
             const hasDiscount = p.precoOriginal > p.preco;
-            const discount = hasDiscount ? Math.round((1 - p.preco/p.precoOriginal)*100) : 0;
             const sizes = ['38','39','40','41','42','43']; 
 
             elements.content.innerHTML = `
@@ -308,7 +284,10 @@ document.addEventListener("DOMContentLoaded", () => {
         },
 
         close: () => {
-            if (elements.overlay) elements.overlay.classList.remove('active');
+            if (elements.overlay) {
+                elements.overlay.classList.remove('active');
+                elements.overlay.classList.remove('quickview-modal-overlay');
+            }
             document.body.style.overflow = '';
             setTimeout(() => { if(elements.content) elements.content.innerHTML = ''; }, 300);
         }
@@ -325,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         window.quickViewApp = {
             openQuickView: quickView.open,
-            close: quickView.close,
+            closeQuickView: quickView.close,
             selectSize: (el, size) => {
                 document.querySelectorAll('.quickview-size-option').forEach(o => o.classList.remove('selected'));
                 el.classList.add('selected');
@@ -353,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const AppModule = (() => {
     function init() {
-      LoadingModule.init(); // OTIMIZADO: Roda imediatamente
+      LoadingModule.init(); // OTIMIZADO: Roda assim que o JS é lido
       HeaderModule.init();
       window.addEventListener("load", AnimationModule.init);
       CartModule.init();

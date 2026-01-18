@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://back-production-e565.up.railway.app';
+    const BASE_URL = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')
+        ? 'http://localhost:8080' 
+        : 'https://back-production-e565.up.railway.app';
     const API_URL = `${BASE_URL}/api/produtos`; 
 
     const sectionsToBuild = [
@@ -19,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${BASE_URL}/${cleanPath}`;
     };
 
-    // Renderiza Skeletons (Estrutura Vazia) IMEDIATAMENTE para evitar layout shift
     const renderSkeletons = () => {
         const skeletonHTML = Array(5).fill(0).map(() => `
             <div class="swiper-slide">
@@ -47,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const limitedProducts = productsToRender.slice(0, 5);
 
             let htmlContent = limitedProducts.map((product, index) => {
-                // OTIMIZAÇÃO: As 4 primeiras imagens carregam com prioridade ALTA
                 const isPriority = index < 4;
                 const loadingAttr = isPriority ? 'eager' : 'lazy';
                 const priorityAttr = isPriority ? 'high' : 'auto';
@@ -105,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const addCartButtonListeners = () => {
-        // Event Delegation para performance: 1 listener para todos os botões
         document.body.addEventListener('click', (e) => {
             if (e.target.closest('.add-to-cart-btn')) {
                 e.preventDefault(); e.stopPropagation();
@@ -133,13 +132,13 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const fetchAndDistributeProducts = async () => {
-        renderSkeletons(); // Mostra estrutura imediatamente
+        renderSkeletons(); 
 
         try {
             const response = await axios.get(API_URL);
             allProducts = response.data; 
 
-            // Renderiza apenas quando os dados chegam
+            // Usa requestAnimationFrame para renderizar no frame seguinte, liberando a thread
             requestAnimationFrame(() => {
                 sectionsToBuild.forEach((section) => {
                     const filteredProducts = allProducts.filter(p => p.categoria?.nome === section.categoryName);
