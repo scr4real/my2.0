@@ -233,7 +233,7 @@
   background-color: transparent; /* SEM FUNDO BRANCO! */
   
   /* PADDING 10PX */
-  padding: 13px; 
+  padding: 15px; 
   
   flex-shrink: 0;
   cursor: pointer;
