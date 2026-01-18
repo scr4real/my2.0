@@ -860,3 +860,29 @@
 .gsap-fade-up {
     opacity: 1; /* O JS vai mudar para 0 rapidinho, mas isso garante visibilidade inicial */
 }
+
+/* ===================================================
+   ADICIONE ISSO NO FINAL DO ARQUIVO style.css
+   PARA DEIXAR O BOTÃO TRANSPARENTE NO MOBILE
+   =================================================== */
+
+@media (max-width: 768px) {
+    /* Seleciona qualquer link ou botão dentro da área inicial (Hero) */
+    .hero-content a, 
+    .hero-content .btn {
+        /* RGBA(Red, Green, Blue, Alpha)
+           255, 102, 0 = Laranja da sua marca
+           0.5 = 50% de Transparência (Mude aqui se quiser mais ou menos)
+        */
+        background-color: rgba(255, 102, 0, 0.65) !important;
+        
+        /* Efeito de vidro embaçado atrás */
+        backdrop-filter: blur(5px);
+        
+        /* Borda fina branca para destacar */
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        
+        /* Garante que o texto fique branco */
+        color: #fff !important;
+    }
+}
