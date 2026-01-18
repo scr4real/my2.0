@@ -491,7 +491,7 @@
   /* === CORREÇÃO DAS IMAGENS NO MOBILE (10px) === */
   .product-image-wrapper {
     height: 180px !important;
-    padding: 10px !important;
+    padding: 9px !important;
     margin: 0 !important;
     background-color: transparent !important; 
   }
