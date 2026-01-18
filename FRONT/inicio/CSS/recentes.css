@@ -222,7 +222,7 @@
   50% { transform: scale(1.05); }
 }
 
-/* ===== CONTAINER DA IMAGEM (ATUALIZADO 10px) ===== */
+/* ===== CONTAINER DA IMAGEM (ATUALIZADO 10px SEM FUNDO BRANCO) ===== */
 .product-image-wrapper {
   height: 300px;
   display: flex;
@@ -230,7 +230,9 @@
   justify-content: center;
   position: relative;
   overflow: visible; /* Permite sombra */
-  background-color: transparent; /* SEM FUNDO BRANCO! */
+  
+  /* MUDANÇA PRINCIPAL: FUNDO TRANSPARENTE */
+  background-color: transparent; 
   
   /* PADDING 10PX */
   padding: 15px; 
@@ -361,7 +363,6 @@
    ======================================================== */
 .see-all-card {
     height: 100%;
-    /* Altura igual ao card de produto para alinhar */
     min-height: 440px; 
     background: linear-gradient(145deg, #121212, #1a1a1a);
     border: 2px dashed #444;
@@ -441,9 +442,10 @@
     font-size: 2rem !important;
     text-align: left !important;
     margin-bottom: 0.5rem !important;
-    color: #fff; /* Título Branco no mobile */
-    background: none;
-    -webkit-text-fill-color: initial;
+    background: linear-gradient(45deg, var(--text-primary), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     width: 100%;
     font-weight: 900;
   }
@@ -488,18 +490,23 @@
     background: var(--card-bg-gradient);
   }
 
-  /* === CORREÇÃO DAS IMAGENS NO MOBILE (10px) === */
+  /* === CORREÇÃO DAS IMAGENS NO MOBILE (10px padding) === */
   .product-image-wrapper {
     height: 180px !important;
-    padding: 9px !important;
+    
+    /* AQUI ESTÁ O PADDING 10PX NO MOBILE */
+    padding: 10px !important; 
+    
     margin: 0 !important;
+    
+    /* FUNDO TRANSPARENTE TAMBÉM NO MOBILE */
     background-color: transparent !important; 
   }
 
   .product-image-wrapper img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important;
+    object-fit: contain !important; /* Contain para não cortar a sombra */
     filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.5));
   }
 
@@ -545,12 +552,16 @@
 
   .product-image-wrapper {
     height: 150px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
   }
 
   .product-image-wrapper img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important;
+    object-fit: cover !important;
+    object-position: center center;
   }
 
   .product-info {
@@ -571,7 +582,7 @@
     font-size: 0.7rem !important;
     min-height: 36px;
   }
-  
+
   .see-all-card {
       min-height: 380px;
   }
@@ -585,6 +596,35 @@
 
   .product-image-wrapper {
     height: 130px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+  }
+
+  .product-image-wrapper img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center;
+  }
+
+  .product-name {
+    font-size: 0.8rem !important;
+    min-height: 2em;
+  }
+
+  .product-price {
+    font-size: 0.9rem !important;
+  }
+
+  .add-to-cart-btn {
+    padding: 0.5rem 0.7rem !important;
+    font-size: 0.65rem !important;
+    min-height: 34px;
+  }
+
+  .product-brand {
+    font-size: 0.65rem !important;
   }
 }
 
@@ -607,6 +647,7 @@
     background-color: transparent;
   }
   
+  /* TABLET: também usa contain para não cortar */
   .product-image-wrapper img {
     object-fit: contain;
   }
