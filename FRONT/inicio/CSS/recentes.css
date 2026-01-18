@@ -222,7 +222,7 @@
   50% { transform: scale(1.05); }
 }
 
-/* ===== CONTAINER DA IMAGEM (ATUALIZADO 10px SEM FUNDO BRANCO) ===== */
+/* ===== CONTAINER DA IMAGEM (CORRIGIDO: 13px + TRANSPARENTE) ===== */
 .product-image-wrapper {
   height: 300px;
   display: flex;
@@ -231,11 +231,11 @@
   position: relative;
   overflow: visible; /* Permite sombra */
   
-  /* MUDANÇA PRINCIPAL: FUNDO TRANSPARENTE */
+  /* AQUI ESTAVA O ERRO: MUDEI DE #ffffff PARA transparent */
   background-color: transparent; 
   
-  /* PADDING 10PX */
-  padding: 15px; 
+  /* PADDING 13PX */
+  padding: 13px; 
   
   flex-shrink: 0;
   cursor: pointer;
@@ -490,16 +490,16 @@
     background: var(--card-bg-gradient);
   }
 
-  /* === CORREÇÃO DAS IMAGENS NO MOBILE (10px padding) === */
+  /* === CORREÇÃO DAS IMAGENS NO MOBILE (10px) === */
   .product-image-wrapper {
     height: 180px !important;
     
-    /* AQUI ESTÁ O PADDING 10PX NO MOBILE */
+    /* PADDING 10PX NO MOBILE */
     padding: 10px !important; 
     
     margin: 0 !important;
     
-    /* FUNDO TRANSPARENTE TAMBÉM NO MOBILE */
+    /* GARANTINDO TRANSPARENTE TAMBÉM NO MOBILE */
     background-color: transparent !important; 
   }
 
@@ -560,8 +560,7 @@
   .product-image-wrapper img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important;
-    object-position: center center;
+    object-fit: contain !important;
   }
 
   .product-info {
@@ -604,7 +603,7 @@
   .product-image-wrapper img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important;
+    object-fit: contain !important;
     object-position: center center;
   }
 
@@ -644,7 +643,7 @@
   
   .product-image-wrapper {
     height: 250px;
-    background-color: transparent;
+    background-color: transparent !important;
   }
   
   /* TABLET: também usa contain para não cortar */
