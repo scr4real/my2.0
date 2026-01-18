@@ -1,13 +1,14 @@
 -- ==================================================================================
 -- ARQUIVO: BACK/src/main/resources/data.sql
+-- VERSÃO FINAL: TODAS AS PASTAS + DESCRIÇÕES "DA RUA"
 -- ==================================================================================
 
--- 1. LIMPEZA DE DADOS (ORDEM CRUCIAL PARA EVITAR ERRO 502)
+-- 1. LIMPEZA DE DADOS
 DELETE FROM itens_pedido;
 DELETE FROM pagamentos;
 DELETE FROM pedido_aviso;
 DELETE FROM pedidos;
-DELETE FROM enderecos; -- Essencial para liberar a exclusão de usuários
+DELETE FROM enderecos; 
 DELETE FROM produtos;
 DELETE FROM categorias;
 DELETE FROM marcas;
@@ -15,428 +16,382 @@ DELETE FROM _usuario;
 
 -- 2. INSERÇÃO DE MARCAS
 INSERT INTO marcas (id, nome) VALUES 
-(1, 'Nike'), 
-(2, 'Air Jordan'), 
-(3, 'Adidas'), 
-(4, 'Bape'), 
-(5, 'Asics'),
-(6, 'New Balance'), 
-(7, 'Puma'), 
-(8, 'Timberland'), 
-(9, 'Crocs'),
-(10, 'Louis Vuitton'), 
-(11, 'Dior'), 
-(12, 'Yeezy');
+(1, 'Nike'), (2, 'Air Jordan'), (3, 'Adidas'), (4, 'Bape'), (5, 'Asics'),
+(6, 'New Balance'), (7, 'Puma'), (8, 'Timberland'), (9, 'Crocs'),
+(10, 'Louis Vuitton'), (11, 'Dior'), (12, 'Yeezy');
 
 -- 3. INSERÇÃO DE CATEGORIAS
 INSERT INTO categorias (id, nome) VALUES 
-(1, 'Air Max 95'), 
-(2, 'Air Max DN'), 
-(3, 'Air Max TN'), 
-(4, 'Dunk'), 
-(5, 'Jordan'), 
-(6, 'Outros'), 
-(7, 'Acessórios'), 
-(8, 'Casual'), 
-(9, 'Corrida'), 
-(10, 'Botas'), 
-(11, 'Chuteiras'), 
-(12, 'Sandálias'),
-(13, 'Adidas Campus'), 
-(14, 'Air Force'),     
-(15, 'Air Jordan 11'),
-(16, 'Air Max 97'),
-(17, 'Air Max 90'),
-(18, 'Asics Gel NYC'),
-(19, 'Asics Kayano 14'),
-(20, 'Bape Sta'),
-(21, 'Air Force CPFM'),
-(22, 'Crocs Bape'),
-(23, 'Crocs McQueen'),
-(24, 'Dior B30'),
-(26, 'Air Max DN8'),
-(27, 'Air Max Drift'),
-(28, 'Nike Dunk'),
-(29, 'Nike Nocta Glide'),
-(30, 'Air Jordan 4'),
-(31, 'LV Trainer'),
-(32, 'New Balance 530'),
-(33, 'New Balance 740'),
-(34, 'New Balance 1000'),
-(35, 'New Balance 9060'),
-(36, 'Nike Vomero 5'),
-(37, 'Nocta Hot Step 2'),
-(38, 'Nike P-6000'),
-(39, 'Puma 180'),
-(40, 'Nike Shox'),
-(41, 'Yeezy Slide'),
-(42, 'Puma Suede'),
-(43, 'Air Max TN3');
+(1, 'Air Max 95'), (2, 'Air Max DN'), (3, 'Air Max TN'), (4, 'Dunk'), (5, 'Jordan'), 
+(6, 'Outros'), (7, 'Acessórios'), (8, 'Casual'), (9, 'Corrida'), (10, 'Botas'), 
+(11, 'Chuteiras'), (12, 'Sandálias'), (13, 'Adidas Campus'), (14, 'Air Force'),     
+(15, 'Air Jordan 11'), (16, 'Air Max 97'), (17, 'Air Max 90'), (18, 'Asics Gel NYC'),
+(19, 'Asics Kayano 14'), (20, 'Bape Sta'), (21, 'Air Force CPFM'), (22, 'Crocs Bape'),
+(23, 'Crocs McQueen'), (24, 'Dior B30'), (26, 'Air Max DN8'), (27, 'Air Max Drift'),
+(28, 'Nike Dunk'), (29, 'Nike Nocta Glide'), (30, 'Air Jordan 4'), (31, 'LV Trainer'),
+(32, 'New Balance 530'), (33, 'New Balance 740'), (34, 'New Balance 1000'), (35, 'New Balance 9060'),
+(36, 'Nike Vomero 5'), (37, 'Nocta Hot Step 2'), (38, 'Nike P-6000'), (39, 'Puma 180'),
+(40, 'Nike Shox'), (41, 'Yeezy Slide'), (42, 'Puma Suede'), (43, 'Air Max TN3');
 
 -- 4. USUÁRIO ADMIN
 INSERT INTO _usuario (nome, email, cpf, telefone, senha, role) VALUES 
-('Vinicius Admin', 
- 'vinicius.biancolini.tds24@gmail.com', 
- '000.000.000-00', 
- '11999999999', 
- '$2a$10$C0iH.HkG8Nh73C57GC7oT.jxzLawZbas/miJPJVP2qhTcpbZI0soq', 
- 'ROLE_ADMIN');
+('Vinicius Admin', 'vinicius.biancolini.tds24@gmail.com', '000.000.000-00', '11999999999', '$2a$10$C0iH.HkG8Nh73C57GC7oT.jxzLawZbas/miJPJVP2qhTcpbZI0soq', 'ROLE_ADMIN');
 
 -- ==================================================================================
 -- 5. INSERÇÃO DOS PRODUTOS
 -- ==================================================================================
 
--- --- LOTE 1: AIR MAX 95 ---
+-- --- LOTE 1: AIR MAX 95 (33 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Max 95', 'Design anatômico lendário e amortecimento visível. Estilo Midnight Navy.', '/uploads/95/1.png', 1199.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Camadas de conforto e estilo urbano agressivo. Edição Dark Grey Green.', '/uploads/95/2.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Inspirado na anatomia humana, conforto premium. Cor Anatomy of Air.', '/uploads/95/3.png', 1249.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'O essencial do dia a dia com durabilidade máxima. Edição Black Grey.', '/uploads/95/4.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Visual all-black imponente para qualquer ocasião. Edição Triple Black.', '/uploads/95/5.png', 1199.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Limpo, clássico e sofisticado. O Pure Platinum combina com tudo.', '/uploads/95/6.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Detalhes em turquesa que destacam o visual. Edição Grey Turquoise.', '/uploads/95/7.png', 1149.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Cores vibrantes para quem tem atitude. Edição Solar Red.', '/uploads/95/8.png', 1199.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Degradê icônico que marcou época. Edição Crystal Blue.', '/uploads/95/9.png', 1199.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Versatilidade e conforto para o corre diário. Edição Black Essential.', '/uploads/95/10.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Clean e fresco. O Triple White é indispensável na coleção.', '/uploads/95/11.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Contraste perfeito entre preto e azul real. Edição Black Royal.', '/uploads/95/12.png', 1149.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'A combinação Oreo preto e branco que nunca falha. Estilo garantido.', '/uploads/95/13.png', 1149.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Tons terrosos e militares para um look robusto. Edição Rough Green.', '/uploads/95/14.png', 1199.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Destaque-se com detalhes em laranja vibrante. Edição Total Orange.', '/uploads/95/15.png', 1149.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Estilo esportivo com toque moderno. Edição Dark Grey Orange.', '/uploads/95/16.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Cores neutras para um visual sofisticado. Edição Neutral Olive.', '/uploads/95/17.png', 1199.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Sombrio e elegante. O tom Anthracite traz exclusividade.', '/uploads/95/18.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'A energia do vermelho varsity no design clássico. Edição Grey Red.', '/uploads/95/19.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Sola azul marcante para um visual único. Edição Black Blue.', '/uploads/95/20.png', 1149.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Branco gelo premium para um look impecável. Edição Summit White.', '/uploads/95/21.png', 1299.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'O contraste urbano do cinza com amarelo. Edição Dark Grey Yellow.', '/uploads/95/22.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Conexão com a natureza e estilo urbano. Edição Sequoia Green.', '/uploads/95/23.png', 1149.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Impacto visual imediato com preto e amarelo. Edição Tour Yellow.', '/uploads/95/24.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'O cinza clássico que combina com qualquer outfit. Edição Cool Grey.', '/uploads/95/25.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Elegância esportiva em preto e azul. Edição Black Royal.', '/uploads/95/26.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Acabamento em couro premium para durabilidade extra. Triple Black.', '/uploads/95/27.png', 1299.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'A base perfeita para o seu estilo. Edição White Essential.', '/uploads/95/28.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95 OG', 'O original que iniciou a lenda. Edição Neon Yellow Clássica.', '/uploads/95/29.png', 1299.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'A combinação Bred lendária da Nike. Preto e Vermelho.', '/uploads/95/30.png', 1149.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Tons de cinza lobo para um visual clean. Edição Wolf Grey.', '/uploads/95/31.png', 1099.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Detalhes em verde lima que acendem o visual. Edição Grey Volt.', '/uploads/95/32.png', 1199.90, 1, 10, 1, 'AM95'),
-('Nike Air Max 95', 'Profundidade e estilo. Edição Navy Blue (Azul Marinho).', '/uploads/95/33.png', 1149.90, 1, 10, 1, 'AM95');
+('Nike Air Max 95 Triple Black', 'Nike Air Max 95 Triple Black\n\nTanque de guerra. Totalmente preto, esse pisante é pra quem quer discrição e agressividade no mesmo kit. Não suja fácil e impõe respeito.', '/uploads/95/1.png', 1199.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Midnight Navy', 'Nike Air Max 95 Midnight Navy\n\nO degradê cinza com azul marinho é sacanagem. Traz aquela vibe OG de quem entende do corre. Elegância e rua na mesma medida.', '/uploads/95/2.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Anatomy of Air', 'Nike Air Max 95 Anatomy of Air\n\nInspirado na fibra muscular humana. Texturas e cores únicas pra quem coleciona relíquia. Esse aqui conta história no pé.', '/uploads/95/3.png', 1249.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Black Royal', 'Nike Air Max 95 Black Royal\n\nPreto com detalhes em azul royal. Aquele detalhe que brilha quando bate a luz do flash. Conforto absurdo pra bater perna o dia todo.', '/uploads/95/4.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Pink Foam', 'Nike Air Max 95 Pink Foam\n\nContraste do preto pesado com rosa suave. Pra quem tem personalidade forte e não tem medo de ousar no visual. Destaque no rolê.', '/uploads/95/5.png', 1199.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Olive Green', 'Nike Air Max 95 Olive Green\n\nPegada militar tática. Verde oliva que combina demais com cargo pants e techwear. Visual de quem tá pronto pra guerra do dia a dia.', '/uploads/95/6.png', 1199.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Stadium Green', 'Nike Air Max 95 Stadium Green\n\nCinza com verde estádio. Visual clean e esportivo clássico dos anos 90. É colocar no pé e sentir o amortecimento Air Max.', '/uploads/95/7.png', 1149.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Solar Red', 'Nike Air Max 95 Solar Red\n\nO detalhe vermelho solar acende o tênis. Base cinza clássica com aquele "pop" de cor que chama atenção de longe. Rápido e agressivo.', '/uploads/95/8.png', 1199.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Cool Grey', 'Nike Air Max 95 Cool Grey\n\nO cinza mais respeitado da cena. Versátil demais, vai do trabalho pro baile sem perder a linha. Essencial na coleção.', '/uploads/95/9.png', 1199.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Black Earth', 'Nike Air Max 95 Black Earth\n\nTons terrosos com preto. Pegada outdoor robusta, aguenta o tranco e mantém o estilo. Diferenciado dos modelos padrão.', '/uploads/95/10.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Summit White', 'Nike Air Max 95 Summit White\n\nBranco gelo, limpo e perigoso. Tem que ter cuidado onde pisa, mas o estilo compensa. Eleva qualquer outfit básico.', '/uploads/95/11.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Racer Blue', 'Nike Air Max 95 Racer Blue\n\nCinza rasgado pelo azul racer. Uma das combinações mais icônicas da silhueta 95. Respira cultura sneaker.', '/uploads/95/12.png', 1149.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Oreo', 'Nike Air Max 95 Oreo\n\nPreto e branco, o famoso Oreo. Não tem erro, combina com tudo. Se tá na dúvida, esse é o tiro certo pra não errar no kit.', '/uploads/95/13.png', 1149.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Sequoia', 'Nike Air Max 95 Sequoia\n\nVerde musgo militar. Estética de batalha. Perfeito pra quem curte um visual mais fechado e underground.', '/uploads/95/14.png', 1199.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Total Orange', 'Nike Air Max 95 Total Orange\n\nLaranja que queima. Presença absurda. O degradê cinza serve de base pro laranja brilhar. Chave demais.', '/uploads/95/15.png', 1149.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Dark Grey', 'Nike Air Max 95 Dark Grey\n\nCinza chumbo com detalhes sutis. Low-profile pra quem não quer chamar atenção indesejada, mas manter o style.', '/uploads/95/16.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Khaki', 'Nike Air Max 95 Khaki\n\nTons de areia e cáqui. Visual deserto insano com jeans ou calça preta. Sai do comum.', '/uploads/95/17.png', 1199.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Anthracite', 'Nike Air Max 95 Anthracite\n\nQuase preto, mas com profundidade. O Anthracite dá um ar de mistério e sofisticação pro pisante.', '/uploads/95/18.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Grey Red', 'Nike Air Max 95 Grey Red\n\nCinza com vermelho varsity. Esportivo na veia. Parece que saiu direto de um clipe de rap dos anos 90.', '/uploads/95/19.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Black Blue Sole', 'Nike Air Max 95 Black Blue Sole\n\nPreto no cabedal com a sola azul translúcida. O detalhe na sola faz toda a diferença andando. Muito style.', '/uploads/95/20.png', 1149.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 White Ice', 'Nike Air Max 95 White Ice\n\nBranco com solado ice. A pureza em forma de tênis. Mantém ele limpo e você vai ter a nave mais bonita do rolê.', '/uploads/95/21.png', 1299.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Tour Yellow', 'Nike Air Max 95 Tour Yellow\n\nCinza e amarelo. Lembra o clássico Neon, mas com um tom mais quente. Chama atenção na medida certa.', '/uploads/95/22.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Utility Green', 'Nike Air Max 95 Utility Green\n\nVerde utilitário com preto. Parece equipamento tático. Robustez e estilo caminhando juntos.', '/uploads/95/23.png', 1149.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Black Gold', 'Nike Air Max 95 Black Gold\n\nPreto com dourado. A combinação da vitória. Traz um ar de luxo e ostentação pro modelo esportivo.', '/uploads/95/24.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Wolf Grey', 'Nike Air Max 95 Wolf Grey\n\nCinza lobo clássico. Aquele tênis que você usa até acabar e compra outro igual. Pau pra toda obra.', '/uploads/95/25.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Black Royal Low', 'Nike Air Max 95 Black Royal Low\n\nMais uma variação do preto e azul, focada no contraste forte. Ideal pra noite.', '/uploads/95/26.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Essential Brown', 'Nike Air Max 95 Essential Brown\n\nTons de marrom e verde oliva. Colorway madura e sofisticada. Fica muito chique no pé.', '/uploads/95/27.png', 1299.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 White Essential', 'Nike Air Max 95 White Essential\n\nBranco básico com construção premium. O ponto de partida pra qualquer coleção de respeito.', '/uploads/95/28.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 OG Neon', 'Nike Air Max 95 OG Neon\n\nO PAI DE TODOS. A cor original de 1995. Cinza com o amarelo neon volt. História pura, respeito máximo nas ruas.', '/uploads/95/29.png', 1299.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Bred', 'Nike Air Max 95 Bred\n\nPreto e vermelho. A colorway mais famosa do basquete aplicada no ícone da corrida. Agressividade pura.', '/uploads/95/30.png', 1149.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Dark Grey Black', 'Nike Air Max 95 Dark Grey Black\n\nDegradê escuro. Discreto, não chama atenção, mas quem sabe, sabe. Perfeito pro dia a dia.', '/uploads/95/31.png', 1099.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Grey Volt', 'Nike Air Max 95 Grey Volt\n\nUma variação moderna do Neon OG. Um pouco mais clara, mas com a mesma energia vibrante.', '/uploads/95/32.png', 1199.90, 1, 10, 1, 'AM95'),
+('Nike Air Max 95 Navy Blue', 'Nike Air Max 95 Navy Blue\n\nAzul marinho total. Sóbrio e elegante. Fica incrível com jeans e calças escuras.', '/uploads/95/33.png', 1149.90, 1, 10, 1, 'AM95');
 
--- --- LOTE 2: ADIDAS CAMPUS ---
+-- --- LOTE 2: ADIDAS CAMPUS (8 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Adidas Campus 00s', 'Vibe skate anos 2000 com camurça premium. Edição Pink Strata.', '/uploads/adidascampus/1.png', 699.90, 13, 10, 3, 'CAMPUS'),
-('Adidas Campus 00s', 'Estilo autêntico e silhueta robusta. Edição Purple.', '/uploads/adidascampus/2.png', 699.90, 13, 10, 3, 'CAMPUS'),
-('Adidas Campus 00s', 'Neutro e estiloso, vai com tudo. Edição Beige Black.', '/uploads/adidascampus/3.png', 699.90, 13, 10, 3, 'CAMPUS'),
-('Adidas Campus 00s', 'Clássico repaginado. Branco e Verde atemporal.', '/uploads/adidascampus/4.png', 699.90, 13, 10, 3, 'CAMPUS'),
-('Adidas Campus 00s', 'Clean e sofisticado. Edição Crystal White.', '/uploads/adidascampus/5.png', 699.90, 13, 10, 3, 'CAMPUS'),
-('Adidas Campus 00s', 'O contraste preto e branco que define o estilo urbano. White Black.', '/uploads/adidascampus/6.png', 699.90, 13, 10, 3, 'CAMPUS'),
-('Adidas Campus 00s', 'Atitude pura. Edição Core Black.', '/uploads/adidascampus/7.png', 699.90, 13, 10, 3, 'CAMPUS'),
-('Adidas Campus 00s', 'Tom diferenciado para quem tem personalidade. Edição Olive Green.', '/uploads/adidascampus/8.png', 699.90, 13, 10, 3, 'CAMPUS');
+('Adidas Campus 00s Black White', 'Adidas Campus 00s Black White\n\nO hype do momento. Vibe skate anos 2000, silhueta gorda e cadarço largo. O coringa que todo mundo quer.', '/uploads/adidascampus/1.png', 699.90, 13, 10, 3, 'CAMPUS'),
+('Adidas Campus 00s Olive Strata', 'Adidas Campus 00s Olive Strata\n\nCamurça premium nesse tom verde oliva absurdo. Foge do padrão mantendo a estética chunky.', '/uploads/adidascampus/2.png', 699.90, 13, 10, 3, 'CAMPUS'),
+('Adidas Campus 00s Crystal White', 'Adidas Campus 00s Crystal White\n\nSola preta, cabedal branco off-white. O reverso do clássico. Pra quem curte contraste forte.', '/uploads/adidascampus/3.png', 699.90, 13, 10, 3, 'CAMPUS'),
+('Adidas Campus 00s Wonder White', 'Adidas Campus 00s Wonder White\n\nTom bege bem claro, quase areia. Clean e com vibe de luxo despojado. Combina com baggy jeans.', '/uploads/adidascampus/4.png', 699.90, 13, 10, 3, 'CAMPUS'),
+('Adidas Campus 00s Grey Gum', 'Adidas Campus 00s Grey Gum\n\nCinza com solado preto. Combinação sóbria e urbana. Neutro, estiloso e pronto pra lixa.', '/uploads/adidascampus/5.png', 699.90, 13, 10, 3, 'CAMPUS'),
+('Adidas Campus 00s Dark Green', 'Adidas Campus 00s Dark Green\n\nVerde escuro com listras creme. Visual universitário clássico com a robustez do Campus. Presença.', '/uploads/adidascampus/6.png', 699.90, 13, 10, 3, 'CAMPUS'),
+('Adidas Campus 00s Pink Strata', 'Adidas Campus 00s Pink Strata\n\nRosa queimado pra quem tem personalidade. Não é qualquer um que segura. Diferenciado e estiloso.', '/uploads/adidascampus/7.png', 699.90, 13, 10, 3, 'CAMPUS'),
+('Adidas Campus 00s Ambient Sky', 'Adidas Campus 00s Ambient Sky\n\nRoxo elétrico com listras pretas. Colorway rara na rua. Exclusividade no pé.', '/uploads/adidascampus/8.png', 699.90, 13, 10, 3, 'CAMPUS');
 
--- --- LOTE 3: AIR FORCE 1 ---
+-- --- LOTE 3: AIR FORCE 1 (2 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Force 1', 'O tênis mais icônico do mundo. Branco total, impecável. Triple White.', '/uploads/airforce/1.png', 799.90, 14, 15, 1, 'AF1'),
-('Nike Air Force 1', 'Essencial e durável. O clássico preto total. Triple Black.', '/uploads/airforce/2.png', 799.90, 14, 15, 1, 'AF1');
+('Nike Air Force 1 Triple Black', 'Nike Air Force 1 Triple Black\n\nA lenda das ruas. AF1 todo preto é sinônimo de atitude. Durabilidade infinita e visual que impõe presença.', '/uploads/airforce/1.png', 799.90, 14, 15, 1, 'AF1'),
+('Nike Air Force 1 Triple White', 'Nike Air Force 1 Triple White\n\nO tênis mais icônico da história. Branco no branco. Limpo, clássico e essencial pra aquele visual fresh.', '/uploads/airforce/2.png', 799.90, 14, 15, 1, 'AF1');
 
--- --- LOTE 4: AIR JORDAN 11 ---
+-- --- LOTE 4: AIR JORDAN 11 (8 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Air Jordan 11 Retro', 'Verniz brilhante e luxo nas quadras. Edição Jubilee.', '/uploads/airjordan11/1.png', 1599.90, 15, 5, 2, 'AJ11'),
-('Air Jordan 11 Low', 'Versão baixa com o brilho clássico do verniz. Black White.', '/uploads/airjordan11/2.png', 1399.90, 15, 5, 2, 'AJ11'),
-('Air Jordan 11 Retro', 'O graal dos sneakers. Elegância absoluta. Edição Concord.', '/uploads/airjordan11/3.png', 1699.90, 15, 5, 2, 'AJ11'),
-('Air Jordan 11 Low', 'O visual Concord em silhueta low. Estilo e conforto.', '/uploads/airjordan11/4.png', 1399.90, 15, 5, 2, 'AJ11'),
-('Air Jordan 11 Retro', 'A cor dos campeões. Preto e vermelho lendário. Edição Bred.', '/uploads/airjordan11/5.png', 1699.90, 15, 5, 2, 'AJ11'),
-('Air Jordan 11 Low', 'Atitude Bred em cano baixo. Perfeito para o verão.', '/uploads/airjordan11/6.png', 1399.90, 15, 5, 2, 'AJ11'),
-('Air Jordan 11 Retro', 'Branco e vermelho vibrante. Destaque total. Edição Cherry.', '/uploads/airjordan11/7.png', 1599.90, 15, 5, 2, 'AJ11'),
-('Air Jordan 11 Low', 'Frescor e estilo icônico. Edição Cherry Low.', '/uploads/airjordan11/8.png', 1399.90, 15, 5, 2, 'AJ11');
+('Air Jordan 11 Jubilee', 'Air Jordan 11 Jubilee\n\nEdição de 25 anos. Preto com detalhes prateados e verniz brilhando mais que o futuro. Luxo puro.', '/uploads/airjordan11/1.png', 1599.90, 15, 5, 2, 'AJ11'),
+('Air Jordan 11 Low Barons', 'Air Jordan 11 Low Barons\n\nInspirado no beisebol. Preto camuflado no verniz. Silhueta low pra quem quer estilo com liberdade.', '/uploads/airjordan11/2.png', 1399.90, 15, 5, 2, 'AJ11'),
+('Air Jordan 11 Concord', 'Air Jordan 11 Concord\n\nO Graal. Branco e preto verniz, solado gelo. É colocar no pé e sentir o peso da história.', '/uploads/airjordan11/3.png', 1699.90, 15, 5, 2, 'AJ11'),
+('Air Jordan 11 Low Concord', 'Air Jordan 11 Low Concord\n\nA elegância do Concord em versão baixa. Perfeito pro verão, mantendo a classe do verniz preto.', '/uploads/airjordan11/4.png', 1399.90, 15, 5, 2, 'AJ11'),
+('Air Jordan 11 Bred', 'Air Jordan 11 Bred\n\nPreto e Vermelho. A cor do campeonato. Agressivo, histórico e indispensável. Solado vermelho translúcido icônico.', '/uploads/airjordan11/5.png', 1699.90, 15, 5, 2, 'AJ11'),
+('Air Jordan 11 Low Bred', 'Air Jordan 11 Low Bred\n\nAtitude Bred em cano curto. Forro interno vermelho dá aquele destaque. Um dos lows mais procurados.', '/uploads/airjordan11/6.png', 1399.90, 15, 5, 2, 'AJ11'),
+('Air Jordan 11 Cherry', 'Air Jordan 11 Cherry\n\nBranco com verniz vermelho cereja. Chama atenção de longe. Visual limpo com explosão de cor.', '/uploads/airjordan11/7.png', 1599.90, 15, 5, 2, 'AJ11'),
+('Air Jordan 11 Low Cherry', 'Air Jordan 11 Low Cherry\n\nVersão low do Cherry. Fresco, vibrante e com sola gelo. Ideal pra montar aquele kit de destaque.', '/uploads/airjordan11/8.png', 1399.90, 15, 5, 2, 'AJ11');
 
--- --- LOTE 5: AIR MAX 97 ---
+-- --- LOTE 5: AIR MAX 97 (5 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Max 97', 'Linhas futuristas inspiradas na água. Edição Black White.', '/uploads/airmax97/1.png', 1099.90, 16, 8, 1, 'AM97'),
-('Nike Air Max 97', 'Tom suave e design aerodinâmico. Edição White Bone.', '/uploads/airmax97/2.png', 1099.90, 16, 8, 1, 'AM97'),
-('Nike Air Max 97', 'Visual stealth elegante. Edição Triple Black.', '/uploads/airmax97/3.png', 1099.90, 16, 8, 1, 'AM97'),
-('Nike Air Max 97', 'Inspirado nos trens-bala japoneses. O original Silver Bullet.', '/uploads/airmax97/4.png', 1199.90, 16, 8, 1, 'AM97'),
-('Nike Air Max 97', 'Frescor e leveza no visual. Edição Light Blue.', '/uploads/airmax97/5.png', 1099.90, 16, 8, 1, 'AM97');
+('Nike Air Max 97 Have a Nike Day', 'Nike Air Max 97 Have a Nike Day\n\nTons pastéis e detalhes divertidos. Vibe positiva no visual. Design ondulado clássico com toque artístico.', '/uploads/airmax97/1.png', 1099.90, 16, 8, 1, 'AM97'),
+('Nike Air Max 97 Silver Bullet', 'Nike Air Max 97 Silver Bullet\n\nO original. Inspirado nos trens-bala do Japão. Prateado refletivo que brilha no flash. Obrigatório na coleção.', '/uploads/airmax97/2.png', 1199.90, 16, 8, 1, 'AM97'),
+('Nike Air Max 97 Black Metallic', 'Nike Air Max 97 Black Metallic\n\nPreto com texturas metálicas. Visual futurista e stealth. Combina com tudo e o ar total garante conforto.', '/uploads/airmax97/3.png', 1099.90, 16, 8, 1, 'AM97'),
+('Nike Air Max 97 Black White', 'Nike Air Max 97 Black White\n\nPreto clássico com entressola branca. Contraste que nunca sai de moda. Linhas aerodinâmicas.', '/uploads/airmax97/4.png', 1099.90, 16, 8, 1, 'AM97'),
+('Nike Air Max 97 White Wolf Grey', 'Nike Air Max 97 White Wolf Grey\n\nBranco com cinza lobo. Clean ao extremo. Pra quem gosta de um visual leve e sofisticado no corre.', '/uploads/airmax97/5.png', 1099.90, 16, 8, 1, 'AM97');
 
--- --- LOTE 6: AIR MAX 90 ---
+-- --- LOTE 6: AIR MAX 90 (7 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Max 90', 'O ícone que definiu uma era. Edição Maroon.', '/uploads/airmax90/1.png', 999.90, 17, 10, 1, 'AM90'),
-('Nike Air Max 90', 'A cor mais famosa do AM90. Clássico Infrared.', '/uploads/airmax90/2.png', 1099.90, 17, 10, 1, 'AM90'),
-('Nike Air Max 90', 'Detalhes em azul laser vibrante. Edição Laser Blue.', '/uploads/airmax90/3.png', 999.90, 17, 10, 1, 'AM90'),
-('Nike Air Max 90', 'Energia e conforto em cada passo. Edição Hyper Turquoise.', '/uploads/airmax90/4.png', 999.90, 17, 10, 1, 'AM90'),
-('Nike Air Max 90', 'Cores retrô para um visual autêntico. Edição Grape.', '/uploads/airmax90/5.png', 999.90, 17, 10, 1, 'AM90'),
-('Nike Air Max 90', 'Puro e atemporal. Edição Triple White.', '/uploads/airmax90/6.png', 999.90, 17, 10, 1, 'AM90'),
-('Nike Air Max 90', 'Contraste clássico e versátil. Edição Black White.', '/uploads/airmax90/7.png', 999.90, 17, 10, 1, 'AM90');
+('Nike Air Max 90 Iron Grey', 'Nike Air Max 90 Iron Grey\n\nCinza ferro com detalhes vermelhos. Combinação robusta que remete aos clássicos. Cultura sneaker pura.', '/uploads/airmax90/1.png', 999.90, 17, 10, 1, 'AM90'),
+('Nike Air Max 90 Infrared', 'Nike Air Max 90 Infrared\n\nA cor que definiu uma era. Infrared original vibrante. História nos pés. Respeito na roda.', '/uploads/airmax90/2.png', 1099.90, 17, 10, 1, 'AM90'),
+('Nike Air Max 90 Laser Blue', 'Nike Air Max 90 Laser Blue\n\nBranco, preto e aquele azul laser rasgando. Esportivo e estiloso, vibe anos 90 com pegada atual.', '/uploads/airmax90/3.png', 999.90, 17, 10, 1, 'AM90'),
+('Nike Air Max 90 Hyper Turquoise', 'Nike Air Max 90 Hyper Turquoise\n\nTurquesa vibrante nos detalhes. Colorway fresca, chama atenção sem ser exagerada. Perfeito pro verão.', '/uploads/airmax90/4.png', 999.90, 17, 10, 1, 'AM90'),
+('Nike Air Max 90 Grape', 'Nike Air Max 90 Grape\n\nRoxo e verde água. Combinação lendária. Traz uma vibe retrô muito forte e diferenciada.', '/uploads/airmax90/5.png', 999.90, 17, 10, 1, 'AM90'),
+('Nike Air Max 90 Triple White', 'Nike Air Max 90 Triple White\n\nBranco total. Couro liso. A definição de clean. Vai com terno ou bermuda. Base perfeita pro outfit.', '/uploads/airmax90/6.png', 999.90, 17, 10, 1, 'AM90'),
+('Nike Air Max 90 Black White', 'Nike Air Max 90 Black White\n\nPreto com swoosh branco. O pão com manteiga dos sneakers. Funcional e estiloso. Tênis de batalha.', '/uploads/airmax90/7.png', 999.90, 17, 10, 1, 'AM90');
 
--- --- LOTE 7: ASICS GEL NYC ---
+-- --- LOTE 7: ASICS GEL NYC (15 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Asics Gel-NYC', 'Estilo urbano com performance de corrida. Edição Cream Grey.', '/uploads/asycsnyc/1.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Tecnologia GEL para conforto o dia todo. Edição Light Blue.', '/uploads/asycsnyc/2.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Visual clean com toques esportivos. Edição White Blue.', '/uploads/asycsnyc/3.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Moderno e sofisticado. Edição Black Graphite.', '/uploads/asycsnyc/4.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Detalhes em azul real que impressionam. Edição White Royal.', '/uploads/asycsnyc/5.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Tons de terra premium. Edição Oatmeal.', '/uploads/asycsnyc/6.png', 1399.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Futurista e retrô ao mesmo tempo. Edição Silver Cream.', '/uploads/asycsnyc/7.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Sóbrio e estiloso. Edição Navy Grey.', '/uploads/asycsnyc/8.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Tons frios para um look diferenciado. Edição Glacier Grey.', '/uploads/asycsnyc/9.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Profundo e elegante. Edição Midnight Navy.', '/uploads/asycsnyc/10.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Detalhes em verde para quem gosta de cor. Edição White Green.', '/uploads/asycsnyc/11.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Brilho metálico premium. Edição Pure Silver.', '/uploads/asycsnyc/12.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Combinação luxuosa de preto e creme. Edição Black Cream.', '/uploads/asycsnyc/13.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Tom escuro e misterioso. Edição Obsidian.', '/uploads/asycsnyc/14.png', 1299.90, 18, 5, 5, 'GELNYC'),
-('Asics Gel-NYC', 'Suavidade e estilo. Edição Pink Cream.', '/uploads/asycsnyc/15.png', 1399.90, 18, 5, 5, 'GELNYC');
+('Asics Gel-NYC Pink Cream', 'Asics Gel-NYC Pink Cream\n\nColorway insana. Rosa, creme e materiais premium. Estética "dad shoe" no nível de luxo urbano. Hype puro.', '/uploads/asycsnyc/1.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Black Clay', 'Asics Gel-NYC Black Clay\n\nPreto com tons de argila. Sombrio e sofisticado. Tecnologia Gel garante nuvens nos pés enquanto você destrói no look.', '/uploads/asycsnyc/2.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Navy Blue', 'Asics Gel-NYC Navy Blue\n\nAzul marinho com cinza. Visual técnico, inspirado na performance de NY. Combina com tactel ou cargo.', '/uploads/asycsnyc/3.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Grey Red', 'Asics Gel-NYC Grey Red\n\nBase cinza com detalhes vermelhos sutis. Visual esportivo clássico repaginado pra rua. Alta qualidade.', '/uploads/asycsnyc/4.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC White Teal', 'Asics Gel-NYC White Teal\n\nBranco com detalhes verde água. Fresco e clean. A silhueta se destaca demais nessas cores claras.', '/uploads/asycsnyc/5.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Dolphin Blue', 'Asics Gel-NYC Dolphin Blue\n\nTons de azul e cinza metálico. Futurista e retrô. Pra quem curte a estética Y2K runner.', '/uploads/asycsnyc/6.png', 1399.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Graphite Grey', 'Asics Gel-NYC Graphite Grey\n\nCinza grafite monstro. Não aparece sujeira e fica bem com qualquer roupa escura. Rei da versatilidade.', '/uploads/asycsnyc/7.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Midnight', 'Asics Gel-NYC Midnight\n\nAzul escuro e preto. Visual noturno, perfeito pro rolê. Mistura de camurça e mesh com textura incrível.', '/uploads/asycsnyc/8.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Oatmeal', 'Asics Gel-NYC Oatmeal\n\nTons de aveia e creme. Tendência earth tones no seu melhor. Sofisticado, limpo e super confortável.', '/uploads/asycsnyc/9.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC White Royal', 'Asics Gel-NYC White Royal\n\nBranco com azul royal forte. Esportivo e agressivo na medida certa. Detalhes refletivos top.', '/uploads/asycsnyc/10.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Pure Silver', 'Asics Gel-NYC Pure Silver\n\nPrata puro. A estética metálica dos anos 2000 voltou com tudo. Brilha muito e chama atenção.', '/uploads/asycsnyc/11.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Black Phantom', 'Asics Gel-NYC Black Phantom\n\nPreto fantasma. Quase todo preto com nuances de cinza. Pra quem curte visual stealth ninja.', '/uploads/asycsnyc/12.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC White Cloud', 'Asics Gel-NYC White Cloud\n\nBranco nuvem com detalhes cinza claro. Leveza visual total. Parece que você está flutuando.', '/uploads/asycsnyc/13.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Sky Blue', 'Asics Gel-NYC Sky Blue\n\nAzul céu com marrom. Combinação inusitada que funcionou demais. Exclusivo e diferenciado.', '/uploads/asycsnyc/14.png', 1299.90, 18, 5, 5, 'GELNYC'),
+('Asics Gel-NYC Concrete', 'Asics Gel-NYC Concrete\n\nInspirado no concreto de Nova York. Tons de cinza urbano e bege. A cara da cidade.', '/uploads/asycsnyc/15.png', 1399.90, 18, 5, 5, 'GELNYC');
 
--- --- LOTE 8: ASICS KAYANO 14 ---
+-- --- LOTE 8: ASICS KAYANO 14 (5 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES
-('Asics Gel-Kayano 14', 'O retorno da lenda da corrida. Edição Cream Silver.', '/uploads/asycskayano/1.png', 1499.90, 19, 5, 5, 'KAYANO14'),
-('Asics Gel-Kayano 14', 'Design técnico e visual anos 2000. Edição White Blue.', '/uploads/asycskayano/2.png', 1499.90, 19, 5, 5, 'KAYANO14'),
-('Asics Gel-Kayano 14', 'Estética metálica inconfundível. Edição Silver Cream.', '/uploads/asycskayano/3.png', 1499.90, 19, 5, 5, 'KAYANO14'),
-('Asics Gel-Kayano 14', 'Minimalismo com performance. Edição White Black.', '/uploads/asycskayano/4.png', 1499.90, 19, 5, 5, 'KAYANO14'),
-('Asics Gel-Kayano 14', 'Toque feminino com alta tecnologia. Edição White Pink.', '/uploads/asycskayano/5.png', 1499.90, 19, 5, 5, 'KAYANO14');
+('Asics Gel-Kayano 14 Cream Green', 'Asics Gel-Kayano 14 Cream Green\n\nA lenda retornou. Base creme com detalhes metálicos esverdeados. O sneaker do momento. Hype absoluto.', '/uploads/asycskayano/1.png', 1499.90, 19, 5, 5, 'KAYANO14'),
+('Asics Gel-Kayano 14 Cream Black', 'Asics Gel-Kayano 14 Cream Black\n\nMesh creme com sobreposições pretas e prateadas. Contraste perfeito. Visual técnico, retrô e confortável.', '/uploads/asycskayano/2.png', 1499.90, 19, 5, 5, 'KAYANO14'),
+('Asics Gel-Kayano 14 White Pink', 'Asics Gel-Kayano 14 White Pink\n\nBase branca e prata com detalhes em rosa choque. Mistura delicadeza com agressividade runner.', '/uploads/asycskayano/3.png', 1499.90, 19, 5, 5, 'KAYANO14'),
+('Asics Gel-Kayano 14 White Blue', 'Asics Gel-Kayano 14 White Blue\n\nBranco, prata e azul bebê. Fresh e limpo. Eleva o nível de qualquer outfit básico.', '/uploads/asycskayano/4.png', 1499.90, 19, 5, 5, 'KAYANO14'),
+('Asics Gel-Kayano 14 Black Silver', 'Asics Gel-Kayano 14 Black Silver\n\nPreto com detalhes prateados. O visual noturno do Kayano. Agressivo, rápido e pronto pro asfalto.', '/uploads/asycskayano/5.png', 1499.90, 19, 5, 5, 'KAYANO14');
 
--- --- LOTE 9: BAPE STA ---
+-- --- LOTE 9: BAPE STA (7 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('A Bathing Ape Bape Sta', 'O ícone do streetwear japonês. Edição White Black Star.', '/uploads/bapesta/1.png', 1999.90, 20, 3, 4, 'BAPE'),
-('A Bathing Ape Bape Sta', 'Exclusividade e design premium. Edição Grey White.', '/uploads/bapesta/2.png', 1999.90, 20, 3, 4, 'BAPE'),
-('A Bathing Ape Bape Sta', 'Cor vibrante para destacar o look. Edição Orange White.', '/uploads/bapesta/3.png', 1999.90, 20, 3, 4, 'BAPE'),
-('A Bathing Ape Bape Sta', 'Detalhes em verde clássico Bape. Edição Green White.', '/uploads/bapesta/4.png', 1999.90, 20, 3, 4, 'BAPE'),
-('A Bathing Ape Bape Sta', 'Contraste forte e marcante. Edição Black White.', '/uploads/bapesta/5.png', 1999.90, 20, 3, 4, 'BAPE'),
-('A Bathing Ape Bape Sta', 'Azul intenso e couro envernizado. Edição Blue White.', '/uploads/bapesta/6.png', 1999.90, 20, 3, 4, 'BAPE'),
-('A Bathing Ape Bape Sta', 'O camuflado clássico da Bape. Edição Black Camo.', '/uploads/bapesta/7.png', 2199.90, 20, 3, 4, 'BAPE');
+('Bape Sta Black Patent', 'Bape Sta Black Patent\n\nÍcone japonês em couro envernizado preto e cinza. A estrela lateral (Sta) não deixa dúvidas. Brilho e hype.', '/uploads/bapesta/1.png', 1999.90, 20, 3, 4, 'BAPE'),
+('Bape Sta Blue Patent', 'Bape Sta Blue Patent\n\nAzul celeste envernizado. Lembra os dias de glória do hip-hop 2000. Vibrante, destaca qualquer look.', '/uploads/bapesta/2.png', 1999.90, 20, 3, 4, 'BAPE'),
+('Bape Sta Green Patent', 'Bape Sta Green Patent\n\nVerde bandeira brilhante. A Bathing Ape não brinca. Qualidade absurda e visual que para o trânsito.', '/uploads/bapesta/3.png', 1999.90, 20, 3, 4, 'BAPE'),
+('Bape Sta Black White', 'Bape Sta Black White\n\nPreto e branco clássico, mas com o verniz Bape. O panda de luxo. Versátil com toque de ostentação.', '/uploads/bapesta/4.png', 1999.90, 20, 3, 4, 'BAPE'),
+('Bape Sta Orange Patent', 'Bape Sta Orange Patent\n\nLaranja mecânica. Cor cítrica forte pra quem quer ser visto. Acabamento premium único.', '/uploads/bapesta/5.png', 1999.90, 20, 3, 4, 'BAPE'),
+('Bape Sta Grey Patent', 'Bape Sta Grey Patent\n\nCinza e branco envernizado. O mais sóbrio, mas sem perder o brilho. Elegância streetwear nível máximo.', '/uploads/bapesta/6.png', 1999.90, 20, 3, 4, 'BAPE'),
+('Bape Sta White Black', 'Bape Sta White Black\n\nBranco com estrela preta. Simples e direto. Logo Bape lateral e calcanhar mostram a força da marca.', '/uploads/bapesta/7.png', 2199.90, 20, 3, 4, 'BAPE');
 
--- --- LOTE 10: AIR FORCE CPFM ---
+-- --- LOTE 10: AIR FORCE CPFM (2 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Force 1 x CPFM', 'Colaboração exclusiva com letreiro lateral. Edição Black.', '/uploads/cpfm/1.png', 2499.90, 21, 2, 1, 'CPFM'),
-('Nike Air Force 1 x CPFM', 'Design artístico e ousado. Edição White.', '/uploads/cpfm/2.png', 2499.90, 21, 2, 1, 'CPFM');
+('Nike Air Force 1 x CPFM Black', 'Nike Air Force 1 x CPFM Black\n\nColab insana. Letras gigantes "AIR" inspiradas no Uptempo. Preto total, couro premium. Obra de arte no pé.', '/uploads/cpfm/1.png', 2499.90, 21, 2, 1, 'CPFM'),
+('Nike Air Force 1 x CPFM White', 'Nike Air Force 1 x CPFM White\n\nA versão branca da colab mais desejada. Letreiro "AIR" com contorno refletivo. Exclusividade nível hard.', '/uploads/cpfm/2.png', 2499.90, 21, 2, 1, 'CPFM');
 
--- --- LOTE 11: CROCS BAPE ---
+-- --- LOTE 11: CROCS BAPE (4 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Crocs x Bape', 'Conforto Crocs com camuflagem Bape. Edição Green Camo.', '/uploads/crocsbape/1.png', 599.90, 22, 10, 9, 'CROCS'),
-('Crocs x Bape', 'Estilo furtivo e exclusivo. Edição Black Camo.', '/uploads/crocsbape/2.png', 599.90, 22, 10, 9, 'CROCS'),
-('Crocs x Bape', 'Destaque-se com o camuflado rosa. Edição Pink Camo.', '/uploads/crocsbape/3.png', 599.90, 22, 10, 9, 'CROCS'),
-('Crocs x Bape', 'Visual único e confortável. Edição Blue Camo.', '/uploads/crocsbape/4.png', 599.90, 22, 10, 9, 'CROCS');
+('Crocs x Bape Green Camo', 'Crocs x Bape Green Camo\n\nConforto Crocs com hype Bape. Camuflagem verde clássica da marca japonesa.', '/uploads/crocsbape/1.png', 599.90, 22, 10, 9, 'CROCS'),
+('Crocs x Bape Black Camo', 'Crocs x Bape Black Camo\n\nCamuflagem escura e discreta. Edição limitada pra relaxar com muito estilo.', '/uploads/crocsbape/2.png', 599.90, 22, 10, 9, 'CROCS'),
+('Crocs x Bape Pink Camo', 'Crocs x Bape Pink Camo\n\nCamuflagem rosa pra quem tem estilo. Colab exclusiva que chama atenção.', '/uploads/crocsbape/3.png', 599.90, 22, 10, 9, 'CROCS'),
+('Crocs x Bape Blue Camo', 'Crocs x Bape Blue Camo\n\nTons de azul na camuflagem Bape. Visual único e colecionável.', '/uploads/crocsbape/4.png', 599.90, 22, 10, 9, 'CROCS');
 
--- --- LOTE 12: CROCS MCQUEEN ---
+-- --- LOTE 12: CROCS MCQUEEN (2 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Crocs Cars Lightning McQueen', 'Katchau! Edição limitada Relâmpago McQueen com luzes.', '/uploads/crocsmaqueen/1.png', 499.90, 23, 10, 9, 'MCQUEEN'),
-('Crocs Cars Mater', 'O gancho mais famoso de Radiator Springs. Edição Mate.', '/uploads/crocsmaqueen/2.png', 499.90, 23, 10, 9, 'MCQUEEN');
+('Crocs Lightning McQueen', 'Crocs Lightning McQueen\n\nKatchau! O carro mais rápido do mundo virou Crocs. Acende luz ao andar. Edição de colecionador.', '/uploads/crocsmaqueen/1.png', 499.90, 23, 10, 9, 'MCQUEEN'),
+('Crocs Mater', 'Crocs Mater\n\nO Mate chegou pra rebocar seu estilo. Detalhes incríveis do personagem mais carismático de Carros.', '/uploads/crocsmaqueen/2.png', 499.90, 23, 10, 9, 'MCQUEEN');
 
--- --- LOTE 13: DIOR B30 ---
+-- --- LOTE 13: DIOR B30 (6 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Dior B30', 'O ápice do luxo esportivo. Edição Black White.', '/uploads/diorb30/1.png', 5999.90, 24, 2, 11, 'B30'),
-('Dior B30', 'Sofisticação em cada detalhe. Edição Triple Black.', '/uploads/diorb30/2.png', 5999.90, 24, 2, 11, 'B30'),
-('Dior B30', 'Design contemporâneo da alta costura. Edição White Grey.', '/uploads/diorb30/3.png', 5999.90, 24, 2, 11, 'B30'),
-('Dior B30', 'Materiais refletivos de alta tecnologia. Edição Grey Reflective.', '/uploads/diorb30/4.png', 5999.90, 24, 2, 11, 'B30'),
-('Dior B30', 'Pureza e elegância Dior. Edição White Mesh.', '/uploads/diorb30/5.png', 5999.90, 24, 2, 11, 'B30'),
-('Dior B30', 'Exclusividade em tom marinho. Edição Navy Blue.', '/uploads/diorb30/6.png', 5999.90, 24, 2, 11, 'B30');
+('Dior B30 White Grey', 'Dior B30 White Grey\n\nÁpice do luxo esportivo. Branco e cinza, logo CD refletivo. Elegância da alta costura no asfalto.', '/uploads/diorb30/1.png', 5999.90, 24, 2, 11, 'B30'),
+('Dior B30 Blue Grey', 'Dior B30 Blue Grey\n\nCombinação de azul marinho e cinza. Sofisticado e exclusivo. Pra quem anda de nave.', '/uploads/diorb30/2.png', 5999.90, 24, 2, 11, 'B30'),
+('Dior B30 Mint Grey', 'Dior B30 Mint Grey\n\nDetalhes em verde menta suave. Diferenciado e moderno. Luxo discreto.', '/uploads/diorb30/3.png', 5999.90, 24, 2, 11, 'B30'),
+('Dior B30 White Black', 'Dior B30 White Black\n\nO clássico panda da alta moda. Contraste preto e branco impecável.', '/uploads/diorb30/4.png', 5999.90, 24, 2, 11, 'B30'),
+('Dior B30 Black White', 'Dior B30 Black White\n\nPreto predominante com detalhes brancos. Visual agressivo e chique.', '/uploads/diorb30/5.png', 5999.90, 24, 2, 11, 'B30'),
+('Dior B30 Triple Black', 'Dior B30 Triple Black\n\nTodo preto. O mais procurado. Combina com terno ou com streetwear de luxo.', '/uploads/diorb30/6.png', 5999.90, 24, 2, 11, 'B30');
 
--- --- LOTE 14: AIR MAX DN (ID 2) ---
+-- --- LOTE 14: AIR MAX DN (7 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Max DN', 'A nova era do Air. Tecnologia Dynamic Air. Edição Sail.', '/uploads/dn/1.png', 1299.90, 2, 8, 1, 'DN'),
-('Nike Air Max DN', 'Visual futurista e conforto surreal. Edição Volt.', '/uploads/dn/2.png', 1299.90, 2, 8, 1, 'DN'),
-('Nike Air Max DN', 'Design moderno e agressivo. Edição Black Anthracite.', '/uploads/dn/3.png', 1299.90, 2, 8, 1, 'DN'),
-('Nike Air Max DN', 'Estética clean com tecnologia de ponta. Edição Pure Platinum.', '/uploads/dn/4.png', 1299.90, 2, 8, 1, 'DN'),
-('Nike Air Max DN', 'O equilíbrio perfeito. Edição Black White.', '/uploads/dn/5.png', 1299.90, 2, 8, 1, 'DN'),
-('Nike Air Max DN', 'Colaboração exclusiva e limitada. Edição Supreme Black.', '/uploads/dn/6.png', 1599.90, 2, 5, 1, 'DN'),
-('Nike Air Max DN', 'Cores vibrantes do futuro. Edição Hyper Violet.', '/uploads/dn/7.png', 1299.90, 2, 8, 1, 'DN');
+('Nike Air Max DN Black Violet', 'Nike Air Max DN Black Violet\n\nNova era do Air. Tecnologia Dynamic Air 4 tubos. Preto com detalhes roxos vibrantes.', '/uploads/dn/1.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN Supreme', 'Nike Air Max DN Supreme\n\nColaboração exclusiva. Logo Supreme na lateral muda tudo. Hype instantâneo.', '/uploads/dn/2.png', 1599.90, 2, 5, 1, 'DN'),
+('Nike Air Max DN Panda', 'Nike Air Max DN Panda\n\nPreto e branco na nova silhueta DN. Equilíbrio perfeito entre futuro e clássico.', '/uploads/dn/3.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN Triple Black', 'Nike Air Max DN Triple Black\n\nDesign moderno e agressivo. Preto total com a nova bolha de ar. Stealth.', '/uploads/dn/4.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN Platinum', 'Nike Air Max DN Platinum\n\nPrata e branco. Estética clean com tecnologia de ponta. Parece nave espacial.', '/uploads/dn/5.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN Volt', 'Nike Air Max DN Volt\n\nVisual futurista e conforto surreal. Cor Volt pra chocar e chamar atenção.', '/uploads/dn/6.png', 1299.90, 2, 8, 1, 'DN'),
+('Nike Air Max DN Sail', 'Nike Air Max DN Sail\n\nTom off-white (Sail). Elegante e fácil de combinar com qualquer fit.', '/uploads/dn/7.png', 1299.90, 2, 8, 1, 'DN');
 
--- --- LOTE 15: AIR MAX DN8 ---
+-- --- LOTE 15: AIR MAX DN8 (23 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Max DN8', 'Evolução máxima do amortecimento. Edição Blue Void.', '/uploads/dn8/1.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Sombrio e tecnológico. Edição Black Grey.', '/uploads/dn8/2.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Profundidade e elegância. Edição Midnight Navy.', '/uploads/dn8/3.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Visual limpo e moderno. Edição White Blue.', '/uploads/dn8/4.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Detalhes em neon que chamam atenção. Edição White Volt.', '/uploads/dn8/5.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Contraste esportivo dinâmico. Edição Grey Orange.', '/uploads/dn8/6.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Clássico repaginado para o futuro. Edição White Black.', '/uploads/dn8/7.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Cores do pôr do sol. Edição Sunset.', '/uploads/dn8/8.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Energia pura em cada passo. Edição Volt Black.', '/uploads/dn8/9.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Estilo robusto e moderno. Edição Black Green.', '/uploads/dn8/10.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Tons neutros com atitude. Edição Grey Green.', '/uploads/dn8/11.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Leveza visual e conforto. Edição Light Grey.', '/uploads/dn8/12.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Sofisticação urbana. Edição Tan.', '/uploads/dn8/13.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Estampa exclusiva e ousada. Edição White Pattern.', '/uploads/dn8/14.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Visual gráfico impactante. Edição Black Pattern.', '/uploads/dn8/15.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Discrição e tecnologia. Edição Anthracite.', '/uploads/dn8/16.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Toque de cor vibrante. Edição Black Pink.', '/uploads/dn8/17.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Estilo marcante e moderno. Edição Pink Black.', '/uploads/dn8/18.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Agressividade e performance. Edição Black Red.', '/uploads/dn8/19.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Destaque-se na multidão. Edição Pink Red.', '/uploads/dn8/20.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Força e impacto visual. Edição Red Black.', '/uploads/dn8/21.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Cor única e diferenciada. Edição Purple.', '/uploads/dn8/22.png', 1399.90, 26, 6, 1, 'DN8'),
-('Nike Air Max DN8', 'Inspirado no militarismo urbano. Edição Olive.', '/uploads/dn8/23.png', 1399.90, 26, 6, 1, 'DN8');
+('Nike Air Max DN8 Blue Void', 'Nike Air Max DN8 Blue Void\n\nEvolução máxima: 8 tubos. Azul profundo e tecnológico.', '/uploads/dn8/1.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Black Grey', 'Nike Air Max DN8 Black Grey\n\nSombrio e futurista. Preto com cinza para visual stealth.', '/uploads/dn8/2.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Midnight', 'Nike Air Max DN8 Midnight\n\nProfundidade e elegância. Azul meia-noite com detalhes pretos.', '/uploads/dn8/3.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 White Blue', 'Nike Air Max DN8 White Blue\n\nVisual limpo e moderno. Branco com detalhes azuis elétricos.', '/uploads/dn8/4.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 White Volt', 'Nike Air Max DN8 White Volt\n\nDetalhes neon que chamam atenção. Branco com bolha Volt.', '/uploads/dn8/5.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Grey Orange', 'Nike Air Max DN8 Grey Orange\n\nContraste esportivo dinâmico. Cinza com detalhes laranjas.', '/uploads/dn8/6.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Panda', 'Nike Air Max DN8 Panda\n\nClássico repaginado pro futuro. Preto e branco, contraste forte.', '/uploads/dn8/7.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Sunset', 'Nike Air Max DN8 Sunset\n\nCores do pôr do sol. Degradê quente que destaca no pé.', '/uploads/dn8/8.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Volt Black', 'Nike Air Max DN8 Volt Black\n\nEnergia pura em cada passo. Amarelo neon e preto.', '/uploads/dn8/9.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Black Green', 'Nike Air Max DN8 Black Green\n\nEstilo robusto e moderno. Preto e verde neon.', '/uploads/dn8/10.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Grey Green', 'Nike Air Max DN8 Grey Green\n\nTons neutros com atitude. Cinza com detalhes verdes.', '/uploads/dn8/11.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Light Grey', 'Nike Air Max DN8 Light Grey\n\nLeveza visual e conforto. Cinza claro futurista.', '/uploads/dn8/12.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Tan', 'Nike Air Max DN8 Tan\n\nSofisticação urbana em tons de bege. Perfeito pro dia a dia.', '/uploads/dn8/13.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 White Pattern', 'Nike Air Max DN8 White Pattern\n\nEstampa exclusiva e ousada. Branco com gráficos.', '/uploads/dn8/14.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Black Pattern', 'Nike Air Max DN8 Black Pattern\n\nVisual gráfico impactante. Preto com estampas.', '/uploads/dn8/15.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Anthracite', 'Nike Air Max DN8 Anthracite\n\nDiscrição e tecnologia. Cinza escuro quase preto.', '/uploads/dn8/16.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Black Pink', 'Nike Air Max DN8 Black Pink\n\nToque de cor vibrante no preto. Rosa choque nos detalhes.', '/uploads/dn8/17.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Pink Black', 'Nike Air Max DN8 Pink Black\n\nEstilo marcante e moderno. Rosa predominante.', '/uploads/dn8/18.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Black Red', 'Nike Air Max DN8 Black Red\n\nAgressividade e performance. Preto e vermelho.', '/uploads/dn8/19.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Pink Red', 'Nike Air Max DN8 Pink Red\n\nDestaque-se na multidão. Mistura quente de rosa e vermelho.', '/uploads/dn8/20.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Red Black', 'Nike Air Max DN8 Red Black\n\nForça e impacto visual. Vermelho com preto.', '/uploads/dn8/21.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Purple', 'Nike Air Max DN8 Purple\n\nCor única e diferenciada. Roxo metálico.', '/uploads/dn8/22.png', 1399.90, 26, 6, 1, 'DN8'),
+('Nike Air Max DN8 Olive', 'Nike Air Max DN8 Olive\n\nInspirado no militarismo urbano. Verde oliva tático.', '/uploads/dn8/23.png', 1399.90, 26, 6, 1, 'DN8');
 
--- --- LOTE 16: AIR MAX DRIFT ---
+-- --- LOTE 16: AIR MAX DRIFT (5 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Max Plus Drift', 'A evolução agressiva do TN. Edição Light Blue.', '/uploads/drift/1.png', 1199.90, 27, 8, 1, 'DRIFT'),
-('Nike Air Max Plus Drift', 'Visual imponente e estruturado. Edição Black.', '/uploads/drift/2.png', 1199.90, 27, 8, 1, 'DRIFT'),
-('Nike Air Max Plus Drift', 'Design futurista em tons frios. Edição Grey Blue.', '/uploads/drift/3.png', 1199.90, 27, 8, 1, 'DRIFT'),
-('Nike Air Max Plus Drift', 'Velocidade e estilo. Edição Red Black.', '/uploads/drift/4.png', 1199.90, 27, 8, 1, 'DRIFT'),
-('Nike Air Max Plus Drift', 'O contraste Panda numa silhueta moderna. Preto e Branco.', '/uploads/drift/5.png', 1199.90, 27, 8, 1, 'DRIFT');
+('Nike Air Max Plus Drift Phantom', 'Nike Air Max Plus Drift Phantom\n\nEvolução agressiva do TN. Branco fantasma com estrutura preta. Visual de tubarão futurista.', '/uploads/drift/1.png', 1199.90, 27, 8, 1, 'DRIFT'),
+('Nike Air Max Plus Drift Sunset', 'Nike Air Max Plus Drift Sunset\n\nO clássico degradê do pôr do sol numa carcaça muito mais robusta e moderna.', '/uploads/drift/2.png', 1199.90, 27, 8, 1, 'DRIFT'),
+('Nike Air Max Plus Drift Midnight', 'Nike Air Max Plus Drift Midnight\n\nAzul e cinza numa combinação noturna. Estrutura pesada que chama atenção.', '/uploads/drift/3.png', 1199.90, 27, 8, 1, 'DRIFT'),
+('Nike Air Max Plus Drift Glacier', 'Nike Air Max Plus Drift Glacier\n\nTons de gelo e azul claro. Fresco e impactante.', '/uploads/drift/4.png', 1199.90, 27, 8, 1, 'DRIFT'),
+('Nike Air Max Plus Drift Triple Black', 'Nike Air Max Plus Drift Triple Black\n\nO mais agressivo de todos. Todo preto, parece uma armadura no pé.', '/uploads/drift/5.png', 1199.90, 27, 8, 1, 'DRIFT');
 
--- --- LOTE 17: NIKE DUNK ---
+-- --- LOTE 17: NIKE DUNK (6 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Dunk Low', 'Colaboração lendária Travis Scott. Edição Limitada.', '/uploads/dunk/1.png', 2999.90, 28, 2, 1, 'DUNK'),
-('Nike Dunk Low', 'Neutro e fácil de combinar. Edição Grey Fog.', '/uploads/dunk/2.png', 899.90, 28, 10, 1, 'DUNK'),
-('Nike Dunk Low', 'O essencial do dia a dia. Edição Grey White.', '/uploads/dunk/3.png', 899.90, 28, 10, 1, 'DUNK'),
-('Nike Dunk Low', 'Homenagem às cores universitárias. Edição University Blue.', '/uploads/dunk/4.png', 999.90, 28, 8, 1, 'DUNK'),
-('Nike Dunk Low', 'O fenômeno das ruas. O clássico Panda Preto e Branco.', '/uploads/dunk/5.png', 999.90, 28, 15, 1, 'DUNK'),
-('Nike Dunk Low', 'Vermelho vibrante e estilo retro. Edição Gym Red.', '/uploads/dunk/6.png', 899.90, 28, 8, 1, 'DUNK');
+('Nike Dunk Low Panda', 'Nike Dunk Low Panda\n\nO fenômeno. Preto e Branco. Todo mundo quer, todo mundo usa. O tênis mais versátil da atualidade.', '/uploads/dunk/1.png', 999.90, 28, 15, 1, 'DUNK'),
+('Nike Dunk Low Gym Red', 'Nike Dunk Low Gym Red\n\nVermelho universitário e branco. Aquele visual retrô que combina com jeans e bermuda.', '/uploads/dunk/2.png', 899.90, 28, 10, 1, 'DUNK'),
+('Nike Dunk Low Black White', 'Nike Dunk Low Black White\n\nOutra variação do clássico preto e branco. Simples e direto.', '/uploads/dunk/3.png', 899.90, 28, 10, 1, 'DUNK'),
+('Nike Dunk Low Kentucky', 'Nike Dunk Low Kentucky\n\nAzul royal e branco. Uma das cores originais "Be True". Clássico demais.', '/uploads/dunk/4.png', 999.90, 28, 8, 1, 'DUNK'),
+('Nike Dunk Low Grey Fog', 'Nike Dunk Low Grey Fog\n\nCinza claro e branco. A cor mais clean e fácil de combinar depois do Panda. Elegância no streetwear.', '/uploads/dunk/5.png', 899.90, 28, 10, 1, 'DUNK'),
+('Nike Dunk Low Shadow', 'Nike Dunk Low Shadow\n\nPreto, cinza e branco. Combinação neutra com toque de seriedade. Perfeito pro dia a dia.', '/uploads/dunk/6.png', 899.90, 28, 10, 1, 'DUNK');
 
--- --- LOTE 18: NIKE NOCTA GLIDE ---
+-- --- LOTE 18: NIKE NOCTA GLIDE (4 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Nocta Glide', 'Inspirado no basquete dos anos 90 por Drake. Edição White Grey.', '/uploads/glide/1.png', 1199.90, 29, 5, 1, 'GLIDE'),
-('Nike Nocta Glide', 'Design fluido e detalhes premium. Edição Black White.', '/uploads/glide/2.png', 1199.90, 29, 5, 1, 'GLIDE'),
-('Nike Nocta Glide', 'Visual limpo e futurista. Edição Triple White.', '/uploads/glide/3.png', 1199.90, 29, 5, 1, 'GLIDE'),
-('Nike Nocta Glide', 'Acabamento cromado exclusivo. Edição Black Chrome.', '/uploads/glide/4.png', 1199.90, 29, 5, 1, 'GLIDE');
+('Nike Nocta Glide White', 'Nike Nocta Glide White\n\nInspirado no basquete anos 90 por Drake. Branco com detalhes cromados. Luxo esportivo.', '/uploads/glide/1.png', 1199.90, 29, 5, 1, 'GLIDE'),
+('Nike Nocta Glide Black', 'Nike Nocta Glide Black\n\nPreto com fibra de carbono falsa e os "olhos de inseto" na sola. Design único da Nocta.', '/uploads/glide/2.png', 1199.90, 29, 5, 1, 'GLIDE'),
+('Nike Nocta Glide Triple White', 'Nike Nocta Glide Triple White\n\nTodo branco, impecável. O visual futurista ganha destaque na limpeza dessa cor.', '/uploads/glide/3.png', 1199.90, 29, 5, 1, 'GLIDE'),
+('Nike Nocta Glide Black Chrome', 'Nike Nocta Glide Black Chrome\n\nPreto com os detalhes cromados brilhando muito. A versão mais procurada.', '/uploads/glide/4.png', 1199.90, 29, 5, 1, 'GLIDE');
 
--- --- LOTE 19: AIR JORDAN 4 ---
+-- --- LOTE 19: AIR JORDAN 4 (12 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Air Jordan 4 Retro', 'O mais desejado de todos. Edição Black Cat.', '/uploads/jordan4/1.png', 1899.90, 30, 3, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'Versatilidade e história. Edição Military Black.', '/uploads/jordan4/2.png', 1599.90, 30, 5, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'Amarelo vibrante que marca presença. Edição Lightning.', '/uploads/jordan4/3.png', 1499.90, 30, 5, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'Detalhes metálicos em roxo. Edição Metallic Purple.', '/uploads/jordan4/4.png', 1499.90, 30, 5, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'O clássico reinventado em couro. Edição Bred Reimagined.', '/uploads/jordan4/5.png', 1699.90, 30, 5, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'Contraste poderoso. Edição Thunder.', '/uploads/jordan4/6.png', 1599.90, 30, 5, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'Vermelho intenso e atitude. Edição Red Thunder.', '/uploads/jordan4/7.png', 1599.90, 30, 5, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'Otimizado para o skate, estilo para a vida. Edição Pine Green SB.', '/uploads/jordan4/8.png', 1799.90, 30, 3, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'Um ícone de 1989 está de volta. Edição Military Blue.', '/uploads/jordan4/9.png', 1599.90, 30, 5, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'A cor original de Michael Jordan. Edição Fire Red.', '/uploads/jordan4/10.png', 1599.90, 30, 5, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'Clean com detalhes salpicados. Edição White Oreo.', '/uploads/jordan4/11.png', 1599.90, 30, 5, 2, 'AJ4'),
-('Air Jordan 4 Retro', 'Camurça premium em azul universitário. Edição University Blue.', '/uploads/jordan4/12.png', 1699.90, 30, 5, 2, 'AJ4');
+('Air Jordan 4 Metallic Purple', 'Air Jordan 4 Metallic Purple\n\nBranco couro premium com detalhes metálicos roxos. Clean e muito chique.', '/uploads/jordan4/1.png', 1499.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Black Canvas', 'Air Jordan 4 Black Canvas\n\nLona preta resistente e camurça. Visual diferenciado e rústico pro clássico AJ4.', '/uploads/jordan4/2.png', 1599.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Thunder', 'Air Jordan 4 Thunder\n\nO retorno do trovão. Preto e amarelo vibrante. Um dos colorways mais amados.', '/uploads/jordan4/3.png', 1599.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Red Thunder', 'Air Jordan 4 Red Thunder\n\nA versão vermelha do Thunder. Agressividade e estilo em cada detalhe.', '/uploads/jordan4/4.png', 1599.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Seafoam', 'Air Jordan 4 Seafoam\n\nBranco com detalhes em verde suave. Uma cor mais delicada e exclusiva.', '/uploads/jordan4/5.png', 1499.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Military Blue', 'Air Jordan 4 Military Blue\n\nÍcone de 1989 está de volta. Branco, cinza e azul militar. O verdadeiro OG.', '/uploads/jordan4/6.png', 1599.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Sail Gold', 'Air Jordan 4 Sail Gold\n\nTom off-white com detalhes dourados. Luxo puro, exclusivo.', '/uploads/jordan4/7.png', 1699.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Fire Red', 'Air Jordan 4 Fire Red\n\nA cor original de Michael Jordan. Branco, preto e vermelho. Essencial.', '/uploads/jordan4/8.png', 1599.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 University Blue', 'Air Jordan 4 University Blue\n\nCamurça azul claro premium. Homenagem à faculdade do MJ. Hype absurdo.', '/uploads/jordan4/9.png', 1699.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Lightning', 'Air Jordan 4 Lightning\n\nAmarelo total. Quem usa esse tênis quer ser visto. Um clássico relançado.', '/uploads/jordan4/10.png', 1499.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Midnight Navy', 'Air Jordan 4 Midnight Navy\n\nBranco com azul marinho e respingos cinza. Toque azul no clássico.', '/uploads/jordan4/11.png', 1599.90, 30, 5, 2, 'AJ4'),
+('Air Jordan 4 Black Cat', 'Air Jordan 4 Black Cat\n\nO rei dos Jordan 4. Preto total, nubuck. A lenda. O mais desejado de todos.', '/uploads/jordan4/12.png', 1899.90, 30, 3, 2, 'AJ4');
 
--- --- LOTE 20: LV TRAINER ---
+-- --- LOTE 20: LV TRAINER (10 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('LV Trainer', 'Luxo e streetwear por Virgil Abloh. Edição Black Denim.', '/uploads/lvtrainer/1.png', 4999.90, 31, 2, 10, 'LV'),
-('LV Trainer', 'Sofisticação em azul claro. Edição Light Blue.', '/uploads/lvtrainer/2.png', 4999.90, 31, 2, 10, 'LV'),
-('LV Trainer', 'Elegância atemporal. Edição Navy Blue.', '/uploads/lvtrainer/3.png', 4999.90, 31, 2, 10, 'LV'),
-('LV Trainer', 'Preto absoluto e discreto. Edição Noir.', '/uploads/lvtrainer/4.png', 4999.90, 31, 2, 10, 'LV'),
-('LV Trainer', 'Toque de cor icônico da maison. Edição Green.', '/uploads/lvtrainer/5.png', 4999.90, 31, 2, 10, 'LV'),
-('LV Trainer', 'A pureza do design LV. Edição White.', '/uploads/lvtrainer/6.png', 4999.90, 31, 2, 10, 'LV'),
-('LV Trainer', 'Monograma clássico em relevo. Edição Black Monogram.', '/uploads/lvtrainer/7.png', 4999.90, 31, 2, 10, 'LV'),
-('LV Trainer', 'Combinação sóbria e moderna. Edição Black Grey.', '/uploads/lvtrainer/8.png', 4999.90, 31, 2, 10, 'LV'),
-('LV Trainer', 'O charme do denim de luxo. Edição Blue Denim.', '/uploads/lvtrainer/9.png', 4999.90, 31, 2, 10, 'LV'),
-('LV Trainer', 'Neutro e extremamente chique. Edição Grey White.', '/uploads/lvtrainer/10.png', 4999.90, 31, 2, 10, 'LV');
+('LV Trainer Grey White', 'LV Trainer Grey White\n\nDesign Virgil Abloh. Cinza e branco com couro premium. O ápice do luxo no streetwear.', '/uploads/lvtrainer/1.png', 4999.90, 31, 2, 10, 'LV'),
+('LV Trainer Blue Monogram', 'LV Trainer Blue Monogram\n\nJeans azul com o monograma Louis Vuitton. Exclusividade e estilo inconfundível.', '/uploads/lvtrainer/2.png', 4999.90, 31, 2, 10, 'LV'),
+('LV Trainer Black Denim', 'LV Trainer Black Denim\n\nJeans preto monogramado. Discreto, mas quem conhece sabe o valor.', '/uploads/lvtrainer/3.png', 4999.90, 31, 2, 10, 'LV'),
+('LV Trainer Triple Black', 'LV Trainer Triple Black\n\nTodo preto, materiais variados. Elegância silenciosa.', '/uploads/lvtrainer/4.png', 4999.90, 31, 2, 10, 'LV'),
+('LV Trainer White', 'LV Trainer White\n\nBranco total. A pureza do design LV em destaque.', '/uploads/lvtrainer/5.png', 4999.90, 31, 2, 10, 'LV'),
+('LV Trainer Green', 'LV Trainer Green\n\nBranco com verde. Uma das cores mais famosas da coleção.', '/uploads/lvtrainer/6.png', 4999.90, 31, 2, 10, 'LV'),
+('LV Trainer Black Yellow', 'LV Trainer Black Yellow\n\nPreto com detalhes amarelos neon. Moderno e arrojado.', '/uploads/lvtrainer/7.png', 4999.90, 31, 2, 10, 'LV'),
+('LV Trainer Navy', 'LV Trainer Navy\n\nAzul marinho e branco. Clássico e atemporal.', '/uploads/lvtrainer/8.png', 4999.90, 31, 2, 10, 'LV'),
+('LV Trainer Light Blue', 'LV Trainer Light Blue\n\nAzul bebê com branco. Fresco e luxuoso.', '/uploads/lvtrainer/9.png', 4999.90, 31, 2, 10, 'LV'),
+('LV Trainer Panda', 'LV Trainer Panda\n\nPreto e branco. O contraste que todo mundo ama, versão luxo.', '/uploads/lvtrainer/10.png', 4999.90, 31, 2, 10, 'LV');
 
--- --- LOTE 21: NEW BALANCE 530 ---
+-- --- LOTE 21: NEW BALANCE 530 (4 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('New Balance 530', 'O queridinho do estilo retro running. Edição White Green.', '/uploads/nb530/1.png', 799.90, 32, 10, 6, 'NB530'),
-('New Balance 530', 'Conforto leve e visual clássico. Edição Black White.', '/uploads/nb530/2.png', 799.90, 32, 10, 6, 'NB530'),
-('New Balance 530', 'Detalhes em azul para um look fresh. Edição White Blue.', '/uploads/nb530/3.png', 799.90, 32, 10, 6, 'NB530'),
-('New Balance 530', 'Brilho sutil e elegância. Edição White Silver.', '/uploads/nb530/4.png', 799.90, 32, 10, 6, 'NB530');
+('New Balance 530 White Green', 'New Balance 530 White Green\n\nQueridinho do retro running. Branco com detalhes verdes. Conforto leve pro dia todo.', '/uploads/nb530/1.png', 799.90, 32, 10, 6, 'NB530'),
+('New Balance 530 Black White', 'New Balance 530 Black White\n\nPreto e branco. Visual clássico que combina com qualquer look casual.', '/uploads/nb530/2.png', 799.90, 32, 10, 6, 'NB530'),
+('New Balance 530 White Blue', 'New Balance 530 White Blue\n\nBranco com azul marinho. Fresh e esportivo.', '/uploads/nb530/3.png', 799.90, 32, 10, 6, 'NB530'),
+('New Balance 530 Silver', 'New Balance 530 Silver\n\nPrata metálico. A tendência Y2K forte nesse modelo.', '/uploads/nb530/4.png', 799.90, 32, 10, 6, 'NB530');
 
--- --- LOTE 22: NEW BALANCE 740 ---
+-- --- LOTE 22: NEW BALANCE 740 (4 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('New Balance 740', 'Estética Y2K com performance moderna. Edição Black Silver.', '/uploads/nb740/1.png', 899.90, 33, 8, 6, 'NB740'),
-('New Balance 740', 'Visual limpo com toque esportivo. Edição White Green.', '/uploads/nb740/2.png', 899.90, 33, 8, 6, 'NB740'),
-('New Balance 740', 'Futurista e ousado. Edição Silver Metallic.', '/uploads/nb740/3.png', 899.90, 33, 8, 6, 'NB740'),
-('New Balance 740', 'Clássico e versátil. Edição White Blue.', '/uploads/nb740/4.png', 899.90, 33, 8, 6, 'NB740');
+('New Balance 740 Black Silver', 'New Balance 740 Black Silver\n\nEstética técnica e moderna. Preto com prata.', '/uploads/nb740/1.png', 899.90, 33, 8, 6, 'NB740'),
+('New Balance 740 White Green', 'New Balance 740 White Green\n\nVisual limpo com toque esportivo verde. Elegante e funcional.', '/uploads/nb740/2.png', 899.90, 33, 8, 6, 'NB740'),
+('New Balance 740 Silver', 'New Balance 740 Silver\n\nFuturista e ousado. Prata metálico total.', '/uploads/nb740/3.png', 899.90, 33, 8, 6, 'NB740'),
+('New Balance 740 White Blue', 'New Balance 740 White Blue\n\nClássico e versátil. Branco com detalhes azuis.', '/uploads/nb740/4.png', 899.90, 33, 8, 6, 'NB740');
 
--- --- LOTE 23: NEW BALANCE 1000 ---
+-- --- LOTE 23: NEW BALANCE 1000 (4 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('New Balance 1000', 'Design inovador e texturas premium. Edição Angora.', '/uploads/nb1000/1.png', 1099.90, 34, 6, 6, 'NB1000'),
-('New Balance 1000', 'Visual técnico e moderno. Edição Silver Metallic.', '/uploads/nb1000/2.png', 1099.90, 34, 6, 6, 'NB1000'),
-('New Balance 1000', 'Brilho e sofisticação. Edição Black Ice.', '/uploads/nb1000/3.png', 1099.90, 34, 6, 6, 'NB1000'),
-('New Balance 1000', 'Combinação de cores única. Edição Pink Brown.', '/uploads/nb1000/4.png', 1099.90, 34, 6, 6, 'NB1000');
+('New Balance 1000 Angora', 'New Balance 1000 Angora\n\nDesign inovador e texturas premium em tons claros de bege e rosa.', '/uploads/nb1000/1.png', 1099.90, 34, 6, 6, 'NB1000'),
+('New Balance 1000 Silver', 'New Balance 1000 Silver\n\nVisual técnico e moderno em prata. Parece que veio do futuro.', '/uploads/nb1000/2.png', 1099.90, 34, 6, 6, 'NB1000'),
+('New Balance 1000 Black Ice', 'New Balance 1000 Black Ice\n\nBrilho e sofisticação em preto degradê. Muito style.', '/uploads/nb1000/3.png', 1099.90, 34, 6, 6, 'NB1000'),
+('New Balance 1000 Pink', 'New Balance 1000 Pink\n\nCombinação de cores única com rosa e marrom. Diferenciado.', '/uploads/nb1000/4.png', 1099.90, 34, 6, 6, 'NB1000');
 
--- --- LOTE 24: NEW BALANCE 9060 ---
+-- --- LOTE 24: NEW BALANCE 9060 (9 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('New Balance 9060', 'Sola volumosa e design agressivo. Edição Black Red.', '/uploads/nb9060/1.png', 1199.90, 35, 8, 6, 'NB9060'),
-('New Balance 9060', 'Futurismo e conforto extremo. Edição Black Castlerock.', '/uploads/nb9060/2.png', 1199.90, 35, 8, 6, 'NB9060'),
-('New Balance 9060', 'O contraste perfeito. Edição Oreo.', '/uploads/nb9060/3.png', 1199.90, 35, 8, 6, 'NB9060'),
-('New Balance 9060', 'Tons neutros e elegantes. Edição Sea Salt.', '/uploads/nb9060/4.png', 1199.90, 35, 8, 6, 'NB9060'),
-('New Balance 9060', 'Estilo orgânico e natural. Edição Driftwood.', '/uploads/nb9060/5.png', 1199.90, 35, 8, 6, 'NB9060'),
-('New Balance 9060', 'Azul profundo e sofisticado. Edição Navy.', '/uploads/nb9060/6.png', 1199.90, 35, 8, 6, 'NB9060'),
-('New Balance 9060', 'Suavidade em tons pastéis. Edição Blue Haze.', '/uploads/nb9060/7.png', 1199.90, 35, 8, 6, 'NB9060'),
-('New Balance 9060', 'Essencial e moderno. Edição Black White.', '/uploads/nb9060/8.png', 1199.90, 35, 8, 6, 'NB9060'),
-('New Balance 9060', 'Tons minerais únicos. Edição Quartz Grey.', '/uploads/nb9060/9.png', 1199.90, 35, 8, 6, 'NB9060');
+('New Balance 9060 Sea Salt', 'New Balance 9060 Sea Salt\n\nTons neutros e elegantes. Bege claro (Sal Marinho). Luxo casual.', '/uploads/nb9060/1.png', 1199.90, 35, 8, 6, 'NB9060'),
+('New Balance 9060 Castlerock', 'New Balance 9060 Castlerock\n\nFuturismo e conforto extremo. Cinza e preto. O modelo do momento.', '/uploads/nb9060/2.png', 1199.90, 35, 8, 6, 'NB9060'),
+('New Balance 9060 Blue Haze', 'New Balance 9060 Blue Haze\n\nSuavidade em tons pastéis de azul. Diferenciado.', '/uploads/nb9060/3.png', 1199.90, 35, 8, 6, 'NB9060'),
+('New Balance 9060 Navy', 'New Balance 9060 Navy\n\nAzul profundo e sofisticado. Uma cor mais séria pra silhueta ousada.', '/uploads/nb9060/4.png', 1199.90, 35, 8, 6, 'NB9060'),
+('New Balance 9060 Driftwood', 'New Balance 9060 Driftwood\n\nEstilo orgânico e natural. Tons de madeira e creme.', '/uploads/nb9060/5.png', 1199.90, 35, 8, 6, 'NB9060'),
+('New Balance 9060 Quartz', 'New Balance 9060 Quartz\n\nTons minerais únicos e claros. Cinza quartzo.', '/uploads/nb9060/6.png', 1199.90, 35, 8, 6, 'NB9060'),
+('New Balance 9060 Black White', 'New Balance 9060 Black White\n\nEssencial e moderno. Preto com sola branca. Básico que funciona.', '/uploads/nb9060/7.png', 1199.90, 35, 8, 6, 'NB9060'),
+('New Balance 9060 Oreo', 'New Balance 9060 Oreo\n\nO contraste perfeito preto e branco. Versátil demais.', '/uploads/nb9060/8.png', 1199.90, 35, 8, 6, 'NB9060'),
+('New Balance 9060 Black Red', 'New Balance 9060 Black Red\n\nSola volumosa e design agressivo. Preto e vermelho. Conforto absurdo.', '/uploads/nb9060/9.png', 1199.90, 35, 8, 6, 'NB9060');
 
--- --- LOTE 25: NIKE VOMERO 5 ---
+-- --- LOTE 25: NIKE VOMERO 5 (5 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Zoom Vomero 5', 'A tendência Dad Shoe com conforto máximo. Edição Cobblestone.', '/uploads/nikevomero/1.png', 1099.90, 36, 10, 1, 'VOMERO'),
-('Nike Zoom Vomero 5', 'Visual rápido e moderno. Edição Supersonic.', '/uploads/nikevomero/2.png', 1099.90, 36, 10, 1, 'VOMERO'),
-('Nike Zoom Vomero 5', 'Tons metálicos e malha respirável. Edição Iron Ore.', '/uploads/nikevomero/3.png', 1099.90, 36, 10, 1, 'VOMERO'),
-('Nike Zoom Vomero 5', 'Discreto e cheio de tecnologia. Edição Triple Black.', '/uploads/nikevomero/4.png', 1099.90, 36, 10, 1, 'VOMERO'),
-('Nike Zoom Vomero 5', 'O branco gelo que eleva qualquer look. Edição Photon Dust.', '/uploads/nikevomero/5.png', 1099.90, 36, 10, 1, 'VOMERO');
+('Nike Zoom Vomero 5 Cobblestone', 'Nike Zoom Vomero 5 Cobblestone\n\nA tendência Dad Shoe com conforto máximo. Cinza pedregulho com detalhes verdes.', '/uploads/nikevomero/1.png', 1099.90, 36, 10, 1, 'VOMERO'),
+('Nike Zoom Vomero 5 Supersonic', 'Nike Zoom Vomero 5 Supersonic\n\nVisual rápido e moderno. Branco, preto e creme. Tech runner.', '/uploads/nikevomero/2.png', 1099.90, 36, 10, 1, 'VOMERO'),
+('Nike Zoom Vomero 5 Iron Ore', 'Nike Zoom Vomero 5 Iron Ore\n\nTons metálicos e malha respirável. Cinza ferro. Muito style.', '/uploads/nikevomero/3.png', 1099.90, 36, 10, 1, 'VOMERO'),
+('Nike Zoom Vomero 5 Triple Black', 'Nike Zoom Vomero 5 Triple Black\n\nDiscreto e cheio de tecnologia. Preto total. Ninja.', '/uploads/nikevomero/4.png', 1099.90, 36, 10, 1, 'VOMERO'),
+('Nike Zoom Vomero 5 Photon Dust', 'Nike Zoom Vomero 5 Photon Dust\n\nO branco gelo que eleva qualquer look. Super clean.', '/uploads/nikevomero/5.png', 1099.90, 36, 10, 1, 'VOMERO');
 
--- --- LOTE 26: NOCTA HOT STEP 2 ---
+-- --- LOTE 26: NOCTA HOT STEP 2 (4 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Nocta Hot Step 2', 'A evolução da parceria com Drake. Edição Black.', '/uploads/noctahotstep/1.png', 1399.90, 37, 5, 1, 'HOTSTEP'),
-('Nike Nocta Hot Step 2', 'Cor vibrante que rouba a cena. Edição Total Orange.', '/uploads/noctahotstep/2.png', 1399.90, 37, 5, 1, 'HOTSTEP'),
-('Nike Nocta Hot Step 2', 'Design clean e futurista. Edição White.', '/uploads/noctahotstep/3.png', 1399.90, 37, 5, 1, 'HOTSTEP'),
-('Nike Nocta Hot Step 2', 'Tom exclusivo e sofisticado. Edição Eggplant.', '/uploads/noctahotstep/4.png', 1399.90, 37, 5, 1, 'HOTSTEP');
+('Nocta Hot Step 2 Black', 'Nike Nocta Hot Step 2 Black\n\nEvolução da parceria com Drake. Preto com detalhes refletivos. Futurista.', '/uploads/noctahotstep/1.png', 1399.90, 37, 5, 1, 'HOTSTEP'),
+('Nocta Hot Step 2 Orange', 'Nike Nocta Hot Step 2 Orange\n\nCor vibrante que rouba a cena. Laranja total. Presença.', '/uploads/noctahotstep/2.png', 1399.90, 37, 5, 1, 'HOTSTEP'),
+('Nocta Hot Step 2 White', 'Nike Nocta Hot Step 2 White\n\nDesign clean e futurista. Branco total. Impecável.', '/uploads/noctahotstep/3.png', 1399.90, 37, 5, 1, 'HOTSTEP'),
+('Nocta Hot Step 2 Eggplant', 'Nike Nocta Hot Step 2 Eggplant\n\nTom exclusivo e sofisticado. Roxo berinjela metálico.', '/uploads/noctahotstep/4.png', 1399.90, 37, 5, 1, 'HOTSTEP');
 
--- --- LOTE 27: NIKE P-6000 ---
+-- --- LOTE 27: NIKE P-6000 (5 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike P-6000', 'Estilo de corrida dos anos 2000. Edição Black.', '/uploads/p6000/1.png', 899.90, 38, 12, 1, 'P6000'),
-('Nike P-6000', 'Visual esportivo retrô. Edição White Red.', '/uploads/p6000/2.png', 899.90, 38, 12, 1, 'P6000'),
-('Nike P-6000', 'Detalhes dourados para um toque premium. Edição White Gold.', '/uploads/p6000/3.png', 899.90, 38, 12, 1, 'P6000'),
-('Nike P-6000', 'A era de prata da corrida. Edição Metallic Silver.', '/uploads/p6000/4.png', 899.90, 38, 12, 1, 'P6000'),
-('Nike P-6000', 'Azul clássico e versátil. Edição Blue Silver.', '/uploads/p6000/5.png', 899.90, 38, 12, 1, 'P6000');
+('Nike P-6000 Black', 'Nike P-6000 Black\n\nEstilo de corrida anos 2000. Preto básico. Conforto e nostalgia.', '/uploads/p6000/1.png', 899.90, 38, 12, 1, 'P6000'),
+('Nike P-6000 Red', 'Nike P-6000 Red\n\nVisual esportivo retrô. Branco com vermelho. Clássico runner.', '/uploads/p6000/2.png', 899.90, 38, 12, 1, 'P6000'),
+('Nike P-6000 Gold', 'Nike P-6000 Gold\n\nDetalhes dourados para um toque premium no branco.', '/uploads/p6000/3.png', 899.90, 38, 12, 1, 'P6000'),
+('Nike P-6000 Silver', 'Nike P-6000 Silver\n\nA era de prata da corrida. Metálico clássico Y2K.', '/uploads/p6000/4.png', 899.90, 38, 12, 1, 'P6000'),
+('Nike P-6000 Blue', 'Nike P-6000 Blue\n\nAzul clássico e versátil. Branco com azul.', '/uploads/p6000/5.png', 899.90, 38, 12, 1, 'P6000');
 
--- --- LOTE 28: PUMA 180 ---
+-- --- LOTE 28: PUMA 180 (5 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Puma-180', 'Estilo skate chunky dos anos 90. Edição Cordura Grey.', '/uploads/puma180/1.png', 799.90, 39, 8, 7, 'PUMA180'),
-('Puma-180', 'Visual limpo e volumoso. Edição White Grey.', '/uploads/puma180/2.png', 799.90, 39, 8, 7, 'PUMA180'),
-('Puma-180', 'Sombrio e estiloso. Edição Dark Grey.', '/uploads/puma180/3.png', 799.90, 39, 8, 7, 'PUMA180'),
-('Puma-180', 'Detalhes suaves em azul. Edição White Blue.', '/uploads/puma180/4.png', 799.90, 39, 8, 7, 'PUMA180'),
-('Puma-180', 'Tons quentes e diferenciados. Edição Chocolate.', '/uploads/puma180/5.png', 799.90, 39, 8, 7, 'PUMA180');
+('Puma-180 Grey', 'Puma-180 Grey\n\nEstilo skate chunky anos 90. Cinza Cordura. Robusto.', '/uploads/puma180/1.png', 799.90, 39, 8, 7, 'PUMA180'),
+('Puma-180 White', 'Puma-180 White\n\nVisual limpo e volumoso. Branco e cinza. Clean.', '/uploads/puma180/2.png', 799.90, 39, 8, 7, 'PUMA180'),
+('Puma-180 Dark', 'Puma-180 Dark\n\nSombrio e estiloso. Cinza escuro. Aguenta o tranco.', '/uploads/puma180/3.png', 799.90, 39, 8, 7, 'PUMA180'),
+('Puma-180 Blue', 'Puma-180 Blue\n\nDetalhes suaves em azul. Estética retro skate.', '/uploads/puma180/4.png', 799.90, 39, 8, 7, 'PUMA180'),
+('Puma-180 Chocolate', 'Puma-180 Chocolate\n\nTons quentes e diferenciados. Marrom. Estilo único.', '/uploads/puma180/5.png', 799.90, 39, 8, 7, 'PUMA180');
 
--- --- LOTE 29: NIKE SHOX TL ---
+-- --- LOTE 29: NIKE SHOX TL (4 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Shox TL', 'O retorno das 12 molas. Impacto visual White Silver.', '/uploads/shox/1.png', 1199.90, 40, 5, 1, 'SHOX'),
-('Nike Shox TL', 'Agressivo e mecânico. Edição Triple Black.', '/uploads/shox/2.png', 1199.90, 40, 5, 1, 'SHOX'),
-('Nike Shox TL', 'Futurismo puro. Edição Metallic Silver.', '/uploads/shox/3.png', 1199.90, 40, 5, 1, 'SHOX'),
-('Nike Shox TL', 'O contraste clássico das molas. Edição White Black.', '/uploads/shox/4.png', 1199.90, 40, 5, 1, 'SHOX');
+('Nike Shox TL White', 'Nike Shox TL White\n\nRetorno das 12 molas. Impacto visual branco e prata. O famoso 12 molas.', '/uploads/shox/1.png', 1199.90, 40, 5, 1, 'SHOX'),
+('Nike Shox TL Black', 'Nike Shox TL Black\n\nAgressivo e mecânico. Preto total. Vilão style.', '/uploads/shox/2.png', 1199.90, 40, 5, 1, 'SHOX'),
+('Nike Shox TL Silver', 'Nike Shox TL Silver\n\nFuturismo puro. Prata metálico. Chama atenção de longe.', '/uploads/shox/3.png', 1199.90, 40, 5, 1, 'SHOX'),
+('Nike Shox TL Panda', 'Nike Shox TL Panda\n\nO contraste clássico das molas. Branco e preto.', '/uploads/shox/4.png', 1199.90, 40, 5, 1, 'SHOX');
 
--- --- LOTE 30: YEEZY SLIDE ---
+-- --- LOTE 30: YEEZY SLIDE (2 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Yeezy Slide', 'Conforto minimalista revolucionário. Edição Slate.', '/uploads/slide/1.png', 499.90, 41, 20, 12, 'SLIDE'),
-('Yeezy Slide', 'Estilo orgânico e neutro. Edição Bone.', '/uploads/slide/2.png', 499.90, 41, 20, 12, 'SLIDE');
+('Yeezy Slide Slate', 'Yeezy Slide Slate\n\nConforto minimalista revolucionário. Tom cinza escuro. Pra relaxar com hype.', '/uploads/slide/1.png', 499.90, 41, 20, 12, 'SLIDE'),
+('Yeezy Slide Bone', 'Yeezy Slide Bone\n\nEstilo orgânico e neutro. Cor osso. O chinelo mais desejado.', '/uploads/slide/2.png', 499.90, 41, 20, 12, 'SLIDE');
 
--- --- LOTE 31: PUMA SUEDE XL ---
+-- --- LOTE 31: PUMA SUEDE XL (8 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Puma Suede XL', 'O clássico agora exagerado e confortável. White Green.', '/uploads/suede/1.png', 599.90, 42, 10, 7, 'SUEDE'),
-('Puma Suede XL', 'Estilo retro com cadarços fat. Edição Maroon.', '/uploads/suede/2.png', 599.90, 42, 10, 7, 'SUEDE'),
-('Puma Suede XL', 'Sola gum clássica e camurça preta. Edição Black Gum.', '/uploads/suede/3.png', 599.90, 42, 10, 7, 'SUEDE'),
-('Puma Suede XL', 'Visual all-black robusto. Edição Triple Black.', '/uploads/suede/4.png', 599.90, 42, 10, 7, 'SUEDE'),
-('Puma Suede XL', 'Limpo e impactante. Edição White.', '/uploads/suede/5.png', 599.90, 42, 10, 7, 'SUEDE'),
-('Puma Suede XL', 'Energia vermelha para o seu outfit. Edição Red.', '/uploads/suede/6.png', 599.90, 42, 10, 7, 'SUEDE'),
-('Puma Suede XL', 'Azul real vibrante. Edição Royal Blue.', '/uploads/suede/7.png', 599.90, 42, 10, 7, 'SUEDE'),
-('Puma Suede XL', 'O OG remasterizado. Edição Black White.', '/uploads/suede/8.png', 599.90, 42, 10, 7, 'SUEDE');
+('Puma Suede XL Green', 'Puma Suede XL Green\n\nO clássico agora exagerado e confortável. Verde com listra branca. Cadarço fat.', '/uploads/suede/1.png', 599.90, 42, 10, 7, 'SUEDE'),
+('Puma Suede XL Maroon', 'Puma Suede XL Maroon\n\nEstilo retro com cadarços fat. Vinho. Vibe anos 2000.', '/uploads/suede/2.png', 599.90, 42, 10, 7, 'SUEDE'),
+('Puma Suede XL Black Gum', 'Puma Suede XL Black Gum\n\nSola gum clássica e camurça preta. O combo perfeito.', '/uploads/suede/3.png', 599.90, 42, 10, 7, 'SUEDE'),
+('Puma Suede XL Black', 'Puma Suede XL Black\n\nVisual all-black robusto. Pra lixar ou pro rolê.', '/uploads/suede/4.png', 599.90, 42, 10, 7, 'SUEDE'),
+('Puma Suede XL White', 'Puma Suede XL White\n\nLimpo e impactante. Branco e preto. Clássico.', '/uploads/suede/5.png', 599.90, 42, 10, 7, 'SUEDE'),
+('Puma Suede XL Red', 'Puma Suede XL Red\n\nEnergia vermelha para o seu outfit. Destaque total.', '/uploads/suede/6.png', 599.90, 42, 10, 7, 'SUEDE'),
+('Puma Suede XL Blue', 'Puma Suede XL Blue\n\nAzul real vibrante. Cor forte e marcante.', '/uploads/suede/7.png', 599.90, 42, 10, 7, 'SUEDE'),
+('Puma Suede XL Panda', 'Puma Suede XL Panda\n\nO OG remasterizado. Preto e branco invertido.', '/uploads/suede/8.png', 599.90, 42, 10, 7, 'SUEDE');
 
--- --- LOTE 32: TIMBERLAND ---
+-- --- LOTE 32: TIMBERLAND (4 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Timberland 6-Inch', 'A bota amarela original à prova d''água. Edição Chocolate.', '/uploads/timbis/1.png', 999.90, 10, 5, 8, 'TIMBERLAND'),
-('Timberland 6-Inch', 'Durabilidade e estilo urbano. Edição Black Nobuck.', '/uploads/timbis/2.png', 999.90, 10, 5, 8, 'TIMBERLAND'),
-('Timberland 6-Inch', 'Toque militar e robusto. Edição Olive.', '/uploads/timbis/3.png', 999.90, 10, 5, 8, 'TIMBERLAND'),
-('Timberland 6-Inch', 'O clássico absoluto. Edição Wheat Yellow.', '/uploads/timbis/4.png', 999.90, 10, 5, 8, 'TIMBERLAND');
+('Timberland Chocolate', 'Timberland 6-Inch Chocolate\n\nA bota amarela original à prova d''água. Marrom escuro. Indestrutível.', '/uploads/timbis/1.png', 999.90, 10, 5, 8, 'TIMBERLAND'),
+('Timberland Black', 'Timberland 6-Inch Black\n\nDurabilidade e estilo urbano. Preto nobuck. Pesada.', '/uploads/timbis/2.png', 999.90, 10, 5, 8, 'TIMBERLAND'),
+('Timberland Olive', 'Timberland 6-Inch Olive\n\nToque militar e robusto. Verde oliva. Pra qualquer terreno.', '/uploads/timbis/3.png', 999.90, 10, 5, 8, 'TIMBERLAND'),
+('Timberland Wheat', 'Timberland 6-Inch Wheat\n\nO clássico absoluto. Amarelo trigo. O ícone de Nova York.', '/uploads/timbis/4.png', 999.90, 10, 5, 8, 'TIMBERLAND');
 
--- --- LOTE 33: AIR MAX TN (TN1) ---
+-- --- LOTE 33: AIR MAX TN (TN1) (20 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Max TN', 'O Tubarão original com tecnologia Tuned Air. Edição Black Blue.', '/uploads/tn1/1.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Degradê agressivo laranja. Edição Tiger.', '/uploads/tn1/2.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Sóbrio e icônico. Edição Grey Black.', '/uploads/tn1/3.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Base preta com destaque branco. Edição Black Swoosh.', '/uploads/tn1/4.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Roxo elétrico que chama atenção. Edição Voltage Purple.', '/uploads/tn1/5.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'O azul clássico do TN. Edição Hyper Blue.', '/uploads/tn1/6.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Cores inspiradas na bandeira francesa. Edição France.', '/uploads/tn1/7.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Fresco e impactante. Edição Glacier Blue.', '/uploads/tn1/8.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Limpo e futurista. Edição Triple White.', '/uploads/tn1/9.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Stealth total. O mais procurado. Edição Triple Black.', '/uploads/tn1/10.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Vermelho e preto intenso. Edição Deadpool.', '/uploads/tn1/11.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Degradê pôr do sol inconfundível. Edição Sunset.', '/uploads/tn1/12.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Branco com detalhes verdes. Edição Celtics.', '/uploads/tn1/13.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Elegância esportiva. Edição White Royal.', '/uploads/tn1/14.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Contraste forte. Edição Black Orange.', '/uploads/tn1/15.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Roxo clássico e atemporal. Edição Grape.', '/uploads/tn1/16.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Azul céu vibrante. Edição Sky Blue.', '/uploads/tn1/17.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Branco com detalhes vermelhos. Edição White Red.', '/uploads/tn1/18.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Preto com brilho prata. Edição Black Silver.', '/uploads/tn1/19.png', 1199.90, 3, 8, 1, 'TN'),
-('Nike Air Max TN', 'Turquesa que se destaca. Edição Aqua.', '/uploads/tn1/20.png', 1199.90, 3, 8, 1, 'TN');
+('Air Max TN Black Blue', 'Nike Air Max TN Black Blue\n\nO Tubarão original com tecnologia Tuned Air. Preto e azul. Agressivo.', '/uploads/tn1/1.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Tiger', 'Nike Air Max TN Tiger\n\nDegradê agressivo laranja. O famoso Tigre. Clássico das ruas.', '/uploads/tn1/2.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Grey', 'Nike Air Max TN Grey\n\nSóbrio e icônico. Cinza e preto. Combina com tudo.', '/uploads/tn1/3.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Black Swoosh', 'Nike Air Max TN Black Swoosh\n\nBase preta com destaque branco no logo. Simples e chave.', '/uploads/tn1/4.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Purple', 'Nike Air Max TN Purple\n\nRoxo elétrico que chama atenção. Voltage Purple. Histórico.', '/uploads/tn1/5.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Hyper Blue', 'Nike Air Max TN Hyper Blue\n\nO azul clássico do TN. Original de 98. Lenda viva.', '/uploads/tn1/6.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN France', 'Nike Air Max TN France\n\nCores inspiradas na bandeira francesa. Estampa xadrez. Exclusivo.', '/uploads/tn1/7.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Glacier', 'Nike Air Max TN Glacier\n\nFresco e impactante. Azul gelo. Visual clean.', '/uploads/tn1/8.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN White', 'Nike Air Max TN White\n\nLimpo e futurista. Branco total. Cuidado onde pisa.', '/uploads/tn1/9.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Triple Black', 'Nike Air Max TN Triple Black\n\nStealth total. O mais procurado. Preto total. O verdadeiro tubarão.', '/uploads/tn1/10.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Deadpool', 'Nike Air Max TN Deadpool\n\nVermelho e preto intenso. Agressivo e perigoso.', '/uploads/tn1/11.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Sunset', 'Nike Air Max TN Sunset\n\nDegradê pôr do sol inconfundível. Laranja e vermelho. Obra de arte.', '/uploads/tn1/12.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Celtics', 'Nike Air Max TN Celtics\n\nBranco com detalhes verdes e dourados. Raro.', '/uploads/tn1/13.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Royal', 'Nike Air Max TN Royal\n\nElegância esportiva. Branco e azul real.', '/uploads/tn1/14.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Orange', 'Nike Air Max TN Orange\n\nContraste forte. Preto e laranja. Halloween vibe.', '/uploads/tn1/15.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Grape', 'Nike Air Max TN Grape\n\nRoxo clássico e atemporal. Preto e roxo.', '/uploads/tn1/16.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Sky', 'Nike Air Max TN Sky\n\nAzul céu vibrante com branco. Leve e estiloso.', '/uploads/tn1/17.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Red', 'Nike Air Max TN Red\n\nBranco com detalhes vermelhos. Esportivo clássico.', '/uploads/tn1/18.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Silver', 'Nike Air Max TN Silver\n\nPreto com brilho prata metálico. Futurista.', '/uploads/tn1/19.png', 1199.90, 3, 8, 1, 'TN'),
+('Air Max TN Aqua', 'Nike Air Max TN Aqua\n\nTurquesa que se destaca no pé. Diferenciado.', '/uploads/tn1/20.png', 1199.90, 3, 8, 1, 'TN');
 
--- --- LOTE 34: AIR MAX TN3 ---
+-- --- LOTE 34: AIR MAX TN3 (4 Produtos) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Max TN3', 'A evolução aerodinâmica do TN. Edição Black Blue.', '/uploads/tn3/1.png', 1299.90, 43, 6, 1, 'TN3'),
-('Nike Air Max TN3', 'Design rápido e futurista. Edição White Blue.', '/uploads/tn3/2.png', 1299.90, 43, 6, 1, 'TN3'),
-('Nike Air Max TN3', 'Visual clean com linhas agressivas. Edição Triple White.', '/uploads/tn3/3.png', 1299.90, 43, 6, 1, 'TN3'),
-('Nike Air Max TN3', 'Preto e vermelho poderoso. Edição Black Red.', '/uploads/tn3/4.png', 1299.90, 43, 6, 1, 'TN3');
+('Air Max TN3 Blue', 'Nike Air Max TN3 Blue\n\nA evolução aerodinâmica do TN. Preto e azul. Velocidade.', '/uploads/tn3/1.png', 1299.90, 43, 6, 1, 'TN3'),
+('Air Max TN3 White Blue', 'Nike Air Max TN3 White Blue\n\nDesign rápido e futurista. Branco e azul.', '/uploads/tn3/2.png', 1299.90, 43, 6, 1, 'TN3'),
+('Air Max TN3 White', 'Nike Air Max TN3 White\n\nVisual clean com linhas agressivas. Branco total.', '/uploads/tn3/3.png', 1299.90, 43, 6, 1, 'TN3'),
+('Air Max TN3 Red', 'Nike Air Max TN3 Red\n\nPreto e vermelho poderoso. Design técnico.', '/uploads/tn3/4.png', 1299.90, 43, 6, 1, 'TN3');
