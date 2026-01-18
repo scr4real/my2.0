@@ -231,7 +231,12 @@
   position: relative;
   overflow: visible; /* Permite sombra */
   background-color: transparent; /* SEM FUNDO BRANCO! */
-  padding: 10px;
+  
+  /* PADDING AJUSTADO PARA 3PX */
+  padding: 3px; 
+  
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
 /* IMAGEM FLUTUANTE */
@@ -282,6 +287,7 @@
   overflow: hidden;
   margin: 0;
   min-height: 2.8em;
+  text-transform: uppercase;
 }
 
 .product-price {
@@ -311,6 +317,10 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   box-shadow: none;
+}
+
+.product-info .shipping-tag i {
+    font-size: 0.85rem;
 }
 
 /* Botão Adicionar ao Carrinho (Style Outline) */
@@ -405,7 +415,7 @@
   }
 
   .swiper[class*="collection-swiper"] .swiper-slide {
-    width: 240px !important;
+    width: 260px !important;
   }
 
   .product-card {
@@ -417,7 +427,10 @@
   /* === CORREÇÃO DAS IMAGENS NO MOBILE === */
   .product-image-wrapper {
     height: 180px !important;
-    padding: 10px !important;
+    
+    /* PADDING 3PX NO MOBILE */
+    padding: 3px !important; 
+    
     margin: 0 !important;
     background-color: transparent !important; /* IMPORTANTE: Transparente no mobile também */
   }
@@ -510,7 +523,7 @@
   }
 }
 
-/* Tablet (769px a 1024px) */
+/* Tablet (769px a 1024px) - MANTÉM DESKTOP */
 @media (min-width: 769px) and (max-width: 1024px) {
   .collection-section .section-header {
     padding: 0 var(--space-md);
@@ -534,7 +547,7 @@
   }
 }
 
-/* Desktop Grande (acima de 1440px) */
+/* Desktop Grande (acima de 1440px) - EXATAMENTE COMO ANTES */
 @media (min-width: 1440px) {
   .swiper[class*="collection-swiper"] {
     padding: var(--space-xl) calc((100% - 1400px) / 2 + 1.5rem);
