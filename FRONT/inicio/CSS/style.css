@@ -855,3 +855,8 @@
         justify-content: center;
     }
 }
+
+/* Fallback: Se o JS demorar, mostra o botão com opacidade total por padrão */
+.gsap-fade-up {
+    opacity: 1; /* O JS vai mudar para 0 rapidinho, mas isso garante visibilidade inicial */
+}

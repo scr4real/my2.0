@@ -17,11 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function init() {
       if (loadingOverlay) {
-        // Remove o loader IMEDIATAMENTE após o HTML estar pronto
-        // Não espera as imagens carregarem.
+        // Remove o loader IMEDIATAMENTE (não espera imagens)
         hideLoader();
-        
-        // Fallback de segurança (caso o DOM não esteja pronto por algum motivo)
+        // Garantia extra de segurança
         setTimeout(hideLoader, 2000);
       }
     }
@@ -46,21 +44,33 @@ document.addEventListener("DOMContentLoaded", () => {
   })();
 
   /**
-   * Módulo de Animações com GSAP
+   * Módulo de Animações com GSAP (CORRIGIDO: BOTÃO VISÍVEL)
    */
   const AnimationModule = (() => {
     function init() {
-      if (typeof gsap === "undefined") return;
+      // Se o GSAP não carregar, forçamos o botão a aparecer via CSS manual
+      if (typeof gsap === "undefined") {
+          document.querySelectorAll(".gsap-fade-up").forEach(el => el.style.opacity = "1");
+          return;
+      }
+      
       const elementsToAnimate = document.querySelectorAll(".gsap-fade-up");
+
       if (elementsToAnimate.length > 0) {
-          gsap.from(".gsap-fade-up", {
+          // OTIMIZAÇÃO: fromTo garante que ele saia de 0 para 1
+          // clearProps garante que o CSS do botão volte ao normal no final
+          gsap.fromTo(".gsap-fade-up", 
+            { y: 30, opacity: 0 }, // Começa invisível e mais baixo
+            { 
               duration: 0.8,
-              y: 30,
-              opacity: 0,
-              delay: 0.1,
+              y: 0,
+              opacity: 1,
+              delay: 0.1, // Começa quase imediatamente
               ease: "power2.out",
               stagger: 0.1,
-          });
+              clearProps: "transform" // Limpa bugs visuais no final
+            }
+          );
       }
     }
     return { init };
@@ -163,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const target = e.target;
         const cartItemEl = target.closest('.cart-item');
         if (!cartItemEl) return;
+
         const id = cartItemEl.dataset.id;
         const size = cartItemEl.dataset.size;
         const idx = cart.findIndex(item => item.id === id && item.size === size);
@@ -245,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 quickView.render(currentProduct);
             } catch (e) {
                 console.error(e);
-                elements.content.innerHTML = `<div class="quickview-error"><p>Erro ao carregar.</p><button onclick="window.quickViewApp.closeQuickView()">Fechar</button></div>`;
+                elements.content.innerHTML = `<div class="quickview-error"><p>Erro ao carregar.</p><button class="btn" onclick="window.quickViewApp.closeQuickView()">Fechar</button></div>`;
             }
         },
 
@@ -332,9 +343,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const AppModule = (() => {
     function init() {
-      LoadingModule.init(); // OTIMIZADO: Roda assim que o JS é lido
+      LoadingModule.init(); 
       HeaderModule.init();
-      window.addEventListener("load", AnimationModule.init);
+      // OTIMIZAÇÃO AQUI: Removemos o "window.load"
+      // A animação agora roda assim que este arquivo JS for lido (que é no final do body)
+      AnimationModule.init(); 
       CartModule.init();
       QuickViewModule.init();
       const yearEl = document.getElementById("currentYear");
