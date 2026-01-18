@@ -222,7 +222,7 @@
   50% { transform: scale(1.05); }
 }
 
-/* ===== CONTAINER DA IMAGEM (CORRIGIDO: 13px + TRANSPARENTE) ===== */
+/* ===== CONTAINER DA IMAGEM (CORREÇÃO DEFINITIVA) ===== */
 .product-image-wrapper {
   height: 300px;
   display: flex;
@@ -231,11 +231,11 @@
   position: relative;
   overflow: visible; /* Permite sombra */
   
-  /* AQUI ESTAVA O ERRO: MUDEI DE #ffffff PARA transparent */
-  background-color: transparent; 
+  /* AQUI: O !important VAI FORÇAR O TRANSPARENTE SOBRE O CATÁLOGO */
+  background-color: transparent !important; 
   
-  /* PADDING 13PX */
-  padding: 13px; 
+  /* PADDING 10PX */
+  padding: 10px; 
   
   flex-shrink: 0;
   cursor: pointer;
@@ -643,6 +643,7 @@
   
   .product-image-wrapper {
     height: 250px;
+    /* AQUI TAMBÉM: GARANTIR TRANSPARÊNCIA */
     background-color: transparent !important;
   }
   
