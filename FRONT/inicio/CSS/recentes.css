@@ -233,7 +233,7 @@
   background-color: transparent; /* SEM FUNDO BRANCO! */
   
   /* PADDING AJUSTADO PARA 3PX */
-  padding: 3px; 
+  padding: 100px; 
   
   flex-shrink: 0;
   cursor: pointer;
