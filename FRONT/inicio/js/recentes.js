@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${BASE_URL}/${cleanPath}`;
 };
 
-    // Renderiza os cards de produto
+    // Renderiza os cards de produto (ATUALIZADO COM FRETE GRÁTIS E ÍCONE)
     const renderProductRow = (productsToRender, containerId) => {
         const container = document.getElementById(containerId);
         if (!container) {
@@ -45,13 +45,17 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="product-info">
                                 <span class="product-brand">${product.marca?.nome || 'Marca'}</span>
                                 <h3 class="product-name">${product.nome || 'Produto sem nome'}</h3>
-                                <div class="shipping-tag">Frete Grátis</div>
+                                
+                                <div class="shipping-tag">
+                                    <i class="fas fa-truck"></i> Frete Grátis
+                                </div>
+                                
                                 <p class="product-price">${formatPrice(product.preco)}</p>
                             </div>
                         </a>
-                        <button class="btn btn-primary add-to-cart-btn"
+                        <button class="add-to-cart-btn"
                                 data-product-id="${product.id}">
-                            Adicionar ao Carrinho
+                            Comprar
                         </button>
                     </div>
                 </div>
@@ -120,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (window.quickViewApp && typeof window.quickViewApp.openQuickView === 'function') {
                     window.quickViewApp.openQuickView(productId);
                 } else {
-                    console.error('Erro: QuickViewApp não está definido.');
+                    // Fallback
                     const product = allProducts.find(p => p.id == productId);
                     if(product && window.addToCart) {
                          window.addToCart({
@@ -131,9 +135,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             size: 'Único',
                             quantity: 1
                         });
-                        alert(`${product.nome} adicionado ao carrinho (tamanho padrão).`);
+                        alert(`${product.nome} adicionado ao carrinho!`);
                     } else {
-                        alert('Erro ao adicionar o produto ao carrinho.');
+                        // Redireciona se não tiver carrinho
+                        window.location.href = `/FRONT/produto/HTML/produto.html?id=${productId}`;
                     }
                 }
             });
