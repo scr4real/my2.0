@@ -537,31 +537,43 @@
 @media (max-width: 768px) {
     .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .product-card { min-height: 400px; }
-  .product-image-wrapper {
-    height: 180px !important; 
     
-    /* AQUI: Remove qualquer borda interna no celular */
-    padding: 7 !important; 
-    
-    margin: 0 !important;
-    background-color: transparent !important; 
-  }
+    /* Ajuste da Imagem (Mantendo o que você já tinha) */
+    .product-image-wrapper {
+        height: 180px !important; 
+        padding: 7px !important; /* Corrigido de "7" para "7px" */
+        margin: 0 !important;
+        background-color: transparent !important; 
+    }
 
-  .product-image-wrapper img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.5));
-    
-    /* AQUI: Aumenta a imagem no celular também */
-    transform: scale(1.10); 
-  }
+    .product-image-wrapper img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.5));
+        transform: scale(1.10); 
+    }
+
     .product-name { font-size: 1.0rem; height: 2.8em; }
     .add-to-cart-btn { padding: 8px; font-size: 0.7rem; min-height: 35px; }
     .quickview-content { grid-template-columns: 1fr; }
     .quickview-gallery { border-radius: 20px 20px 0 0; min-height: 300px; }
-}
 
+    /* --- NOVO CÓDIGO: Diminuir as etiquetas "Novo", "17%" --- */
+    .product-badges {
+        top: 8px !important;
+        left: 8px !important;
+        gap: 3px !important;
+    }
+
+    .badge {
+        padding: 3px 6px !important;      /* Menor preenchimento */
+        font-size: 0.55rem !important;    /* Fonte bem pequena */
+        border-radius: 4px !important;
+        line-height: 1.1 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    }
+}
 @media (max-width: 360px) {
     .products-grid { grid-template-columns: 1fr; }
 }
