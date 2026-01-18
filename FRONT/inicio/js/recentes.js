@@ -21,25 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${BASE_URL}/${cleanPath}`;
     };
 
-    const renderSkeletons = () => {
-        const skeletonHTML = Array(5).fill(0).map(() => `
-            <div class="swiper-slide">
-                <div class="product-card skeleton-card" style="border-color: #333; background: #1a1a1a;">
-                     <div class="product-image-wrapper skeleton" style="height: 300px; opacity: 0.1;"></div>
-                     <div class="product-info" style="gap: 10px;">
-                         <div class="skeleton" style="height: 20px; width: 80%; background: #333;"></div>
-                         <div class="skeleton" style="height: 20px; width: 40%; background: #333;"></div>
-                     </div>
-                </div>
-             </div>
-        `).join('');
-
-        sectionsToBuild.forEach(section => {
-             const container = document.getElementById(section.containerId);
-             if (container) container.innerHTML = skeletonHTML;
-        });
-    };
-
     const renderProductRow = (productsToRender, containerId, categoryName) => {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -48,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const limitedProducts = productsToRender.slice(0, 5);
 
             let htmlContent = limitedProducts.map((product, index) => {
+                // OTIMIZAÇÃO: Prioridade alta para os primeiros itens
                 const isPriority = index < 4;
                 const loadingAttr = isPriority ? 'eager' : 'lazy';
                 const priorityAttr = isPriority ? 'high' : 'auto';
@@ -132,13 +114,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const fetchAndDistributeProducts = async () => {
-        renderSkeletons(); 
-
         try {
             const response = await axios.get(API_URL);
             allProducts = response.data; 
 
-            // Usa requestAnimationFrame para renderizar no frame seguinte, liberando a thread
+            // Renderiza rápido no próximo frame
             requestAnimationFrame(() => {
                 sectionsToBuild.forEach((section) => {
                     const filteredProducts = allProducts.filter(p => p.categoria?.nome === section.categoryName);

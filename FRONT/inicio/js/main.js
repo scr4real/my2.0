@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   /**
    * Módulo de Carregamento (ULTRA RÁPIDO)
+   * Libera a tela assim que o HTML carrega.
    */
   const LoadingModule = (() => {
     const loadingOverlay = document.querySelector(".loading-overlay");
@@ -48,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   const AnimationModule = (() => {
     function init() {
-      // Se o GSAP não carregar, forçamos o botão a aparecer via CSS manual
+      // Se o GSAP não carregar, força o botão a aparecer
       if (typeof gsap === "undefined") {
           document.querySelectorAll(".gsap-fade-up").forEach(el => el.style.opacity = "1");
           return;
@@ -57,15 +58,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const elementsToAnimate = document.querySelectorAll(".gsap-fade-up");
 
       if (elementsToAnimate.length > 0) {
-          // OTIMIZAÇÃO: fromTo garante que ele saia de 0 para 1
-          // clearProps garante que o CSS do botão volte ao normal no final
+          // OTIMIZAÇÃO: Começa a animar imediatamente
           gsap.fromTo(".gsap-fade-up", 
-            { y: 30, opacity: 0 }, // Começa invisível e mais baixo
+            { y: 30, opacity: 0 }, 
             { 
               duration: 0.8,
               y: 0,
               opacity: 1,
-              delay: 0.1, // Começa quase imediatamente
+              delay: 0.1, 
               ease: "power2.out",
               stagger: 0.1,
               clearProps: "transform" // Limpa bugs visuais no final
@@ -343,11 +343,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const AppModule = (() => {
     function init() {
-      LoadingModule.init(); 
+      LoadingModule.init(); // OTIMIZADO: Roda agora!
       HeaderModule.init();
-      // OTIMIZAÇÃO AQUI: Removemos o "window.load"
-      // A animação agora roda assim que este arquivo JS for lido (que é no final do body)
-      AnimationModule.init(); 
+      AnimationModule.init(); // OTIMIZADO: Não espera mais o window.load
       CartModule.init();
       QuickViewModule.init();
       const yearEl = document.getElementById("currentYear");
