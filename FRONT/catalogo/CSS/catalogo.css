@@ -302,7 +302,7 @@
 }
 
 .product-name {
-    font-weight: 800;
+    font-weight: 1000;
     font-size: 1rem;
     margin: 0;
     line-height: 1.4;
@@ -344,14 +344,14 @@
 }
 
 .current-price {
-    font-size: 0.9rem;
+    font-size: 1.0rem;
     font-weight: 700;
     color: var(--brand-orange); /* Preço Laranja Neon */
     text-shadow: 0 0 15px rgba(255, 102, 0, 0.2);
 }
 
 .original-price {
-    font-size: 0.rem;
+    font-size: 0.7rem;
     color: #555;
     text-decoration: line-through;
 }
@@ -414,7 +414,6 @@
 }
 
 .products-grid[data-view="list"] .product-info {
-    padding: 0;
     border: none;
 }
 
@@ -424,11 +423,10 @@
 
 .products-grid[data-view="list"] .product-price {
     border: none;
-    padding: 0;
+
 }
 
 .products-grid[data-view="list"] .product-footer {
-    padding: 0;
     width: 180px;
 }
 
@@ -558,7 +556,7 @@
     /* AQUI: Aumenta a imagem no celular também */
     transform: scale(1.15); 
   }
-    .product-name { font-size: 0.8rem; height: 2.6em; }
+    .product-name { font-size: 1.0rem; height: 2.8em; }
     .add-to-cart-btn { padding: 8px; font-size: 0.7rem; min-height: 35px; }
     .quickview-content { grid-template-columns: 1fr; }
     .quickview-gallery { border-radius: 20px 20px 0 0; min-height: 300px; }

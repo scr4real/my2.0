@@ -2,14 +2,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://back-production-e565.up.railway.app';
     const API_URL = `${BASE_URL}/api/produtos`; 
 
-    // Mapeamento das seções e seus elementos Swiper
+    // Mapeamento das seções - ATUALIZADO COM A NOVA ORDEM SOLICITADA
+    // O containerId mantém o nome antigo do HTML para não quebrar o layout,
+    // mas o categoryName busca os produtos corretos no banco.
     const sectionsToBuild = [
-        { categoryName: "Air Max 95", containerId: "products-95", swiperClass: ".collection-swiper-95", prev: ".collection-prev-95", next: ".collection-next-95" },
-        { categoryName: "Air Max DN", containerId: "products-dn", swiperClass: ".collection-swiper-dn", prev: ".collection-prev-dn", next: ".collection-next-dn" },
-        { categoryName: "Air Max TN", containerId: "products-tn", swiperClass: ".collection-swiper-tn", prev: ".collection-prev-tn", next: ".collection-next-tn" },
+        // 1º Linha: Air Max TN (No container products-95)
+        { categoryName: "Air Max TN", containerId: "products-95", swiperClass: ".collection-swiper-95", prev: ".collection-prev-95", next: ".collection-next-95" },
+        
+        // 2º Linha: Asics Gel NYC (No container products-dn)
+        { categoryName: "Asics Gel NYC", containerId: "products-dn", swiperClass: ".collection-swiper-dn", prev: ".collection-prev-dn", next: ".collection-next-dn" },
+        
+        // 3º Linha: Bape Sta (No container products-tn)
+        { categoryName: "Bape Sta", containerId: "products-tn", swiperClass: ".collection-swiper-tn", prev: ".collection-prev-tn", next: ".collection-next-tn" },
     ];
 
-    // Armazena todos os produtos buscados para referência rápida
     let allProducts = [];
 
     // Funções utilitárias
@@ -19,15 +25,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const getImageUrl = (path) => {
-    if (!path) return 'FRONT/assets/images/placeholder-product.jpg';
-    if (path.startsWith('http')) return path;
-    // Remove a barra inicial se existir
-    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-    return `${BASE_URL}/${cleanPath}`;
-};
+        if (!path) return 'FRONT/assets/images/placeholder-product.jpg';
+        if (path.startsWith('http')) return path;
+        const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+        return `${BASE_URL}/${cleanPath}`;
+    };
 
-    // Renderiza os cards de produto (ATUALIZADO COM FRETE GRÁTIS E ÍCONE)
-    const renderProductRow = (productsToRender, containerId) => {
+    // Renderiza os cards de produto (ATUALIZADO COM LIMITAÇÃO E BOTÃO VER TODOS)
+    const renderProductRow = (productsToRender, containerId, categoryName) => {
         const container = document.getElementById(containerId);
         if (!container) {
             console.warn(`Container com ID '${containerId}' não encontrado.`);
@@ -35,46 +40,65 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (productsToRender && productsToRender.length > 0) {
-            container.innerHTML = productsToRender.map(product => `
+            // LIMITAÇÃO: Pega apenas os 5 primeiros produtos
+            const limitedProducts = productsToRender.slice(0, 5);
+
+            let htmlContent = limitedProducts.map(product => `
                 <div class="swiper-slide">
                     <div class="product-card" data-id="${product.id}">
                         <a href="/FRONT/produto/HTML/produto.html?id=${product.id}" class="product-card-link">
                             <div class="product-image-wrapper">
-                                <img src="${getImageUrl(product.imagemUrl)}" alt="${product.nome || 'Nome do produto'}">
+                                <img src="${getImageUrl(product.imagemUrl)}" alt="${product.nome || 'Nome do produto'}" loading="lazy">
                             </div>
                             <div class="product-info">
-                                <span class="product-brand">${product.marca?.nome || 'Marca'}</span>
+                                <span class="product-brand">${product.marca?.nome || 'Japa Universe'}</span>
                                 <h3 class="product-name">${product.nome || 'Produto sem nome'}</h3>
-                                
-                                <div class="shipping-tag">
-                                    <i class="fas fa-truck"></i> Frete Grátis
+                                <div class="product-shipping-tag">
+                                    <i class="fas fa-truck"></i>
+                                    <span>Frete Grátis</span>
                                 </div>
-                                
                                 <p class="product-price">${formatPrice(product.preco)}</p>
                             </div>
                         </a>
-                        <button class="add-to-cart-btn"
-                                data-product-id="${product.id}">
+                        <button class="add-to-cart-btn" data-product-id="${product.id}">
                             Comprar
                         </button>
                     </div>
                 </div>
             `).join("");
+
+            // SE TIVER MAIS DE 5 PRODUTOS NO TOTAL (OU SE QUISERMOS SEMPRE MOSTRAR O BOTÃO)
+            // Adiciona o card "Ver Todos" no final
+            // Link redireciona para o catálogo filtrando pela busca (simulando filtro de categoria)
+            const seeAllLink = `/FRONT/catalogo/HTML/catalogo.html?search=${encodeURIComponent(categoryName)}`;
+            
+            htmlContent += `
+                <div class="swiper-slide">
+                    <a href="${seeAllLink}" class="see-all-card">
+                        <span>Ver Todos</span>
+                        <h3>${categoryName}</h3>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            `;
+
+            container.innerHTML = htmlContent;
+
         } else {
-            container.innerHTML = `<div class="swiper-slide"><p style="padding: 20px; text-align: center; color: var(--text-secondary);">Nenhum produto encontrado nesta categoria.</p></div>`;
+            container.innerHTML = `<div class="swiper-slide"><p style="padding: 20px; text-align: center; color: #666;">Nenhum produto encontrado nesta categoria.</p></div>`;
         }
     };
 
-    // Inicializa o Swiper (CORRIGIDO)
+    // Inicializa o Swiper
     const initSwiper = (containerClass, navPrevClass, navNextClass) => {
         const swiperEl = document.querySelector(containerClass);
         if (!swiperEl || swiperEl.swiper) return;
 
         try {
             new Swiper(containerClass, {
-                slidesPerView: "auto", // Respeita a largura definida no CSS
+                slidesPerView: "auto", 
                 spaceBetween: 24, 
-                freeMode: true, // IMPORTANTE: Permite rolagem livre sem travar (snap suave)
+                freeMode: true, 
                 grabCursor: true,
                 scrollbar: {
                     el: `${containerClass} .swiper-scrollbar`, 
@@ -85,26 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     prevEl: navPrevClass, 
                 },
                 breakpoints: { 
-                    // Mobile: CORRIGIDO para "auto"
-                    320: { 
-                        slidesPerView: "auto", 
-                        spaceBetween: 16, 
-                    },
-                    // Tablets
-                    640: { 
-                        slidesPerView: "auto", // Mantém auto para fluidez
-                        spaceBetween: 20,
-                    },
-                    // Desktops menores
-                    1024: { 
-                        slidesPerView: "auto",
-                        spaceBetween: 30,
-                    },
-                    // Desktops maiores
-                     1440: { 
-                        slidesPerView: "auto", 
-                        spaceBetween: 30,
-                    }
+                    320: { spaceBetween: 15 },
+                    640: { spaceBetween: 20 },
+                    1024: { spaceBetween: 24 }
                 }
             });
         } catch (e) {
@@ -114,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Listeners dos botões
     const addCartButtonListeners = () => {
-        document.querySelectorAll('.product-card .add-to-cart-btn:not([data-listener-added="true"])').forEach(button => {
+        document.querySelectorAll('.add-to-cart-btn:not([data-listener-added="true"])').forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault(); 
                 e.stopPropagation(); 
@@ -123,8 +130,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (window.quickViewApp && typeof window.quickViewApp.openQuickView === 'function') {
                     window.quickViewApp.openQuickView(productId);
+                } else if (window.catalogApp && window.catalogApp.quickViewSystem) {
+                    window.catalogApp.quickViewSystem.openQuickView(productId);
                 } else {
-                    // Fallback
                     const product = allProducts.find(p => p.id == productId);
                     if(product && window.addToCart) {
                          window.addToCart({
@@ -137,7 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         });
                         alert(`${product.nome} adicionado ao carrinho!`);
                     } else {
-                        // Redireciona se não tiver carrinho
                         window.location.href = `/FRONT/produto/HTML/produto.html?id=${productId}`;
                     }
                 }
@@ -148,17 +155,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Busca principal
     const fetchAndDistributeProducts = async () => {
+        // Skeleton Loading
         sectionsToBuild.forEach(section => {
              const container = document.getElementById(section.containerId);
              if (container) {
                  container.innerHTML = Array(4).fill(0).map(() => `
-                    <div class="swiper-slide skeleton-card">
-                         <div class="product-image-wrapper skeleton skeleton-image" style="height: 260px;"></div>
-                         <div class="product-info skeleton" style="padding: var(--space-md); gap: 0.5rem;">
-                             <div class="skeleton skeleton-text short"></div>
-                             <div class="skeleton skeleton-text medium"></div>
-                             <div class="skeleton skeleton-text short" style="height: 1.2rem; width: 40%; margin-top: auto;"></div>
-                         </div>
+                    <div class="swiper-slide">
+                        <div class="product-card" style="background: #1a1a1a; border-color: #333;">
+                             <div class="product-image-wrapper" style="opacity: 0.5;"></div>
+                             <div class="product-info">
+                                 <div style="height: 20px; background: #333; margin-bottom: 10px; width: 80%; border-radius: 4px;"></div>
+                                 <div style="height: 15px; background: #333; width: 60%; border-radius: 4px;"></div>
+                             </div>
+                        </div>
                      </div>
                  `).join('');
              }
@@ -170,7 +179,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             sectionsToBuild.forEach((section) => {
                 const filteredProducts = allProducts.filter(p => p.categoria?.nome === section.categoryName);
-                renderProductRow(filteredProducts, section.containerId);
+                // Passa o categoryName para criar o link do botão "Ver Todos"
+                renderProductRow(filteredProducts, section.containerId, section.categoryName);
                 initSwiper(section.swiperClass, section.prev, section.next);
             });
 
@@ -181,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sectionsToBuild.forEach(section => {
                  const container = document.getElementById(section.containerId);
                  if (container) {
-                     container.innerHTML = `<p style="padding: 20px; text-align: center; color: var(--error-color);">Erro ao carregar produtos.</p>`;
+                     container.innerHTML = `<p style="padding: 20px; text-align: center; color: #ff4444;">Erro de conexão.</p>`;
                  }
             });
         }
