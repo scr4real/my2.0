@@ -267,7 +267,7 @@
     background-color: transparent;
     
     /* AQUI ESTÁ O SEGREDO: Padding 0 */
-    padding: 4px; 
+    padding:8px; 
     
     flex-shrink: 0;
     cursor: pointer;
@@ -282,7 +282,7 @@
     will-change: transform;
 
     /* AQUI: Aumenta a imagem em 15% para preencher bem o card */
-    transform: scale(1.15); 
+    transform: scale(1.10); 
 }
 
 /* Animação do Tênis no Hover */
