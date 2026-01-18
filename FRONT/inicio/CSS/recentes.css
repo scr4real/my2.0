@@ -429,7 +429,7 @@
     height: 180px !important;
     
     /* PADDING 3PX NO MOBILE */
-    padding: 3px !important; 
+    padding: 100px !important; 
     
     margin: 0 !important;
     background-color: transparent !important; /* IMPORTANTE: Transparente no mobile também */
