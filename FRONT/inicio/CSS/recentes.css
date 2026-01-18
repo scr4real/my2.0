@@ -234,8 +234,8 @@
   /* AQUI: O !important VAI FORÇAR O TRANSPARENTE SOBRE O CATÁLOGO */
   background-color: transparent !important; 
   
-  /* PADDING 13PX */
-  padding: 13px; 
+  /* PADDING 15PX */
+  padding: 15px; 
   
   flex-shrink: 0;
   cursor: pointer;
