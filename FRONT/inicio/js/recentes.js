@@ -26,14 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!container) return;
 
         if (productsToRender && productsToRender.length > 0) {
-            const limitedProducts = productsToRender.slice(0, 5);
+            // MUDANÇA AQUI: Limitado para 4 produtos por carrossel
+            const limitedProducts = productsToRender.slice(0, 4);
 
             let htmlContent = limitedProducts.map((product, index) => {
-                // OTIMIZAÇÃO: Prioridade alta para os primeiros itens
-                const isPriority = index < 4;
-                const loadingAttr = isPriority ? 'eager' : 'lazy';
-                const priorityAttr = isPriority ? 'high' : 'auto';
-
+                const isPriority = index < 2; // As 2 primeiras são críticas
                 return `
                 <div class="swiper-slide">
                     <div class="product-card" data-id="${product.id}">
@@ -41,8 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="product-image-wrapper">
                                 <img src="${getImageUrl(product.imagemUrl)}" 
                                      alt="${product.nome}"
-                                     loading="${loadingAttr}"
-                                     fetchpriority="${priorityAttr}"
+                                     loading="${isPriority ? 'eager' : 'lazy'}"
+                                     fetchpriority="${isPriority ? 'high' : 'auto'}"
                                      decoding="async"
                                      width="300" height="300">
                             </div>
@@ -86,51 +83,20 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) { console.error(e); }
     };
 
-    const addCartButtonListeners = () => {
-        document.body.addEventListener('click', (e) => {
-            if (e.target.closest('.add-to-cart-btn')) {
-                e.preventDefault(); e.stopPropagation();
-                const btn = e.target.closest('.add-to-cart-btn');
-                const productId = btn.dataset.productId;
-
-                if (window.quickViewApp?.openQuickView) {
-                    window.quickViewApp.openQuickView(productId);
-                } else if (window.catalogApp?.quickViewSystem?.openQuickView) {
-                    window.catalogApp.quickViewSystem.openQuickView(productId);
-                } else {
-                    const product = allProducts.find(p => p.id == productId);
-                    if(product && window.addToCart) {
-                         window.addToCart({
-                            id: product.id.toString(), name: product.nome, price: product.preco,
-                            image: getImageUrl(product.imagemUrl), size: 'Único', quantity: 1
-                        });
-                        alert(`${product.nome} adicionado!`);
-                    } else {
-                        window.location.href = `/FRONT/produto/HTML/produto.html?id=${productId}`;
-                    }
-                }
-            }
-        });
-    };
-
     const fetchAndDistributeProducts = async () => {
         try {
             const response = await axios.get(API_URL);
             allProducts = response.data; 
 
-            // Renderiza rápido no próximo frame
             requestAnimationFrame(() => {
                 sectionsToBuild.forEach((section) => {
                     const filteredProducts = allProducts.filter(p => p.categoria?.nome === section.categoryName);
                     renderProductRow(filteredProducts, section.containerId, section.categoryName);
                     initSwiper(section.swiperClass, section.prev, section.next);
                 });
-                addCartButtonListeners();
             });
 
-        } catch (error) {
-            console.error("Falha API:", error);
-        }
+        } catch (error) { console.error("Erro API:", error); }
     };
 
     fetchAndDistributeProducts();
