@@ -3,13 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ? 'http://localhost:8080' 
         : 'https://back-production-e565.up.railway.app';
     const API_URL = `${BASE_URL}/api/produtos`;
+    const CACHE_KEY = 'japa_catalogo_data'; // Chave para salvar no navegador
     const grid = document.getElementById('products-grid');
     
     if (grid) {
         let state = {
             allProducts: [], filteredProducts: [], currentPage: 1, itemsPerPage: 12, currentView: 'grid',
             filters: { search: '', brand: 'all', category: 'all', price: 'all', sort: 'featured' },
-            isLoading: false
+            isLoading: true // Começa true, mas o cache pode mudar isso rápido
         };
 
         const elements = {
@@ -38,39 +39,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filterSystem = {
             applyFilters: () => {
-                let filtered = [...state.allProducts];
-                if (state.filters.search) filtered = filtered.filter(p => p.nome.toLowerCase().includes(state.filters.search.toLowerCase()) || p.marca?.nome.toLowerCase().includes(state.filters.search.toLowerCase()));
-                if (state.filters.brand !== 'all') filtered = filtered.filter(p => p.marca?.nome === state.filters.brand);
-                if (state.filters.category !== 'all') filtered = filtered.filter(p => p.categoria?.nome === state.filters.category);
-                if (state.filters.price !== 'all') { const range = utils.parsePriceRange(state.filters.price); filtered = filtered.filter(p => p.preco >= range.min && p.preco <= range.max); }
-                
-                if (state.filters.sort === 'price-asc') filtered.sort((a, b) => a.preco - b.preco);
-                else if (state.filters.sort === 'price-desc') filtered.sort((a, b) => b.preco - a.preco);
-                else if (state.filters.sort === 'newest') filtered.sort((a, b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
+                // Executa em microtask para não travar a UI se a lista for grande
+                Promise.resolve().then(() => {
+                    let filtered = [...state.allProducts];
+                    
+                    // Filtragem
+                    if (state.filters.search) {
+                        const term = state.filters.search.toLowerCase();
+                        filtered = filtered.filter(p => p.nome.toLowerCase().includes(term) || p.marca?.nome.toLowerCase().includes(term));
+                    }
+                    if (state.filters.brand !== 'all') filtered = filtered.filter(p => p.marca?.nome === state.filters.brand);
+                    if (state.filters.category !== 'all') filtered = filtered.filter(p => p.categoria?.nome === state.filters.category);
+                    if (state.filters.price !== 'all') { 
+                        const range = utils.parsePriceRange(state.filters.price); 
+                        filtered = filtered.filter(p => p.preco >= range.min && p.preco <= range.max); 
+                    }
+                    
+                    // Ordenação
+                    if (state.filters.sort === 'price-asc') filtered.sort((a, b) => a.preco - b.preco);
+                    else if (state.filters.sort === 'price-desc') filtered.sort((a, b) => b.preco - a.preco);
+                    else if (state.filters.sort === 'newest') filtered.sort((a, b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
 
-                state.filteredProducts = filtered;
-                state.currentPage = 1; 
-                filterSystem.updateActiveFilters();
-                filterSystem.updateFormElements();
-                renderSystem.renderProducts();
+                    state.filteredProducts = filtered;
+                    state.currentPage = 1; 
+                    
+                    filterSystem.updateActiveFilters();
+                    filterSystem.updateFormElements();
+                    renderSystem.renderProducts();
+                });
             },
             updateActiveFilters: () => {
                 if(!elements.activeFilters) return;
-                elements.activeFilters.innerHTML = '';
-                if(state.filters.search) filterSystem.addTag('search', `Busca: ${state.filters.search}`);
-                if(state.filters.brand !== 'all') filterSystem.addTag('brand', `Marca: ${state.filters.brand}`);
-                if(state.filters.price !== 'all') filterSystem.addTag('price', 'Preço');
+                let html = '';
+                if(state.filters.search) html += filterSystem.createTag('search', `Busca: ${state.filters.search}`);
+                if(state.filters.brand !== 'all') html += filterSystem.createTag('brand', `Marca: ${state.filters.brand}`);
+                if(state.filters.price !== 'all') html += filterSystem.createTag('price', 'Preço');
+                elements.activeFilters.innerHTML = html;
             },
-            addTag: (type, label) => {
-                elements.activeFilters.innerHTML += `<div class="filter-tag"><span>${label}</span><button onclick="window.catalogRemoveFilter('${type}')"><i class="fas fa-times"></i></button></div>`;
-            },
+            createTag: (type, label) => `<div class="filter-tag"><span>${label}</span><button onclick="window.catalogRemoveFilter('${type}')"><i class="fas fa-times"></i></button></div>`,
             removeFilter: (type) => {
                 state.filters[type] = (type === 'sort') ? 'featured' : (type === 'search' ? '' : 'all');
                 if(elements.searchInput && type === 'search') elements.searchInput.value = '';
                 filterSystem.applyFilters();
             },
             updateFormElements: () => {
-                if(elements.searchInput) elements.searchInput.value = state.filters.search;
+                if(elements.searchInput && document.activeElement !== elements.searchInput) elements.searchInput.value = state.filters.search;
                 if(elements.brandFilter) elements.brandFilter.value = state.filters.brand;
                 if(elements.searchClear) elements.searchClear.style.display = state.filters.search ? 'block' : 'none';
             },
@@ -82,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const renderSystem = {
             renderProducts: () => {
+                // Se estiver carregando E não tiver produtos (cache vazio), mostra esqueleto
                 if (state.isLoading && state.filteredProducts.length === 0) {
                     elements.grid.innerHTML = utils.generateSkeletons(12);
                     if(elements.loadingState) elements.loadingState.style.display = 'block';
@@ -104,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if(elements.emptyState) elements.emptyState.style.display = 'none';
                 
+                // Renderização eficiente com HTML string
                 elements.grid.innerHTML = productsToShow.map((product, index) => renderSystem.createProductCard(product, index)).join('');
                 renderSystem.renderPagination();
             },
@@ -124,7 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
             createProductCard: (product, index) => {
                 const hasDiscount = product.precoOriginal > product.preco;
                 const discountPercent = hasDiscount ? Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
-                const isCritical = index < 6; // OTIMIZAÇÃO DE CARREGAMENTO
+                // Performance: As primeiras 6 imagens carregam imediatamente (eager), o resto espera (lazy)
+                const isCritical = index < 6; 
                 const loadingAttr = isCritical ? 'eager' : 'lazy';
                 const priorityAttr = isCritical ? 'high' : 'auto';
 
@@ -140,7 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                      alt="${product.nome}"
                                      loading="${loadingAttr}"
                                      fetchpriority="${priorityAttr}"
-                                     decoding="async">
+                                     decoding="async"
+                                     width="300" height="300">
                             </div>
                         </a>
                         <div class="product-info">
@@ -178,8 +195,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             },
             fetch: async () => {
-                state.isLoading = true;
-                elements.grid.innerHTML = utils.generateSkeletons(12);
+                // 1. TENTA CARREGAR DO CACHE PRIMEIRO (INSTANTÂNEO)
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    try {
+                        const data = JSON.parse(cached);
+                        state.allProducts = data;
+                        state.isLoading = false; // Já temos dados, não precisa mostrar loading
+                        filterSystem.applyFilters(); // Renderiza o que tem no cache
+                    } catch (e) {
+                        console.warn("Cache inválido", e);
+                    }
+                } else {
+                    // Se não tem cache, mostra esqueleto
+                    elements.grid.innerHTML = utils.generateSkeletons(12);
+                }
+
+                // 2. BUSCA DADOS FRESCOS NA API (SILENCIOSO SE JÁ TIVER CACHE)
                 try {
                     const res = await axios.get(API_URL);
                     state.allProducts = res.data.map(product => ({ 
@@ -189,10 +221,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         marca: product.marca || { nome: 'Japa' },
                         categoria: product.categoria || { nome: 'Geral' }
                     }));
+                    
+                    // Atualiza o cache e a tela com os dados novos
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(state.allProducts));
                     filterSystem.applyFilters();
+                    
                 } catch (error) { 
-                    console.error(error);
-                    elements.grid.innerHTML = '<div class="error-state">Erro ao carregar produtos.</div>'; 
+                    console.error("Erro API Catálogo:", error);
+                    // Só mostra erro na tela se não tivermos NENHUM produto (nem do cache)
+                    if (state.allProducts.length === 0) {
+                        elements.grid.innerHTML = '<div class="error-state">Erro ao carregar produtos.</div>'; 
+                    }
                 } 
                 finally { 
                     state.isLoading = false; 
