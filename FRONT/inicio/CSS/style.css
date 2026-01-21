@@ -925,11 +925,11 @@
         max-width: 600px;
         margin: 0 auto;
         border-radius: 16px;
-        min-height: 450px; /* Aumentado proporcionalmente para mobile */
+        min-height: 480px; /* Aumentado proporcionalmente para mobile */
     }
 
     .crew-video-element {
-        height: 450px; /* Aumentado de 350px para 450px no mobile */
+        height: 480px; /* Aumentado de 350px para 480px no mobile */
     }
 
     .video-overlay {
@@ -994,12 +994,12 @@
     }
 
     .crew-video-element {
-        height: 380px; /* Aumentado de 280px para 380px */
+        height: 420px; /* Aumentado de 280px para 380px */
     }
 
     .crew-video-container {
         border-radius: 12px;
-        min-height: 380px;
+        min-height: 420px;
     }
 
     .crew-text h2 {
@@ -1031,11 +1031,11 @@
     }
     
     .crew-video-element {
-        height: 350px; /* Aumentado de 300px para 350px */
+        height: 400px; /* Aumentado de 300px para 350px */
     }
     
     .crew-video-container {
-        min-height: 350px;
+        min-height: 400px;
     }
 }
 
