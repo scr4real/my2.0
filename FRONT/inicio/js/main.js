@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   /**
-   * Módulo de Carregamento (ULTRA RÁPIDO)
+   * Módulo de Carregamento (OTIMIZADO)
    */
   const LoadingModule = (() => {
     const loadingOverlay = document.querySelector(".loading-overlay");
@@ -13,15 +13,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     function init() {
       if (loadingOverlay) {
-        hideLoader(); // Remove imediatamente ao ler o JS
-        setTimeout(hideLoader, 2000); // Fallback de segurança
+        hideLoader(); // Remove imediatamente ao carregar
       }
     }
     return { init };
   })();
 
   /**
-   * Módulo de Animações com GSAP (CORRIGIDO: BOTÃO VISÍVEL)
+   * Módulo de Animações com GSAP
    */
   const AnimationModule = (() => {
     function init() {
@@ -49,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const overlay = document.getElementById("modalOverlay");
     const cartItemsContainer = document.getElementById("cartItemsContainer");
     const cartSubtotalEl = document.getElementById("cartSubtotal");
-    const checkoutBtn = document.querySelector('.checkout-btn');
 
     let cart = JSON.parse(localStorage.getItem("japaUniverseCart")) || [];
     const saveCart = () => localStorage.setItem("japaUniverseCart", JSON.stringify(cart));
@@ -69,7 +67,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         if (cartSubtotalEl) cartSubtotalEl.textContent = formatPrice(total);
-        document.querySelector(".cart-count").textContent = cart.reduce((s, i) => s + i.quantity, 0);
+        const countEl = document.querySelector(".cart-count");
+        if (countEl) countEl.textContent = cart.reduce((s, i) => s + i.quantity, 0);
     };
 
     return { 

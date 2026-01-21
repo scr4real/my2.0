@@ -10,8 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
         { categoryName: "Bape Sta", containerId: "products-tn", swiperClass: ".collection-swiper-tn", prev: ".collection-prev-tn", next: ".collection-next-tn" },
     ];
 
-    let allProducts = [];
-
     const formatPrice = (price) => typeof price === 'number' ? `R$ ${price.toFixed(2).replace('.', ',')}` : 'R$ --,--';
 
     const getImageUrl = (path) => {
@@ -26,11 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!container) return;
 
         if (productsToRender && productsToRender.length > 0) {
-            // MUDANÇA AQUI: Limitado para 4 produtos por carrossel
             const limitedProducts = productsToRender.slice(0, 4);
-
             let htmlContent = limitedProducts.map((product, index) => {
-                const isPriority = index < 2; // As 2 primeiras são críticas
+                const isPriority = index < 2; 
                 return `
                 <div class="swiper-slide">
                     <div class="product-card" data-id="${product.id}">
@@ -52,8 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         </a>
                         <button class="add-to-cart-btn" data-product-id="${product.id}">Comprar</button>
                     </div>
-                </div>
-            `}).join("");
+                </div>`}).join("");
 
             const seeAllLink = `/FRONT/catalogo/HTML/catalogo.html?search=${encodeURIComponent(categoryName)}`;
             htmlContent += `
@@ -61,8 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <a href="${seeAllLink}" class="see-all-card">
                         <span>Ver Todos</span><h3>${categoryName}</h3><i class="fas fa-arrow-right"></i>
                     </a>
-                </div>
-            `;
+                </div>`;
             container.innerHTML = htmlContent;
         } else {
             container.innerHTML = `<div class="swiper-slide"><p style="padding: 20px; text-align: center; color: #666;">Indisponível.</p></div>`;
@@ -72,31 +66,37 @@ document.addEventListener("DOMContentLoaded", () => {
     const initSwiper = (containerClass, navPrevClass, navNextClass) => {
         const swiperEl = document.querySelector(containerClass);
         if (!swiperEl || swiperEl.swiper) return;
-
         try {
             new Swiper(containerClass, {
                 slidesPerView: "auto", spaceBetween: 24, freeMode: true, grabCursor: true,
-                scrollbar: { el: `${containerClass} .swiper-scrollbar`, draggable: true },
                 navigation: { nextEl: navNextClass, prevEl: navPrevClass },
                 breakpoints: { 320: { spaceBetween: 15 }, 640: { spaceBetween: 20 }, 1024: { spaceBetween: 24 } }
             });
         } catch (e) { console.error(e); }
     };
 
+    const distribute = (products) => {
+        sectionsToBuild.forEach((section) => {
+            const filteredProducts = products.filter(p => p.categoria?.nome === section.categoryName);
+            renderProductRow(filteredProducts, section.containerId, section.categoryName);
+            initSwiper(section.swiperClass, section.prev, section.next);
+        });
+    };
+
     const fetchAndDistributeProducts = async () => {
+        const cachedData = localStorage.getItem("japa_products_cache");
+        if (cachedData) {
+            distribute(JSON.parse(cachedData));
+        }
+
         try {
             const response = await axios.get(API_URL);
-            allProducts = response.data; 
-
-            requestAnimationFrame(() => {
-                sectionsToBuild.forEach((section) => {
-                    const filteredProducts = allProducts.filter(p => p.categoria?.nome === section.categoryName);
-                    renderProductRow(filteredProducts, section.containerId, section.categoryName);
-                    initSwiper(section.swiperClass, section.prev, section.next);
-                });
-            });
-
-        } catch (error) { console.error("Erro API:", error); }
+            const allProducts = response.data; 
+            localStorage.setItem("japa_products_cache", JSON.stringify(allProducts));
+            requestAnimationFrame(() => distribute(allProducts));
+        } catch (error) { 
+            console.error("Erro API:", error); 
+        }
     };
 
     fetchAndDistributeProducts();
