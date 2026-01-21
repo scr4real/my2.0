@@ -189,18 +189,13 @@
 }
 
 .section-titleRECEM {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #fff;
-    background: var(--accent-color, #000); /* Cor de destaque ou preto */
-    display: inline-block;
-    padding: 4px 12px;
-    margin-bottom: var(--space-sm);
+    letter-spacing: 3px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xs);
     font-family: var(--font-mono);
-    
-    /* Corta o canto para um visual técnico */
-    clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+    font-weight: 500;
 }
 
 .section-title {
