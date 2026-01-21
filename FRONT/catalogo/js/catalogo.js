@@ -3,14 +3,21 @@ document.addEventListener('DOMContentLoaded', () => {
         ? 'http://localhost:8080' 
         : 'https://back-production-e565.up.railway.app';
     const API_URL = `${BASE_URL}/api/produtos`;
-    const CACHE_KEY = 'japa_catalogo_data'; // Chave para salvar no navegador
+    
+    // USAMOS A MESMA CHAVE DA PÁGINA INICIAL PARA COMPARTILHAR O CACHE
+    const CACHE_KEY = "japa_products_cache"; 
+    
     const grid = document.getElementById('products-grid');
     
     if (grid) {
         let state = {
-            allProducts: [], filteredProducts: [], currentPage: 1, itemsPerPage: 12, currentView: 'grid',
+            allProducts: [], 
+            filteredProducts: [], 
+            currentPage: 1, 
+            itemsPerPage: 12, 
+            currentView: 'grid',
             filters: { search: '', brand: 'all', category: 'all', price: 'all', sort: 'featured' },
-            isLoading: true // Começa true, mas o cache pode mudar isso rápido
+            isLoading: true 
         };
 
         const elements = {
@@ -33,20 +40,21 @@ document.addEventListener('DOMContentLoaded', () => {
             debounce: (func, wait) => { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func(...args), wait); }; },
             formatPrice: (price) => `R$ ${Number(price).toFixed(2).replace('.', ',')}`,
             getImageUrl: (path) => !path ? 'FRONT/assets/images/placeholder.jpg' : (path.startsWith('http') ? path : `${BASE_URL}/${path.startsWith('/') ? path.substring(1) : path}`),
-            generateSkeletons: (count) => Array.from({ length: count }).map((_, i) => `<div class="product-card skeleton-card"><div class="product-image-wrapper skeleton"></div><div class="product-info"><div class="skeleton" style="height:20px"></div><div class="skeleton" style="height:20px;width:50%;margin-top:10px"></div></div></div>`).join(''),
+            // Gera esqueletos leves para feedback visual imediato
+            generateSkeletons: (count) => Array.from({ length: count }).map(() => `<div class="product-card skeleton-card"><div class="product-image-wrapper skeleton"></div><div class="product-info"><div class="skeleton" style="height:20px; margin-bottom: 10px;"></div><div class="skeleton" style="height:20px;width:50%;"></div></div></div>`).join(''),
             parsePriceRange: (range) => { if (range === 'all') return { min: 0, max: Infinity }; const [min, max] = range.split('-').map(Number); return { min, max: max || Infinity }; }
         };
 
         const filterSystem = {
             applyFilters: () => {
-                // Executa em microtask para não travar a UI se a lista for grande
-                Promise.resolve().then(() => {
+                // Executamos num timeout zero para liberar a thread principal (UI não trava)
+                setTimeout(() => {
                     let filtered = [...state.allProducts];
                     
-                    // Filtragem
+                    // Lógica de filtragem
                     if (state.filters.search) {
                         const term = state.filters.search.toLowerCase();
-                        filtered = filtered.filter(p => p.nome.toLowerCase().includes(term) || p.marca?.nome.toLowerCase().includes(term));
+                        filtered = filtered.filter(p => p.nome.toLowerCase().includes(term) || (p.marca?.nome || '').toLowerCase().includes(term));
                     }
                     if (state.filters.brand !== 'all') filtered = filtered.filter(p => p.marca?.nome === state.filters.brand);
                     if (state.filters.category !== 'all') filtered = filtered.filter(p => p.categoria?.nome === state.filters.category);
@@ -66,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     filterSystem.updateActiveFilters();
                     filterSystem.updateFormElements();
                     renderSystem.renderProducts();
-                });
+                }, 0);
             },
             updateActiveFilters: () => {
                 if(!elements.activeFilters) return;
@@ -95,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const renderSystem = {
             renderProducts: () => {
-                // Se estiver carregando E não tiver produtos (cache vazio), mostra esqueleto
+                // Caso 1: Carregando e sem cache -> Mostra Esqueleto
                 if (state.isLoading && state.filteredProducts.length === 0) {
                     elements.grid.innerHTML = utils.generateSkeletons(12);
                     if(elements.loadingState) elements.loadingState.style.display = 'block';
@@ -104,11 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
+                // Remove loading explícito se já tivermos produtos
                 if(elements.loadingState) elements.loadingState.style.display = 'none';
                 
                 const start = (state.currentPage - 1) * state.itemsPerPage;
                 const productsToShow = state.filteredProducts.slice(start, start + state.itemsPerPage);
                 
+                // Caso 2: Nenhum produto encontrado
                 if (productsToShow.length === 0) {
                     elements.grid.innerHTML = '';
                     if(elements.emptyState) elements.emptyState.style.display = 'block';
@@ -118,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if(elements.emptyState) elements.emptyState.style.display = 'none';
                 
-                // Renderização eficiente com HTML string
+                // Renderização Otimizada
                 elements.grid.innerHTML = productsToShow.map((product, index) => renderSystem.createProductCard(product, index)).join('');
                 renderSystem.renderPagination();
             },
@@ -139,7 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
             createProductCard: (product, index) => {
                 const hasDiscount = product.precoOriginal > product.preco;
                 const discountPercent = hasDiscount ? Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
-                // Performance: As primeiras 6 imagens carregam imediatamente (eager), o resto espera (lazy)
+                
+                // OTIMIZAÇÃO CRÍTICA: As 6 primeiras imagens carregam IMEDIATAMENTE.
+                // O resto carrega conforme o scroll (lazy).
                 const isCritical = index < 6; 
                 const loadingAttr = isCritical ? 'eager' : 'lazy';
                 const priorityAttr = isCritical ? 'high' : 'auto';
@@ -195,42 +207,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             },
             fetch: async () => {
+                // ESTRATÉGIA "STALE-WHILE-REVALIDATE":
+                
                 // 1. TENTA CARREGAR DO CACHE PRIMEIRO (INSTANTÂNEO)
                 const cached = localStorage.getItem(CACHE_KEY);
                 if (cached) {
                     try {
                         const data = JSON.parse(cached);
-                        state.allProducts = data;
-                        state.isLoading = false; // Já temos dados, não precisa mostrar loading
-                        filterSystem.applyFilters(); // Renderiza o que tem no cache
+                        if (Array.isArray(data) && data.length > 0) {
+                            state.allProducts = data;
+                            state.isLoading = false; 
+                            // Renderiza imediatamente com o que temos
+                            filterSystem.applyFilters(); 
+                        }
                     } catch (e) {
-                        console.warn("Cache inválido", e);
+                        console.warn("Cache inválido, baixando novamente...", e);
                     }
                 } else {
-                    // Se não tem cache, mostra esqueleto
+                    // Se não tem cache, garante que o esqueleto apareça
                     elements.grid.innerHTML = utils.generateSkeletons(12);
                 }
 
-                // 2. BUSCA DADOS FRESCOS NA API (SILENCIOSO SE JÁ TIVER CACHE)
+                // 2. BUSCA DADOS FRESCOS NA API (EM SEGUNDO PLANO)
                 try {
                     const res = await axios.get(API_URL);
-                    state.allProducts = res.data.map(product => ({ 
+                    const freshData = res.data.map(product => ({ 
                         ...product, 
-                        isNew: Math.random() > 0.8, 
+                        isNew: Math.random() > 0.8, // Mantendo sua lógica visual
                         precoOriginal: product.preco * 1.15,
                         marca: product.marca || { nome: 'Japa' },
                         categoria: product.categoria || { nome: 'Geral' }
                     }));
                     
-                    // Atualiza o cache e a tela com os dados novos
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(state.allProducts));
+                    // Atualiza o estado
+                    state.allProducts = freshData;
+                    
+                    // Atualiza o cache compartilhado
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(freshData));
+                    
+                    // Re-renderiza com os dados novos
                     filterSystem.applyFilters();
                     
                 } catch (error) { 
-                    console.error("Erro API Catálogo:", error);
-                    // Só mostra erro na tela se não tivermos NENHUM produto (nem do cache)
+                    console.error("Erro ao atualizar catálogo:", error);
+                    // Se falhar e não tivermos cache, aí sim mostramos erro
                     if (state.allProducts.length === 0) {
-                        elements.grid.innerHTML = '<div class="error-state">Erro ao carregar produtos.</div>'; 
+                        elements.grid.innerHTML = '<div class="error-state">Erro ao carregar produtos. Tente recarregar a página.</div>'; 
                     }
                 } 
                 finally { 
