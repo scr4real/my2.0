@@ -458,7 +458,7 @@
     
     /* Ajuste de entrelinha para fontes muito grandes não encavalarem */
     line-height: 1.1 !important; 
-    padding: 10px;
+    padding: 20px;
 }
 
 .section-titleRECEM::after {
