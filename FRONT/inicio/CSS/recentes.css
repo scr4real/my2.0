@@ -440,7 +440,7 @@
 
 .section-titleRECEM {
     /* Aumentei de 2rem para 3rem (ajuste conforme o gosto) */
-    font-size: 3rem !important; 
+    font-size: 2,5rem !important; 
     
     /* Troca para uma fonte mais "pesada" nativa do sistema */
     font-family: "Arial Black", "Gadget", sans-serif !important;
@@ -451,13 +451,14 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    width: 90%;
+    width: 100%;
     
     /* Garante o peso máximo */
-    font-weight: 900;
+    font-weight: 800;
     
     /* Ajuste de entrelinha para fontes muito grandes não encavalarem */
     line-height: 1.1 !important; 
+    padding: 10px;
 }
 
 .section-titleRECEM::after {
