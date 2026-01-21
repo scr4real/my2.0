@@ -1,11 +1,6 @@
 /* ===================================================================
-    ARQUIVO DE ESTILO DA PÁGINA INICIAL - TN DO JAPA (VERSÃO FINAL)
+    ARQUIVO DE ESTILO DA PÁGINA INICIAL - TN DO JAPA (OTIMIZADO)
    =================================================================== */
-
-/* --- CONFIGURAÇÕES BASE --- */
-:root {
-    --header-height: 80px;
-}
 
 /* ===== HERO SECTION ===== */
 .hero {
@@ -53,6 +48,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  /* OTIMIZAÇÃO: Removido scale(1.05) para acelerar a pintura inicial (LCP) */
 }
 
 .hero-background::after {
@@ -103,6 +99,7 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   display: flex;
+  /* OTIMIZAÇÃO: Isola a renderização deste componente pesado */
   contain: layout style;
 }
 
@@ -165,6 +162,7 @@
   padding-bottom: var(--space-xxl);
   width: 100%;
   overflow: hidden;
+  /* OTIMIZAÇÃO: Evita recálculos de layout na página inteira ao deslizar o carrossel */
   contain: layout style;
 }
 
@@ -301,12 +299,11 @@
   background: var(--primary);
 }
 
-/* ===== CREW SECTION (VÍDEO INTERATIVO) ===== */
+/* ===== CREW SECTION ===== */
 .crew {
   background-color: var(--surface);
   width: 100%;
   overflow: hidden;
-  padding: var(--space-xxl) 0;
 }
 
 .crew-content {
@@ -317,28 +314,43 @@
   width: 100%;
 }
 
-.crew-video-container {
+.crew-image-stack {
   position: relative;
   width: 100%;
-  max-width: 380px;
-  height: 520px;
-  margin: 0 auto;
-  perspective: 1000px;
+  height: 450px;
 }
 
-.crew-video-element {
+.image-card {
+  position: absolute;
+  width: 280px;
+  height: 380px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transition: var(--transition-slow);
+}
+
+.image-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s ease;
-  transform: rotate(-5deg); 
 }
 
-.crew-video-container:hover .crew-video-element {
-  transform: rotate(0deg) scale(1.05);
-  box-shadow: 0 30px 60px rgba(255, 102, 0, 0.3);
+.image-card:nth-child(1) {
+  transform: rotate(-10deg) translate(-30%, 0);
+}
+
+.image-card:nth-child(2) {
+  transform: rotate(5deg) translate(0, 20%);
+  z-index: 2;
+}
+
+.image-card:nth-child(3) {
+  transform: rotate(15deg) translate(30%, 0);
+}
+
+.crew-content:hover .image-card {
+  transform: rotate(0) translate(0, 0) scale(1.05);
 }
 
 /* ===== NEWSLETTER ===== */
@@ -346,7 +358,6 @@
   text-align: center;
   width: 100%;
   overflow: hidden;
-  padding: var(--space-xxl) 0;
 }
 
 .newsletter h2 {
@@ -384,9 +395,10 @@
 }
 
 /* ==========================================================
-    RESPONSIVIDADE MOBILE
+    RESPONSIVIDADE MOBILE - CORREÇÃO DA BARRA PRETA
    ========================================================== */
 
+/* Mobile (até 768px) */
 @media (max-width: 768px) {
   html, body {
     width: 100% !important;
@@ -429,15 +441,6 @@
     z-index: 2;
     margin-top: 10vh;
     max-width: 100%;
-  }
-
-  /* TRANSPARÊNCIA DO BOTÃO MOBILE */
-  .hero-content a, 
-  .hero-content .btn {
-    background-color: rgba(255, 145, 0, 0.69) !important;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    color: #fff !important;
   }
 
   .hero-title {
@@ -507,23 +510,13 @@
     gap: var(--space-md);
   }
 
-  /* --- CREW VIDEO MOBILE --- */
-  .crew-content {
-    grid-template-columns: 1fr;
-    text-align: center;
+  /* --- SEÇÕES SECUNDÁRIAS --- */
+  .featured-sneaker {
+    padding: var(--space-xl) 0;
+    width: 100%;
+    overflow: hidden;
   }
 
-  .crew-video-container {
-    height: 450px;
-    max-width: 300px;
-    margin-top: var(--space-xl);
-  }
-
-  .crew-video-element {
-    transform: rotate(0deg);
-  }
-
-  /* --- OUTRAS SEÇÕES MOBILE --- */
   .featured-sneaker-content {
     grid-template-columns: 1fr;
     gap: var(--space-lg);
@@ -534,6 +527,12 @@
   .featured-image-wrapper.swiper {
     height: 300px;
     order: -1;
+    width: 100%;
+  }
+
+  .collection-section {
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
     width: 100%;
   }
 
@@ -555,9 +554,36 @@
   .collection-swiper .swiper-slide {
     width: 260px;
   }
+
+  .crew {
+    padding: var(--space-xl) 0;
+    width: 100%;
+  }
+
+  .crew-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    text-align: center;
+    width: 100%;
+  }
+
+  .newsletter {
+    padding: var(--space-xl) 0;
+    width: 100%;
+  }
+
+  #newsletterForm {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
+  .hero {
+    height: 100vh;
+    min-height: 100vh;
+  }
+
   .hero-content {
     padding-left: 1rem;
     margin-top: 10vh;
@@ -576,9 +602,35 @@
     background: linear-gradient(90deg, var(--background) 10%, transparent 85%),
                 linear-gradient(180deg, var(--background) 3%, transparent 25%);
   }
+
+  .collection-swiper .swiper-slide {
+    width: 240px;
+  }
+}
+
+@media (max-width: 414px) {
+  .hero-content {
+    padding-left: 1rem;
+      transform: translateY(-57px); 
+  }
+  
+  .hero-title {
+    font-size: clamp(2.5rem, 13vw, 4rem);
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem;
+    max-width: 300px;
+  }
 }
 
 @media (min-width: 769px) {
+  .hero {
+    height: 100vh;
+    min-height: 700px;
+    align-items: center;
+  }
+
   .hero-content {
     padding-left: 10%;
     margin-top: 0;
@@ -615,6 +667,7 @@
     opacity: 1;
 }
 
+/* Base do conteúdo do Modal (Mobile First) */
 .size-modal-content {
     background-color: var(--background);
     padding: 30px;
@@ -644,6 +697,10 @@
     border: none;
     transition: color 0.2s;
     z-index: 10;
+}
+
+.size-modal-content .close-button:hover {
+    color: var(--primary);
 }
 
 .size-modal-content h3 {
@@ -696,48 +753,141 @@
     text-decoration: line-through;
 }
 
-@media (min-width: 1024px) {
+.modal-error {
+    color: var(--error-color, #dc3545);
+    text-align: center;
+    margin-top: -15px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+#addToCartModalBtn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+}
+
+/* Responsividade: Reduzir tamanho do modal em telas pequenas */
+@media (max-width: 450px) {
     .size-modal-content {
-        max-width: 900px;
+        padding: 20px;
+    }
+    .size-modal-content h3 {
+        font-size: 1.3rem;
+    }
+    .size-option {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+}
+
+/* ========================================================================
+   MODAL DE SELEÇÃO DE TAMANHO (DESKTOP) - LAYOUT "SPLIT" (DIVIDIDO)
+   ======================================================================== */
+@media (min-width: 1024px) {
+    
+    /* 1. Transforma o container em Grid de 2 colunas */
+    .size-modal-content {
+        max-width: 900px; /* Aumenta largura total */
         width: 90%;
         display: grid;
-        grid-template-columns: 45% 55%;
+        grid-template-columns: 45% 55%; /* Coluna Esq (IMG) / Coluna Dir (INFO) */
+        
+        /* OTIMIZAÇÃO: Layout fixo melhora performance de renderização do modal */
         grid-template-rows: repeat(3, auto); 
+        
         gap: 0; 
-        padding: 0;
-        overflow: hidden;
-        align-items: center;
+        padding: 0; /* Remove padding interno para a imagem colar nas bordas */
+        overflow: hidden; /* Garante que a imagem não saia das bordas arredondadas */
+        align-items: center; /* Centraliza verticalmente o conteúdo */
     }
 
+    /* * 2. FORÇA A IMAGEM PARA A COLUNA ESQUERDA (Ocupando toda a altura) */
     .size-modal-content > img,
     .size-modal-content .modal-image-wrapper { 
-        grid-column: 1 / 2;
-        grid-row: 1 / -1;
+        grid-column: 1 / 2; /* Fica na primeira coluna */
+        grid-row: 1 / -1;   /* Ocupa da primeira até a última linha (altura total) */
         width: 100%;
         height: 100%;
-        min-height: 450px;
-        object-fit: contain;
-        background-color: #f4f4f4;
-        padding: 40px;
+        min-height: 450px;  /* Altura mínima imponente */
+        object-fit: contain; /* Mostra o tênis inteiro */
+        background-color: #f4f4f4; /* Fundo cinza claro para destaque premium */
+        padding: 40px; /* Espaço interno para o tênis respirar */
     }
 
+    /* * 3. FORÇA TODO O RESTO (TEXTO E BOTÕES) PARA A COLUNA DIREITA */
     .size-modal-content > h3,
     .size-modal-content > .size-options-container,
-    .size-modal-content > #addToCartModalBtn {
-        grid-column: 2 / 3;
-        width: 85%;
+    .size-modal-content > #addToCartModalBtn,
+    .size-modal-content > .modal-error,
+    .size-modal-content > p {
+        grid-column: 2 / 3; /* Força todos esses para a segunda coluna */
+        width: 85%; /* Largura reduzida para não colar nas bordas */
         margin-left: auto;
         margin-right: auto;
     }
 
+    /* Ajustes finos de espaçamento no lado direito */
     .size-modal-content > h3 {
         font-size: 2.2rem;
         margin-top: 40px;
-        text-align: left;
+        margin-bottom: 20px;
+        text-align: left; /* Título alinhado à esquerda fica mais moderno no PC */
+    }
+
+    .size-options-container {
+        justify-content: flex-start; /* Alinha os tamanhos à esquerda */
+        margin-bottom: 30px;
+    }
+
+    #addToCartModalBtn {
+        margin-bottom: 40px; /* Espaço no final */
+    }
+
+    /* Ajuste do botão de fechar (X) */
+    .size-modal-content .close-button {
+        top: 20px;
+        right: 20px;
+        color: #333; /* Cor escura para contrastar com fundo branco */
+        background: rgba(0,0,0,0.05); /* Fundo sutil */
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 
+/* OTIMIZAÇÃO: Avisa ao navegador para preparar a animação, evitando travamentos */
 .gsap-fade-up {
-    opacity: 1; 
+    opacity: 1; /* Garante visibilidade inicial se o JS falhar */
     will-change: transform, opacity;
+}
+
+/* ===================================================
+   ADICIONE ISSO NO FINAL DO ARQUIVO style.css
+   PARA DEIXAR O BOTÃO TRANSPARENTE NO MOBILE
+   =================================================== */
+
+@media (max-width: 768px) {
+    /* Seleciona qualquer link ou botão dentro da área inicial (Hero) */
+    .hero-content a, 
+    .hero-content .btn {
+        /* RGBA(Red, Green, Blue, Alpha)
+           255, 102, 0 = Laranja da sua marca
+           0.5 = 50% de Transparência (Mude aqui se quiser mais ou menos)
+        */
+        background-color: rgba(255, 145, 0, 0.69) !important;
+        
+        /* Efeito de vidro embaçado atrás */
+        backdrop-filter: blur(5px);
+        
+        /* Borda fina branca para destacar */
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        
+        /* Garante que o texto fique branco */
+        color: #fff !important;
+    }
 }
