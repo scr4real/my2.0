@@ -438,8 +438,13 @@
     position: relative;
   }
 
-  .section-titleRECEM {
-    font-size: 2rem !important;
+.section-titleRECEM {
+    /* Aumentei de 2rem para 3rem (ajuste conforme o gosto) */
+    font-size: 3rem !important; 
+    
+    /* Troca para uma fonte mais "pesada" nativa do sistema */
+    font-family: "Arial Black", "Gadget", sans-serif !important;
+    
     text-align: left !important;
     margin-bottom: 0.5rem !important;
     background: linear-gradient(45deg, var(--text-primary), var(--primary));
@@ -447,17 +452,22 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     width: 100%;
+    
+    /* Garante o peso máximo */
     font-weight: 900;
-  }
+    
+    /* Ajuste de entrelinha para fontes muito grandes não encavalarem */
+    line-height: 1.1 !important; 
+}
 
-  .section-titleRECEM::after {
+.section-titleRECEM::after {
     left: 0 !important;
     transform: translateX(0) !important;
     width: 50px;
     height: 2px;
     bottom: -6px;
-    display: none; /* Remove barra no mobile para limpar */
-  }
+    display: none; 
+}
 
   .collection-section .collection-nav {
     position: absolute;
