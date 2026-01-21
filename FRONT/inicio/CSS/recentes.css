@@ -451,7 +451,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    width: 100%;
+    width: 90%;
     
     /* Garante o peso máximo */
     font-weight: 900;
