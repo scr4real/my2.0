@@ -36,26 +36,35 @@
 }
 
 .collection-section .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: var(--space-xxl);
-  position: relative;
+    flex-direction: column;
+    align-items: flex-start; /* Alinha tudo à esquerda como uma vitrine de luxo */
+    text-align: left;
 }
 
-/* --- Títulos das Seções --- */
 .section-titleRECEM {
-  font-size: clamp(3rem, 8vw, 6rem);
-  text-align: center;
-  margin-bottom: var(--space-lg);
-  padding: 0;
-  color: transparent;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 50%, var(--text-primary) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  position: relative;
-  font-weight: 900;
-  letter-spacing: -0.02em;
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(90deg, #ff6600 0%, #ff9100 100%);
+    color: #fff !important; /* FORÇA O TEXTO BRANCO PARA APARECER NA CAIXA */
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 0.9rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 2px !important;
+    margin-bottom: 15px !important;
+    text-transform: uppercase;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+    border-left: 5px solid #fff; 
+    animation: pulseBadge 2s infinite;
+    font-family: var(--font-mono);
+    /* REMOVA AS LINHAS DE COLOR TRANSPARENT E BACKGROUND-CLIP */
+}
+
+@keyframes pulseBadge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
 }
 
 .section-titleRECEM::after {
@@ -68,6 +77,16 @@
   height: 3px;
   background: var(--primary);
   border-radius: 2px;
+}
+
+.section-titleRECEM::after {
+    display: none !important;
+}
+
+.section-title {
+    margin-top: 10px !important;
+    display: block;
+    width: 100%;
 }
 
 /* --- Botões de Navegação dos Carrosséis --- */
@@ -438,48 +457,28 @@
     position: relative;
   }
 
-/* --- DENTRO DO @media (max-width: 768px) --- */
+  /* --- DENTRO DO @media (max-width: 768px) --- */
+  .section-titleRECEM {
+        padding: 6px 15px; /* Menor no mobile */
+        font-size: 0.75rem !important;
+        border-left-width: 4px;
+        margin-bottom: 10px !important;
+    }
+    
+    .section-title {
+        font-size: 2rem !important; /* Ajuste para não ocupar a tela toda */
+        margin-top: 5px !important;
+    }
 
-.section-titleRECEM {
-    display: inline-flex;
-    align-items: center;
-    background: linear-gradient(90deg, #ff6600 0%, #ff9100 100%);
-    color: #fff !important;
-    padding: 6px 15px;
-    border-radius: 4px;
-    font-size: 0.80rem !important;
-    font-weight: 800 !important;
-    letter-spacing: 1.5px !important;
-    margin-bottom: 12px !important;
-    text-transform: uppercase;
-    position: relative;
-    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
-    border-left: 4px solid #fff; 
-    animation: pulseBadge 2s infinite;
-}
-
-.section-title {
-    margin-top: 5px !important;
-    font-size: 2.2rem !important;
-    text-align: left; /* Garante alinhamento com a badge */
-}
-
-/* Removi a chave que estava sobrando aqui */
-
-.section-titleRECEM::after {
-    display: none !important; /* Força o sumiço de qualquer linha antiga */
-}
-
-@keyframes pulseBadge {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.03); }
-    100% { transform: scale(1); }
-}
+  /* Removi a chave que estava sobrando aqui */
+  .section-titleRECEM::after {
+      display: none !important;
+  }
 
   .collection-section .collection-nav {
-    position: absolute;
-    bottom: 0;
-    right: 1rem;
+      position: absolute;
+      bottom: 0;
+      right: 1rem;
   }
 
   .collection-nav button,
