@@ -438,36 +438,42 @@
     position: relative;
   }
 
+/* --- DENTRO DO @media (max-width: 768px) --- */
+
 .section-titleRECEM {
-    /* Aumentei de 2rem para 3rem (ajuste conforme o gosto) */
-    font-size: 2,7rem !important; 
-    
-    /* Troca para uma fonte mais "pesada" nativa do sistema */
-    font-family: "Arial Black", "Gadget", sans-serif !important;
-    
-    text-align: left !important;
-    margin-bottom: 0.5rem !important;
-    background: linear-gradient(45deg, var(--text-primary), var(--primary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    width: 80%;
-    
-    /* Garante o peso máximo */
-    font-weight: 720;
-    
-    /* Ajuste de entrelinha para fontes muito grandes não encavalarem */
-    line-height: 1.1 !important; 
-    padding: 5px;
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(90deg, #ff6600 0%, #ff9100 100%);
+    color: #fff !important;
+    padding: 6px 15px;
+    border-radius: 4px;
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 1.5px !important;
+    margin-bottom: 12px !important;
+    text-transform: uppercase;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3);
+    border-left: 4px solid #fff; 
+    animation: pulseBadge 2s infinite;
 }
 
+.section-title {
+    margin-top: 5px !important;
+    font-size: 2.2rem !important;
+    text-align: left; /* Garante alinhamento com a badge */
+}
+
+/* Removi a chave que estava sobrando aqui */
+
 .section-titleRECEM::after {
-    left: 0 !important;
-    transform: translateX(0) !important;
-    width: 50px;
-    height: 2px;
-    bottom: -6px;
-    display: none; 
+    display: none !important; /* Força o sumiço de qualquer linha antiga */
+}
+
+@keyframes pulseBadge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
 }
 
   .collection-section .collection-nav {
