@@ -1,268 +1,177 @@
-document.addEventListener('DOMContentLoaded', () => {
+/**
+ * JAPA UNIVERSE - CATALOGO JS (ULTRA OPTIMIZED)
+ * Foco: Carregamento instantâneo de imagens e renderização em milissegundos.
+ */
+
+(function() {
     const BASE_URL = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')
         ? 'http://localhost:8080' 
         : 'https://back-production-e565.up.railway.app';
     const API_URL = `${BASE_URL}/api/produtos`;
-    
-    // USAMOS A MESMA CHAVE DA PÁGINA INICIAL PARA COMPARTILHAR O CACHE
-    const CACHE_KEY = "japa_products_cache"; 
-    
+    const CACHE_KEY = "japa_products_cache";
+
+    // Estado da aplicação (Privado para performance)
+    let allProducts = [];
+    let filteredProducts = [];
+    let currentPage = 1;
+    const itemsPerPage = 12;
+
     const grid = document.getElementById('products-grid');
-    
-    if (grid) {
-        let state = {
-            allProducts: [], 
-            filteredProducts: [], 
-            currentPage: 1, 
-            itemsPerPage: 12, 
-            currentView: 'grid',
-            filters: { search: '', brand: 'all', category: 'all', price: 'all', sort: 'featured' },
-            isLoading: true 
-        };
 
-        const elements = {
-            grid, 
-            paginationContainer: document.getElementById('pagination-controls') || document.querySelector('.catalog-footer'),
-            searchInput: document.getElementById('searchInput'), 
-            searchClear: document.getElementById('searchClear'),
-            brandFilter: document.getElementById('brandFilter'), 
-            categoryFilter: document.getElementById('categoryFilter'),
-            priceFilter: document.getElementById('priceFilter'), 
-            sortFilter: document.getElementById('sortFilter'),
-            activeFilters: document.getElementById('activeFilters'), 
-            loadingState: document.getElementById('loadingState'),
-            emptyState: document.getElementById('emptyState'),
-            clearFiltersBtn: document.getElementById('clearFiltersBtn'),
-            viewButtons: document.querySelectorAll('.view-btn')
-        };
+    /**
+     * Utilitários de Performance
+     */
+    const Utils = {
+        formatPrice: (p) => `R$ ${Number(p).toFixed(2).replace('.', ',')}`,
+        // Otimização de URL de Imagem: Garante que o navegador não se perca em caminhos relativos
+        getImageUrl: (path) => {
+            if (!path) return '/FRONT/assets/images/placeholder.jpg';
+            if (path.startsWith('http')) return path;
+            const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+            return `${BASE_URL}/${cleanPath}`;
+        },
+        // Gera esqueletos CSS puros (sem imagens) para ocupação de espaço imediata
+        getSkeleton: () => `<div class="product-card skeleton-card"><div class="product-image-wrapper skeleton"></div><div class="product-info"><div class="skeleton" style="height:20px;width:70%"></div><div class="skeleton" style="height:20px;width:40%"></div></div></div>`.repeat(6)
+    };
 
-        const utils = {
-            debounce: (func, wait) => { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func(...args), wait); }; },
-            formatPrice: (price) => `R$ ${Number(price).toFixed(2).replace('.', ',')}`,
-            getImageUrl: (path) => !path ? 'FRONT/assets/images/placeholder.jpg' : (path.startsWith('http') ? path : `${BASE_URL}/${path.startsWith('/') ? path.substring(1) : path}`),
-            // Gera esqueletos leves para feedback visual imediato
-            generateSkeletons: (count) => Array.from({ length: count }).map(() => `<div class="product-card skeleton-card"><div class="product-image-wrapper skeleton"></div><div class="product-info"><div class="skeleton" style="height:20px; margin-bottom: 10px;"></div><div class="skeleton" style="height:20px;width:50%;"></div></div></div>`).join(''),
-            parsePriceRange: (range) => { if (range === 'all') return { min: 0, max: Infinity }; const [min, max] = range.split('-').map(Number); return { min, max: max || Infinity }; }
-        };
+    /**
+     * Renderização de Alta Velocidade
+     */
+    const Render = {
+        products: () => {
+            if (!grid) return;
 
-        const filterSystem = {
-            applyFilters: () => {
-                // Executamos num timeout zero para liberar a thread principal (UI não trava)
-                setTimeout(() => {
-                    let filtered = [...state.allProducts];
-                    
-                    // Lógica de filtragem
-                    if (state.filters.search) {
-                        const term = state.filters.search.toLowerCase();
-                        filtered = filtered.filter(p => p.nome.toLowerCase().includes(term) || (p.marca?.nome || '').toLowerCase().includes(term));
-                    }
-                    if (state.filters.brand !== 'all') filtered = filtered.filter(p => p.marca?.nome === state.filters.brand);
-                    if (state.filters.category !== 'all') filtered = filtered.filter(p => p.categoria?.nome === state.filters.category);
-                    if (state.filters.price !== 'all') { 
-                        const range = utils.parsePriceRange(state.filters.price); 
-                        filtered = filtered.filter(p => p.preco >= range.min && p.preco <= range.max); 
-                    }
-                    
-                    // Ordenação
-                    if (state.filters.sort === 'price-asc') filtered.sort((a, b) => a.preco - b.preco);
-                    else if (state.filters.sort === 'price-desc') filtered.sort((a, b) => b.preco - a.preco);
-                    else if (state.filters.sort === 'newest') filtered.sort((a, b) => new Date(b.createdAt||0) - new Date(a.createdAt||0));
+            const start = (currentPage - 1) * itemsPerPage;
+            const toShow = filteredProducts.slice(start, start + itemsPerPage);
 
-                    state.filteredProducts = filtered;
-                    state.currentPage = 1; 
-                    
-                    filterSystem.updateActiveFilters();
-                    filterSystem.updateFormElements();
-                    renderSystem.renderProducts();
-                }, 0);
-            },
-            updateActiveFilters: () => {
-                if(!elements.activeFilters) return;
-                let html = '';
-                if(state.filters.search) html += filterSystem.createTag('search', `Busca: ${state.filters.search}`);
-                if(state.filters.brand !== 'all') html += filterSystem.createTag('brand', `Marca: ${state.filters.brand}`);
-                if(state.filters.price !== 'all') html += filterSystem.createTag('price', 'Preço');
-                elements.activeFilters.innerHTML = html;
-            },
-            createTag: (type, label) => `<div class="filter-tag"><span>${label}</span><button onclick="window.catalogRemoveFilter('${type}')"><i class="fas fa-times"></i></button></div>`,
-            removeFilter: (type) => {
-                state.filters[type] = (type === 'sort') ? 'featured' : (type === 'search' ? '' : 'all');
-                if(elements.searchInput && type === 'search') elements.searchInput.value = '';
-                filterSystem.applyFilters();
-            },
-            updateFormElements: () => {
-                if(elements.searchInput && document.activeElement !== elements.searchInput) elements.searchInput.value = state.filters.search;
-                if(elements.brandFilter) elements.brandFilter.value = state.filters.brand;
-                if(elements.searchClear) elements.searchClear.style.display = state.filters.search ? 'block' : 'none';
-            },
-            clearAllFilters: () => {
-                state.filters = { search: '', brand: 'all', category: 'all', price: 'all', sort: 'featured' };
-                filterSystem.applyFilters();
+            if (toShow.length === 0) {
+                grid.innerHTML = '<div class="empty-state">Nenhum tênis encontrado.</div>';
+                return;
             }
-        };
 
-        const renderSystem = {
-            renderProducts: () => {
-                // Caso 1: Carregando e sem cache -> Mostra Esqueleto
-                if (state.isLoading && state.filteredProducts.length === 0) {
-                    elements.grid.innerHTML = utils.generateSkeletons(12);
-                    if(elements.loadingState) elements.loadingState.style.display = 'block';
-                    if(elements.emptyState) elements.emptyState.style.display = 'none';
-                    if(elements.paginationContainer) elements.paginationContainer.innerHTML = '';
-                    return;
-                }
-                
-                // Remove loading explícito se já tivermos produtos
-                if(elements.loadingState) elements.loadingState.style.display = 'none';
-                
-                const start = (state.currentPage - 1) * state.itemsPerPage;
-                const productsToShow = state.filteredProducts.slice(start, start + state.itemsPerPage);
-                
-                // Caso 2: Nenhum produto encontrado
-                if (productsToShow.length === 0) {
-                    elements.grid.innerHTML = '';
-                    if(elements.emptyState) elements.emptyState.style.display = 'block';
-                    if(elements.paginationContainer) elements.paginationContainer.innerHTML = '';
-                    return;
-                }
-                
-                if(elements.emptyState) elements.emptyState.style.display = 'none';
-                
-                // Renderização Otimizada
-                elements.grid.innerHTML = productsToShow.map((product, index) => renderSystem.createProductCard(product, index)).join('');
-                renderSystem.renderPagination();
-            },
-
-            renderPagination: () => {
-                if (!elements.paginationContainer) return;
-                const totalPages = Math.ceil(state.filteredProducts.length / state.itemsPerPage);
-                if (totalPages <= 1) { elements.paginationContainer.innerHTML = ''; return; }
-
-                let html = `<div class="pagination-wrapper"><button class="page-btn" ${state.currentPage===1?'disabled':''} onclick="window.catalogPage(${state.currentPage-1})"><i class="fas fa-chevron-left"></i></button>`;
-                let start = Math.max(1, state.currentPage - 2);
-                let end = Math.min(totalPages, start + 4);
-                for (let i = start; i <= end; i++) html += `<button class="page-btn ${i===state.currentPage?'active':''}" onclick="window.catalogPage(${i})">${i}</button>`;
-                html += `<button class="page-btn" ${state.currentPage===totalPages?'disabled':''} onclick="window.catalogPage(${state.currentPage+1})"><i class="fas fa-chevron-right"></i></button></div>`;
-                elements.paginationContainer.innerHTML = html;
-            },
-
-            createProductCard: (product, index) => {
-                const hasDiscount = product.precoOriginal > product.preco;
-                const discountPercent = hasDiscount ? Math.round((1 - product.preco / product.precoOriginal) * 100) : 0;
-                
-                // OTIMIZAÇÃO CRÍTICA: As 6 primeiras imagens carregam IMEDIATAMENTE.
-                // O resto carrega conforme o scroll (lazy).
-                const isCritical = index < 6; 
-                const loadingAttr = isCritical ? 'eager' : 'lazy';
-                const priorityAttr = isCritical ? 'high' : 'auto';
-
-                return `
-                    <div class="product-card" data-id="${product.id}">
-                        <div class="product-badges">
-                            ${product.isNew ? '<span class="badge new">Novo</span>' : ''}
-                            ${hasDiscount ? `<span class="badge sale">-${discountPercent}%</span>` : ''}
-                        </div>
-                        <a href="/FRONT/produto/HTML/produto.html?id=${product.id}" class="product-card-link">
+            // Fragmento de string para evitar múltiplos Reflows no DOM
+            let html = '';
+            toShow.forEach((p, idx) => {
+                const isCritical = idx < 4; // As 4 primeiras fotos são prioridade máxima
+                html += `
+                    <div class="product-card" data-id="${p.id}">
+                        <a href="/FRONT/produto/HTML/produto.html?id=${p.id}" class="product-card-link">
                             <div class="product-image-wrapper">
-                                <img src="${utils.getImageUrl(product.imagemUrl)}" 
-                                     alt="${product.nome}"
-                                     loading="${loadingAttr}"
-                                     fetchpriority="${priorityAttr}"
+                                <img src="${Utils.getImageUrl(p.imagemUrl)}" 
+                                     alt="${p.nome}"
+                                     loading="${isCritical ? 'eager' : 'lazy'}"
+                                     fetchpriority="${isCritical ? 'high' : 'low'}"
                                      decoding="async"
-                                     width="300" height="300">
+                                     onload="this.style.opacity='1'">
                             </div>
                         </a>
                         <div class="product-info">
-                            <h3 class="product-name">${product.nome}</h3>
+                            <h3 class="product-name">${p.nome}</h3>
                             <div class="product-shipping-tag"><i class="fas fa-truck"></i><span>Frete Grátis</span></div>
                             <div class="product-price">
-                                <span class="current-price">${utils.formatPrice(product.preco)}</span>
-                                ${hasDiscount ? `<span class="original-price">${utils.formatPrice(product.precoOriginal)}</span>` : ''}
+                                <span class="current-price">${Utils.formatPrice(p.preco)}</span>
                             </div>
                         </div>
                         <div class="product-footer">
-                            <button class="btn btn-primary add-to-cart-btn" data-product-id="${product.id}">Comprar</button>
+                            <button class="btn btn-primary add-to-cart-btn" onclick="event.preventDefault(); window.location.href='/FRONT/produto/HTML/produto.html?id=${p.id}'">Ver Detalhes</button>
                         </div>
                     </div>`;
+            });
+
+            grid.innerHTML = html;
+            Render.pagination();
+        },
+
+        pagination: () => {
+            const container = document.getElementById('pagination-controls');
+            if (!container) return;
+            const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+            if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+            let html = `<div class="pagination-wrapper">`;
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="window.setCatalogPage(${i})">${i}</button>`;
             }
-        };
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+    };
 
-        window.catalogPage = p => { state.currentPage = p; renderSystem.renderProducts(); grid.scrollIntoView({behavior:'smooth', block:'start'}); };
-        window.catalogRemoveFilter = k => filterSystem.removeFilter(k);
+    /**
+     * Lógica de Busca e Filtro (Sem travamento de UI)
+     */
+    const Logic = {
+        filter: () => {
+            const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const brand = document.getElementById('brandFilter')?.value || 'all';
 
-        const init = {
-            setup: () => {
-                if(elements.searchInput) elements.searchInput.addEventListener('input', utils.debounce((e) => { state.filters.search = e.target.value.trim(); filterSystem.applyFilters(); }, 300));
-                if(elements.searchClear) elements.searchClear.addEventListener('click', () => { state.filters.search = ''; elements.searchInput.value = ''; filterSystem.applyFilters(); });
-                ['brandFilter', 'categoryFilter', 'priceFilter', 'sortFilter'].forEach(id => {
-                    if(elements[id]) elements[id].addEventListener('change', (e) => { state.filters[id.replace('Filter', '')] = e.target.value; filterSystem.applyFilters(); });
-                });
-                if(elements.clearFiltersBtn) elements.clearFiltersBtn.addEventListener('click', filterSystem.clearAllFilters);
-                grid.addEventListener('click', e => {
-                    if(e.target.closest('.add-to-cart-btn')) {
-                        e.preventDefault();
-                        const id = e.target.closest('.add-to-cart-btn').dataset.productId;
-                        if(window.quickViewApp) window.quickViewApp.openQuickView(id);
-                    }
-                });
-            },
-            fetch: async () => {
-                // ESTRATÉGIA "STALE-WHILE-REVALIDATE":
-                
-                // 1. TENTA CARREGAR DO CACHE PRIMEIRO (INSTANTÂNEO)
-                const cached = localStorage.getItem(CACHE_KEY);
-                if (cached) {
-                    try {
-                        const data = JSON.parse(cached);
-                        if (Array.isArray(data) && data.length > 0) {
-                            state.allProducts = data;
-                            state.isLoading = false; 
-                            // Renderiza imediatamente com o que temos
-                            filterSystem.applyFilters(); 
-                        }
-                    } catch (e) {
-                        console.warn("Cache inválido, baixando novamente...", e);
-                    }
-                } else {
-                    // Se não tem cache, garante que o esqueleto apareça
-                    elements.grid.innerHTML = utils.generateSkeletons(12);
-                }
+            filteredProducts = allProducts.filter(p => {
+                const matchesSearch = p.nome.toLowerCase().includes(searchTerm);
+                const matchesBrand = brand === 'all' || (p.marca?.nome === brand);
+                return matchesSearch && matchesBrand;
+            });
 
-                // 2. BUSCA DADOS FRESCOS NA API (EM SEGUNDO PLANO)
-                try {
-                    const res = await axios.get(API_URL);
-                    const freshData = res.data.map(product => ({ 
-                        ...product, 
-                        isNew: Math.random() > 0.8, // Mantendo sua lógica visual
-                        precoOriginal: product.preco * 1.15,
-                        marca: product.marca || { nome: 'Japa' },
-                        categoria: product.categoria || { nome: 'Geral' }
-                    }));
-                    
-                    // Atualiza o estado
-                    state.allProducts = freshData;
-                    
-                    // Atualiza o cache compartilhado
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(freshData));
-                    
-                    // Re-renderiza com os dados novos
-                    filterSystem.applyFilters();
-                    
-                } catch (error) { 
-                    console.error("Erro ao atualizar catálogo:", error);
-                    // Se falhar e não tivermos cache, aí sim mostramos erro
-                    if (state.allProducts.length === 0) {
-                        elements.grid.innerHTML = '<div class="error-state">Erro ao carregar produtos. Tente recarregar a página.</div>'; 
-                    }
-                } 
-                finally { 
-                    state.isLoading = false; 
-                    if(elements.loadingState) elements.loadingState.style.display = 'none';
-                }
-            },
-            start: () => { init.setup(); init.fetch(); }
-        };
+            currentPage = 1;
+            Render.products();
+        }
+    };
 
-        init.start();
+    /**
+     * Orquestração de Carregamento
+     */
+    const Init = async () => {
+        // 1. Mostrar Skeletons IMEDIATAMENTE
+        if (grid) grid.innerHTML = Utils.getSkeleton();
+
+        // 2. Tentar Cache (Instantâneo)
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+            allProducts = JSON.parse(cached);
+            filteredProducts = [...allProducts];
+            Render.products();
+        }
+
+        // 3. Buscar na API em Background (Stale-While-Revalidate)
+        try {
+            const res = await axios.get(API_URL);
+            const freshData = res.data;
+            
+            // Só re-renderiza se os dados mudaram
+            if (JSON.stringify(freshData) !== cached) {
+                allProducts = freshData;
+                filteredProducts = [...allProducts];
+                localStorage.setItem(CACHE_KEY, JSON.stringify(freshData));
+                Render.products();
+            }
+        } catch (err) {
+            console.error("Erro API:", err);
+            if (!cached) grid.innerHTML = '<p>Erro ao carregar catálogo. Verifique sua conexão.</p>';
+        }
+
+        // Ocultar spinner de loading se existir
+        const loader = document.getElementById('loadingState');
+        if (loader) loader.style.display = 'none';
+    };
+
+    // Global para os botões de paginação
+    window.setCatalogPage = (p) => {
+        currentPage = p;
+        Render.products();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Event Listeners Otimizados
+    document.getElementById('searchInput')?.addEventListener('input', () => {
+        clearTimeout(window.searchTimer);
+        window.searchTimer = setTimeout(Logic.filter, 300);
+    });
+
+    document.getElementById('brandFilter')?.addEventListener('change', Logic.filter);
+
+    // Start
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', Init);
+    } else {
+        Init();
     }
-});
+})();
