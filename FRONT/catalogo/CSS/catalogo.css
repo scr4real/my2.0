@@ -422,10 +422,13 @@
     display: flex;
 }
 
-.products-grid[data-view="list"] .product-price {
+.products-grid[data-view="list"] 
+
+.product-price {
     margin-top: 0 !important;
     border: none;
-
+    padding-top: 2px !important;   /* <--- Diminui o recuo interno superior */
+    gap: 5px !important;
 }
 
 .products-grid[data-view="list"] .product-footer {
