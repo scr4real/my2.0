@@ -562,7 +562,13 @@
     .product-name { 
         font-size: 1.0rem; 
         height: 2.8em; 
+        margin-bottom: 2px !important;
     }
+
+    .product-shipping-tag {
+        margin-bottom: 2px !important;
+    }
+
     .add-to-cart-btn { padding: 8px; font-size: 0.7rem; min-height: 35px; }
     .quickview-content { grid-template-columns: 1fr; }
     .quickview-gallery { border-radius: 20px 20px 0 0; min-height: 300px; }
