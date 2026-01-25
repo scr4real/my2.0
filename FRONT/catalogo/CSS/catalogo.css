@@ -334,14 +334,15 @@
     font-size: 0.75rem;
 }
 
-/* --- ADICIONE ESTE BLOCO ABAIXO --- */
-    .product-price {
-        margin-top: 0 !important;      /* Remove o espaço de cima */
-        padding-top: 0 !important;      /* Remove o recuo interno */
-        border-top: none !important;    /* Tira a linha divisória que ocupa espaço */
-        gap: 2px !important;            /* Aproxima o R$ do valor */
-    }
-    /* ---------------------------------- */
+.product-price {
+    margin-top: auto;
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    padding-top: 3px;
+    border-top: 1px solid rgba(255,255,255,0.05); /* Divisor sutil */
+}
+
 .current-price {
     font-size: 1.0rem;
     font-weight: 700;
@@ -540,12 +541,11 @@
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
     .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .product-card { min-height: 400px; }
+    .product-card { min-height: 380px; } /* Diminuí um pouco a altura total do card */
     
-    /* Ajuste da Imagem (Mantendo o que você já tinha) */
     .product-image-wrapper {
         height: 180px !important; 
-        padding: 7px !important; /* Corrigido de "7" para "7px" */
+        padding: 7px !important; 
         margin: 0 !important;
         background-color: transparent !important; 
     }
@@ -558,21 +558,35 @@
         transform: scale(1.10); 
     }
 
+    /* Aproxima Nome do Frete */
     .product-name { 
-        font-size: 1.0rem; 
-        height: 2.8em; 
+        font-size: 0.9rem; 
+        height: auto; 
+        min-height: auto;
         margin-bottom: 2px !important;
     }
 
+    /* Aproxima Frete do Preço */
     .product-shipping-tag {
-        margin-bottom: 2px !important;
+        margin-bottom: 0px !important;
+        font-size: 0.65rem;
+    }
+
+    /* Tira o espaço e a linha que separa o preço */
+    .product-price {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        border-top: none !important; /* Remove a linha cinza que afasta os dois */
+        gap: 2px !important;
+    }
+
+    .current-price {
+        font-size: 1.1rem !important;
     }
 
     .add-to-cart-btn { padding: 8px; font-size: 0.7rem; min-height: 35px; }
-    .quickview-content { grid-template-columns: 1fr; }
-    .quickview-gallery { border-radius: 20px 20px 0 0; min-height: 300px; }
 
-    /* --- NOVO CÓDIGO: Diminuir as etiquetas "Novo", "17%" --- */
+    /* Ajuste das Etiquetas */
     .product-badges {
         top: 8px !important;
         left: 8px !important;
@@ -580,11 +594,9 @@
     }
 
     .badge {
-        padding: 3px 6px !important;      /* Menor preenchimento */
-        font-size: 0.55rem !important;    /* Fonte bem pequena */
+        padding: 3px 6px !important;
+        font-size: 0.55rem !important;
         border-radius: 4px !important;
-        line-height: 1.1 !important;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
     }
 }
 @media (max-width: 360px) {
