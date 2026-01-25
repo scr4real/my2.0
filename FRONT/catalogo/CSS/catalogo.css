@@ -538,97 +538,85 @@
     border-color: #333;
 }
 
-/* ===== RESPONSIVIDADE JAPA UNIVERSE (MOBILE COMPACTO) ===== */
+/* ===== RESPONSIVIDADE JAPA UNIVERSE (ULTRA COMPACTO) ===== */
 @media (max-width: 768px) {
-    /* 1. Ajuste do Grid e do Card */
     .products-grid { 
         grid-template-columns: repeat(2, 1fr) !important; 
-        gap: 10px !important; 
+        gap: 8px !important; 
     }
 
     .product-card { 
-        min-height: 360px !important; /* Altura reduzida para evitar vácuo */
+        /* REDUÇÃO DE ALTURA: De 400px para 330px para sumir o vácuo no fundo */
+        min-height: 330px !important; 
+        height: auto !important;
         display: flex !important;
         flex-direction: column !important;
+        padding-bottom: 5px !important;
     }
 
-    /* 2. Ajuste da Imagem (Ocupando o espaço correto) */
     .product-image-wrapper {
-        height: 180px !important; 
+        height: 160px !important; /* Reduzi um pouco a imagem para o card subir */
         padding: 5px !important; 
-        margin: 0 !important;
-        background-color: transparent !important; 
+        margin-bottom: 0 !important;
     }
 
     .product-image-wrapper img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: contain !important;
-        filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.5));
-        transform: scale(1.10); 
+        transform: scale(1.05) !important; 
     }
 
-    /* 3. INFO: O segredo para colar os textos */
+    /* INFO: Força os textos a ficarem grudados no topo do bloco */
     .product-info {
-        padding: 0 0.8rem 0.2rem !important;
-        display: block !important; /* Remove o flex que espalha os itens */
-        flex-grow: 0 !important;   /* Impede que o bloco estique */
+        padding: 0 0.8rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important; /* Alinha tudo no topo */
+        flex-grow: 0 !important;
+        gap: 0 !important; /* Zera o espaço entre os filhos */
     }
 
     .product-name { 
-        font-size: 0.85rem !important; 
+        font-size: 0.8rem !important; 
         height: auto !important;
-        min-height: auto !important; /* Tira a altura fixa que criava o buraco */
-        margin-bottom: 2px !important;
+        min-height: auto !important;
+        margin: 0 0 2px 0 !important;
+        line-height: 1.1 !important;
         display: block !important;
-        line-height: 1.2;
     }
 
     .product-shipping-tag {
-        font-size: 0.65rem !important;
-        margin-bottom: 2px !important; /* Cola no preço */
+        font-size: 0.6rem !important;
+        margin: 0 0 2px 0 !important;
         display: flex !important;
     }
 
-    /* 4. PREÇO: Subindo para perto do frete */
     .product-price {
-        margin-top: 0 !important;      /* Tira a margem automática que jogava o preço pra baixo */
-        padding-top: 0 !important;     /* Tira o vácuo interno */
-        border-top: none !important;   /* Tira a linha cinza divisória */
+        margin: 0 !important;
+        padding: 0 !important;
+        border-top: none !important;
         display: flex !important;
-        align-items: baseline !important;
-        gap: 4px !important;
+        align-items: center !important;
     }
 
     .current-price {
-        font-size: 1.0rem !important;
-        line-height: 1;
+        font-size: 0.95rem !important;
+        line-height: 1 !important;
     }
 
-    /* 5. RODAPÉ E BOTÃO */
+    /* BOTÃO: Agora ele fica logo abaixo do preço sem empurrar o card */
     .product-footer {
-        margin-top: auto !important;   /* O botão continua no fundo, mas o preço subiu */
-        padding: 0 0.8rem 1rem !important;
+        margin-top: 8px !important;
+        padding: 0 0.8rem 0.8rem !important;
     }
 
     .add-to-cart-btn { 
-        padding: 8px !important; 
-        font-size: 0.7rem !important; 
-        min-height: 35px !important; 
+        padding: 6px !important; 
+        font-size: 0.65rem !important; 
+        min-height: 30px !important; 
     }
 
-    /* Ajuste das Etiquetas (Novo/Promo) */
-    .product-badges {
-        top: 8px !important;
-        left: 8px !important;
-        gap: 3px !important;
-    }
-
-    .badge {
-        padding: 3px 6px !important;
-        font-size: 0.55rem !important;
-        border-radius: 4px !important;
-    }
+    /* Etiquetas menores */
+    .product-badges { top: 5px !important; left: 5px !important; }
+    .badge { padding: 2px 5px !important; font-size: 0.5rem !important; }
 }
 @media (max-width: 360px) {
     .products-grid { grid-template-columns: 1fr; }
