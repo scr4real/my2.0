@@ -334,15 +334,14 @@
     font-size: 0.75rem;
 }
 
-.product-price {
-    margin-top: auto;
-    display: flex;
-    align-items: baseline;
-    gap: 9px;
-    padding-top: 3px;
-    border-top: 1px solid rgba(255,255,255,0.05); /* Divisor sutil */
-}
-
+/* --- ADICIONE ESTE BLOCO ABAIXO --- */
+    .product-price {
+        margin-top: 0 !important;      /* Remove o espaço de cima */
+        padding-top: 0 !important;      /* Remove o recuo interno */
+        border-top: none !important;    /* Tira a linha divisória que ocupa espaço */
+        gap: 2px !important;            /* Aproxima o R$ do valor */
+    }
+    /* ---------------------------------- */
 .current-price {
     font-size: 1.0rem;
     font-weight: 700;
