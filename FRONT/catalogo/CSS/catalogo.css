@@ -538,43 +538,66 @@
     border-color: #333;
 }
 
-/* ===== RESPONSIVIDADE MOBILE - ULTRA COMPACTO ===== */
+/* ===== RESPONSIVIDADE JAPA UNIVERSE (MOBILE COMPACTO) ===== */
 @media (max-width: 768px) {
-    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .product-card { min-height: 360px !important; } /* Reduzi a altura para fechar o vácuo embaixo */
-    
+    /* 1. Ajuste do Grid e do Card */
+    .products-grid { 
+        grid-template-columns: repeat(2, 1fr) !important; 
+        gap: 10px !important; 
+    }
+
+    .product-card { 
+        min-height: 360px !important; /* Altura reduzida para evitar vácuo */
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* 2. Ajuste da Imagem (Ocupando o espaço correto) */
     .product-image-wrapper {
         height: 180px !important; 
-        padding: 5px !important;
-        margin-bottom: 0 !important;
+        padding: 5px !important; 
+        margin: 0 !important;
+        background-color: transparent !important; 
     }
 
     .product-image-wrapper img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        filter: drop-shadow(0px 8px 10px rgba(0,0,0,0.5));
         transform: scale(1.10); 
     }
 
-    /* 1. NOME: Tira o espaço de baixo e reduz a altura fixa */
+    /* 3. INFO: O segredo para colar os textos */
+    .product-info {
+        padding: 0 0.8rem 0.2rem !important;
+        display: block !important; /* Remove o flex que espalha os itens */
+        flex-grow: 0 !important;   /* Impede que o bloco estique */
+    }
+
     .product-name { 
         font-size: 0.85rem !important; 
         height: auto !important;
-        min-height: auto !important;
-        margin-bottom: 0px !important; /* Colado no frete */
+        min-height: auto !important; /* Tira a altura fixa que criava o buraco */
+        margin-bottom: 2px !important;
+        display: block !important;
         line-height: 1.2;
     }
 
-    /* 2. FRETE: Tira a margem que empurra o preço */
     .product-shipping-tag {
-        margin-top: 2px !important;
-        margin-bottom: 0px !important; /* Colado no preço */
         font-size: 0.65rem !important;
+        margin-bottom: 2px !important; /* Cola no preço */
+        display: flex !important;
     }
 
-    /* 3. PREÇO: O segredo está em tirar a borda e o padding */
+    /* 4. PREÇO: Subindo para perto do frete */
     .product-price {
-        margin-top: 0 !important;
-        padding-top: 0 !important;      /* Tira o vácuo de 10px */
-        border-top: none !important;    /* Tira a linha que separa os elementos */
-        gap: 2px !important;
+        margin-top: 0 !important;      /* Tira a margem automática que jogava o preço pra baixo */
+        padding-top: 0 !important;     /* Tira o vácuo interno */
+        border-top: none !important;   /* Tira a linha cinza divisória */
+        display: flex !important;
+        align-items: baseline !important;
+        gap: 4px !important;
     }
 
     .current-price {
@@ -582,20 +605,29 @@
         line-height: 1;
     }
 
-    /* 4. BOTÃO: Ajuste final para subir tudo */
-    .product-info {
-        padding: 0 0.8rem 0.2rem !important;
-        gap: 2px !important; /* Cola todos os elementos internos */
-    }
-
+    /* 5. RODAPÉ E BOTÃO */
     .product-footer {
-        padding: 0 0.8rem 0.8rem !important;
+        margin-top: auto !important;   /* O botão continua no fundo, mas o preço subiu */
+        padding: 0 0.8rem 1rem !important;
     }
 
     .add-to-cart-btn { 
-        padding: 6px !important; 
+        padding: 8px !important; 
         font-size: 0.7rem !important; 
-        min-height: 32px !important; 
+        min-height: 35px !important; 
+    }
+
+    /* Ajuste das Etiquetas (Novo/Promo) */
+    .product-badges {
+        top: 8px !important;
+        left: 8px !important;
+        gap: 3px !important;
+    }
+
+    .badge {
+        padding: 3px 6px !important;
+        font-size: 0.55rem !important;
+        border-radius: 4px !important;
     }
 }
 @media (max-width: 360px) {
