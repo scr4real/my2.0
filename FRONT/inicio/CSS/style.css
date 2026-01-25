@@ -854,7 +854,7 @@
     .hero-content a, 
     .hero-content .btn {
         /* MANTÉM SEU DESIGN TRANSPARENTE */
-        background-color: rgba(255, 102, 0, 0.601) !important;
+        background-color: rgba(255, 102, 0, 0.55) !important;
         backdrop-filter: blur(5px);
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
         color: #fff !important;
