@@ -188,7 +188,7 @@
     width: 100%;
 }
 
- {
+.section-titleRECEM {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 3px;
@@ -815,7 +815,7 @@
     }
 
     .hero-bg-image {
-        background-image: url("../IMG/tiger.png");
+        background-image: url("../IMG/tiger.jpeg");
         width: 100vw !important;
         height: 100%;
         background-size: cover;
