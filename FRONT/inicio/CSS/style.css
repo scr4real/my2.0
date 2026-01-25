@@ -850,13 +850,32 @@
     }
 
     /* Botão transparente no mobile */
+@media (max-width: 768px) {
     .hero-content a, 
     .hero-content .btn {
-        background-color: rgba(255, 145, 0, 0.69) !important;
+        /* MANTÉM SEU DESIGN TRANSPARENTE */
+        background-color: rgba(255, 102, 0, 0.601) !important;
         backdrop-filter: blur(5px);
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
         color: #fff !important;
+
+        /* ADICIONA A DIMINUIÇÃO DE TAMANHO */
+        padding: 0.6rem 1.2rem !important; /* Diminui altura e largura */
+        font-size: 0.85rem !important;      /* Diminui o texto */
+        border-radius: 6px !important;    /* Ajuste opcional para arredondar menos */
+        
+        /* Garante alinhamento perfeito do texto e ícone */
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: auto; /* Garante que ele não ocupe a largura toda da tela */
     }
+
+    /* Diminui o ícone da setinha separadamente se necessário */
+    .hero-content .btn i {
+        font-size: 0.8rem !important;
+    }
+}
 
     /* --- SEÇÕES SECUNDÁRIAS --- */
     .featured-sneaker-content {
