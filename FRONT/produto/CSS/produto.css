@@ -1,377 +1,5 @@
-/* ===================================================
-    CSS/produto.css - ESTILO DARK PREMIUM (MELHORADO)
-   =================================================== */
-
-:root {
-    --brand-orange: #FF6600;
-    --success-color: #00e676;
-    --card-bg-gradient: linear-gradient(165deg, #161616 0%, #241c19 100%);
-    --card-border: #332e2b;
-}
-
-body {
-    padding-top: var(--header-height);
-    background-color: #0a0a0a;
-    color: #fff;
-    font-family: var(--font-body);
-}
-
-main.container {
-    padding-top: var(--space-lg);
-    padding-bottom: var(--space-lg);
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-.loading-message {
-    text-align: center;
-    padding: var(--space-xl) 0;
-    font-size: 1.2rem;
-    color: #888;
-}
-
-/* ===================================
-   LAYOUT PRINCIPAL - MELHORADO
-   =================================== */
-.product-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-xl);
-    align-items: flex-start;
-}
-
-/* --- IMAGENS DO PRODUTO - OTIMIZADO --- */
-.product-images {
-    display: flex;
-    flex-direction: column-reverse;
-    gap: var(--space-md);
-    background: #111;
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid #222;
-}
-
-.thumbnail-gallery {
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    overflow-x: auto;
-    padding: 10px 5px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--brand-orange) #222;
-}
-
-.thumbnail-gallery::-webkit-scrollbar {
-    height: 4px;
-}
-.thumbnail-gallery::-webkit-scrollbar-track {
-    background: #222;
-    border-radius: 10px;
-}
-.thumbnail-gallery::-webkit-scrollbar-thumb {
-    background: var(--brand-orange);
-    border-radius: 10px;
-}
-
-/* Miniaturas (Dark) - Melhorado */
-.thumbnail-item {
-    width: 80px;
-    height: 80px;
-    min-width: 80px;
-    border: 2px solid #333;
-    border-radius: 10px;
-    cursor: pointer;
-    background-color: #1a1a1a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    padding: 8px;
-}
-
-.thumbnail-item:hover {
-    border-color: #555;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-.thumbnail-item.active {
-    border-color: var(--brand-orange);
-    background-color: #252525;
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(255, 102, 0, 0.2);
-}
-
-.thumbnail-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-}
-
-/* Imagem Principal - Melhor Controle */
-.main-image-container {
-    flex: 1;
-    border: 1px solid #333;
-    border-radius: 16px;
-    background: radial-gradient(circle at 30% 30%, #2a2a2a 0%, #111 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 350px;
-    height: 400px;
-    position: relative;
-    overflow: hidden;
-    padding: 30px;
-}
-
-.main-image-container img {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.7));
-    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.main-image-container:hover img {
-    transform: scale(1.08);
-}
-
-/* --- INFORMAÇÕES DO PRODUTO - ORGANIZADO --- */
-.product-info {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-    padding: 0 10px;
-}
-
-.breadcrumbs {
-    font-size: 0.9rem;
-    color: #888;
-    margin-bottom: 5px;
-}
-.breadcrumbs a { 
-    color: #aaa; 
-    text-decoration: none; 
-    transition: 0.2s; 
-}
-.breadcrumbs a:hover { 
-    color: var(--brand-orange); 
-    text-decoration: underline;
-}
-
-.product-info h1 {
-    font-size: 2.2rem;
-    font-family: var(--font-display);
-    font-weight: 800;
-    line-height: 1.1;
-    margin: 0 0 10px 0;
-    text-transform: uppercase;
-    color: #fff;
-    letter-spacing: 0.5px;
-}
-
-/* Caixa de Preço - Mais Limpa */
-.price-box {
-    background-color: #161616;
-    border: 1px solid #333;
-    padding: 25px;
-    border-radius: 12px;
-    position: relative;
-}
-
-.price-container {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 8px;
-}
-
-.price-current {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--brand-orange);
-    text-shadow: 0 0 20px rgba(255, 102, 0, 0.2);
-    line-height: 1;
-}
-
-.price-installments {
-    font-size: 1rem;
-    color: #ccc;
-    display: block;
-    margin-top: 8px;
-}
-
-/* Tag de Frete - Destaque */
-.product-page-shipping {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--success-color);
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 1rem;
-    padding: 12px 20px;
-    background: rgba(0, 230, 118, 0.1);
-    border: 1px solid rgba(0, 230, 118, 0.2);
-    border-radius: 8px;
-    margin: 10px 0;
-}
-
-.product-page-shipping i {
-    font-size: 1.2rem;
-}
-
-/* Variantes - Melhor Espaçamento */
-.variations-selector,
-.size-selector {
-    margin-bottom: 20px;
-}
-
-.variations-selector h3,
-.size-selector h3 {
-    font-size: 1rem;
-    margin-bottom: 12px;
-    color: #fff;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-.variations-list {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.variant-option {
-    width: 70px;
-    height: 70px;
-    border: 2px solid #444;
-    border-radius: 10px;
-    padding: 6px;
-    background: #1a1a1a;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.variant-option:hover {
-    border-color: #666;
-    transform: translateY(-2px);
-}
-
-.variant-option.active-variant {
-    border-color: var(--brand-orange);
-    background: #252525;
-    box-shadow: 0 0 15px rgba(255, 102, 0, 0.2);
-}
-
-.variant-option img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* Tamanhos - Botões Melhores */
-.size-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.size-btn {
-    width: 55px;
-    height: 55px;
-    background: #1a1a1a;
-    border: 2px solid #444;
-    color: #fff;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 700;
-    font-size: 1rem;
-}
-
-.size-btn:hover:not(.active) {
-    border-color: var(--brand-orange);
-    color: var(--brand-orange);
-    transform: translateY(-2px);
-}
-
-.size-btn.active {
-    background-color: var(--brand-orange);
-    border-color: var(--brand-orange);
-    color: #000;
-    box-shadow: 0 0 20px rgba(255, 102, 0, 0.4);
-    transform: scale(1.05);
-}
-
-/* Botão Comprar - Mais Impactante */
-.buy-button {
-    width: 100%;
-    padding: 20px;
-    font-size: 1.2rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    border-radius: 12px;
-    background: var(--brand-orange);
-    color: #000;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    margin-top: 20px;
-    letter-spacing: 1px;
-    position: relative;
-    overflow: hidden;
-}
-
-.buy-button::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: 0.5s;
-}
-
-.buy-button:hover {
-    box-shadow: 0 10px 30px rgba(255, 102, 0, 0.4);
-    transform: translateY(-3px);
-    background: linear-gradient(135deg, var(--brand-orange), #ff8533);
-}
-
-.buy-button:hover::after {
-    left: 100%;
-}
-
-/* Descrição - Melhor Tipografia */
-.product-description {
-    margin-top: 4rem;
-    padding-top: 2.5rem;
-    border-top: 1px solid #333;
-}
-
-.product-description h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.product-description p {
-    color: #aaa;
-    line-height: 1.8;
-    font-size: 1.05rem;
-    max-width: 800px;
-}
-
 /* =======================================================
-   ===== SEÇÃO "TALVEZ VOCÊ GOSTE" - EXATAMENTE IGUAL AO CARD =====
+   ===== SEÇÃO "TALVEZ VOCÊ GOSTE" - MELHORADA =====
    ======================================================= */
 .related-products-section {
     margin-top: 5rem;
@@ -380,289 +8,436 @@ main.container {
 }
 
 .related-products-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-family: var(--font-body);
     font-weight: 800;
     color: #fff;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    padding-left: 10px;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
 }
 
-/* Swiper Customização */
+.related-products-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: var(--brand-orange);
+    border-radius: 2px;
+}
+
+/* Swiper Customização - Melhorada */
 .related-products-swiper {
-    padding: 10px 5px 30px !important;
+    padding: 20px 10px 50px !important;
     position: relative;
 }
 
+.swiper-wrapper {
+    align-items: stretch !important;
+}
+
+.swiper-slide {
+    height: auto !important;
+    display: flex !important;
+}
+
+/* Botões de navegação - Melhorados */
 .swiper-button-next,
 .swiper-button-prev {
-    color: var(--brand-orange) !important;
-    background: rgba(0,0,0,0.7) !important;
-    width: 40px !important;
-    height: 40px !important;
+    color: #fff !important;
+    background: rgba(255, 102, 0, 0.9) !important;
+    width: 45px !important;
+    height: 45px !important;
     border-radius: 50%;
     top: 50% !important;
     transform: translateY(-50%);
-    border: 1px solid #333;
+    border: 2px solid rgba(255, 102, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.swiper-button-next {
+    right: 5px !important;
+}
+
+.swiper-button-prev {
+    left: 5px !important;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+    background: var(--brand-orange) !important;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 102, 0, 0.4);
 }
 
 .swiper-button-next:after,
 .swiper-button-prev:after {
-    font-size: 20px !important;
+    font-size: 18px !important;
+    font-weight: bold;
+}
+
+/* Indicadores de paginação */
+.swiper-pagination {
+    bottom: 15px !important;
+}
+
+.swiper-pagination-bullet {
+    background: #666 !important;
+    opacity: 0.7 !important;
+    width: 8px !important;
+    height: 8px !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--brand-orange) !important;
+    opacity: 1 !important;
+    transform: scale(1.2);
 }
 
 /* ===================================
-   CARD DE PRODUTO SIMILAR - EXATAMENTE IGUAL AO CARD DA LISTAGEM
+   CARD DE PRODUTO SIMILAR - REFINADO
    =================================== */
 .related-product-card {
     display: flex !important;
     flex-direction: column !important;
-    min-height: 330px !important;
-    height: auto !important;
+    height: 100% !important;
+    min-height: 360px !important;
     background: #fff !important;
-    border-radius: 8px !important;
+    border-radius: 12px !important;
     overflow: hidden !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
     position: relative;
+    border: 1px solid #e0e0e0 !important;
 }
 
 .related-product-card:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+    transform: translateY(-8px) !important;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+    border-color: var(--brand-orange) !important;
 }
 
-/* Container Imagem - EXATAMENTE IGUAL */
+/* Container Imagem - Refinado */
 .related-product-image-wrapper {
-    height: 160px !important;
-    padding: 5px !important;
+    height: 180px !important;
+    min-height: 180px !important;
+    padding: 20px 15px !important;
     margin-bottom: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    background: #f8f8f8 !important;
+    background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%) !important;
+    position: relative;
+    overflow: hidden;
 }
 
 .related-product-image-wrapper img {
     transform: scale(1.05) !important;
-    max-height: 100% !important;
-    max-width: 100% !important;
+    max-height: 140px !important;
+    max-width: 90% !important;
     object-fit: contain !important;
-    transition: transform 0.3s ease !important;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 .related-product-card:hover .related-product-image-wrapper img {
-    transform: scale(1.1) !important;
+    transform: scale(1.12) !important;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
 }
 
-/* Info do Produto - EXATAMENTE IGUAL */
+/* Badge - Melhorado */
+.related-discount-badge {
+    position: absolute !important;
+    top: 12px !important;
+    left: 12px !important;
+    background: linear-gradient(135deg, #e53935 0%, #c62828 100%) !important;
+    color: #fff !important;
+    padding: 5px 12px !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    border-radius: 20px !important;
+    z-index: 2 !important;
+    box-shadow: 0 3px 8px rgba(229, 57, 53, 0.3);
+    letter-spacing: 0.5px;
+}
+
+/* Info do Produto - Layout Refinado */
 .related-product-info {
-    padding: 0 0.8rem !important;
+    padding: 18px 15px 15px !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-start !important;
-    flex-grow: 0 !important;
-    gap: 0 !important;
+    flex: 1 !important;
+    justify-content: space-between !important;
+    background: #fff !important;
 }
 
-/* Nome do Produto - EXATAMENTE IGUAL */
+/* Nome do Produto - Mais Elegante */
 .related-product-name {
-    font-size: 0.8rem !important;
-    height: auto !important;
-    min-height: auto !important;
-    margin: 0 0 2px 0 !important;
-    line-height: 1.1 !important;
-    display: block !important;
-    color: #333 !important;
-    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    color: #222 !important;
     text-transform: uppercase !important;
+    line-height: 1.4 !important;
+    margin: 0 0 10px 0 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    height: 2.8em !important;
+    letter-spacing: 0.3px !important;
 }
 
-/* Tag Frete - EXATAMENTE IGUAL (FRETE GRÁTIS) */
+/* Tag Frete - Destaque Refinado */
 .related-shipping-tag {
-    font-size: 0.6rem !important;
-    margin: 0 0 2px 0 !important;
+    font-size: 0.7rem !important;
+    margin: 0 0 12px 0 !important;
     display: flex !important;
     align-items: center !important;
+    gap: 6px !important;
     color: #2e7d32 !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
+    background: rgba(46, 125, 50, 0.08) !important;
+    padding: 5px 10px !important;
+    border-radius: 4px !important;
+    width: fit-content !important;
+    letter-spacing: 0.5px;
 }
 
-/* Preço - EXATAMENTE IGUAL */
+.related-shipping-tag::before {
+    content: '🚚';
+    font-size: 0.8rem;
+}
+
+/* Preço - Destaque */
 .related-price-line {
-    margin: 0 !important;
-    padding: 0 !important;
-    border-top: none !important;
+    margin-top: auto !important;
+    padding-top: 12px !important;
+    border-top: 1px solid #f0f0f0 !important;
     display: flex !important;
     align-items: center !important;
+    justify-content: space-between !important;
 }
 
 .related-price-current {
-    font-size: 0.95rem !important;
-    line-height: 1 !important;
-    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
     color: #000 !important;
+    line-height: 1 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Área do Botão - EXATAMENTE IGUAL */
-.related-product-footer {
-    margin-top: 8px !important;
-    padding: 0 0.8rem 0.8rem !important;
-}
-
+/* Botão Ver Detalhes - Mais Atraente */
 .related-view-details-btn {
-    width: 100% !important;
-    padding: 6px !important;
-    font-size: 0.65rem !important;
-    min-height: 30px !important;
     background: #000 !important;
     color: #fff !important;
     border: none !important;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
+    padding: 8px 15px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    text-decoration: none !important;
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    gap: 5px !important;
+    letter-spacing: 0.5px;
+    text-decoration: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .related-view-details-btn:hover {
-    background: #333 !important;
-    transform: translateY(-1px) !important;
+    background: var(--brand-orange) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(255, 102, 0, 0.2);
 }
 
-/* Badge */
-.related-discount-badge {
-    position: absolute !important;
-    top: 5px !important;
-    left: 5px !important;
-    background: #e53935 !important;
-    color: #fff !important;
-    padding: 2px 5px !important;
-    font-size: 0.5rem !important;
-    font-weight: 700 !important;
-    border-radius: 4px !important;
-    z-index: 2 !important;
+.related-view-details-btn::after {
+    content: '→';
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.related-view-details-btn:hover::after {
+    transform: translateX(3px);
 }
 
 /* ===================================
-    RESPONSIVIDADE
+    RESPONSIVIDADE MELHORADA
    =================================== */
 
 @media (min-width: 901px) {
-    .product-detail-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-xl);
+    .related-products-title {
+        font-size: 2.2rem;
+        margin-bottom: 3rem;
     }
     
-    .product-images {
-        flex-direction: row;
-        padding: 25px;
+    .related-products-swiper {
+        padding: 20px 40px 50px !important;
     }
     
-    .thumbnail-gallery {
-        flex-direction: column;
-        overflow-x: visible;
-        height: 500px;
-        justify-content: flex-start;
-        padding: 5px;
+    .swiper-button-next {
+        right: 10px !important;
     }
     
-    .thumbnail-item {
-        width: 90px;
-        height: 90px;
-    }
-    
-    .main-image-container {
-        height: 500px;
-    }
-    
-    .product-info h1 {
-        font-size: 2.5rem;
-    }
-    
-    /* Swiper buttons visíveis apenas no desktop */
-    .swiper-button-next,
     .swiper-button-prev {
-        display: flex !important;
+        left: 10px !important;
     }
     
-    /* Cards relacionados no desktop */
     .related-product-card {
-        min-height: 330px !important;
+        min-height: 380px !important;
+    }
+    
+    .related-product-image-wrapper {
+        height: 200px !important;
+        min-height: 200px !important;
+    }
+    
+    .related-product-image-wrapper img {
+        max-height: 150px !important;
     }
 }
 
 @media (max-width: 900px) {
-    .main-image-container {
-        min-height: 300px;
-        height: 350px;
-        padding: 20px;
-    }
-    
-    .product-info h1 {
+    .related-products-title {
         font-size: 1.8rem;
+        margin-bottom: 2rem;
     }
     
-    .price-current {
-        font-size: 2rem;
+    .related-products-swiper {
+        padding: 15px 5px 40px !important;
     }
     
-    .price-container {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .variations-list {
-        justify-content: center;
-    }
-    
-    .size-options {
-        justify-content: center;
-    }
-    
-    /* Ajuste Cards Relacionados no mobile */
-    .related-product-card {
-        min-height: 330px !important;
-    }
-    
-    .related-product-image-wrapper {
-        height: 160px !important;
-        padding: 5px !important;
-    }
-    
-    /* Esconde botões de navegação no mobile */
     .swiper-button-next,
     .swiper-button-prev {
         display: none !important;
     }
+    
+    .related-product-card {
+        min-height: 350px !important;
+    }
+    
+    .related-product-image-wrapper {
+        height: 170px !important;
+        min-height: 170px !important;
+        padding: 15px 10px !important;
+    }
+    
+    .related-product-image-wrapper img {
+        max-height: 130px !important;
+    }
+    
+    .related-product-info {
+        padding: 15px 12px 12px !important;
+    }
+    
+    .related-price-current {
+        font-size: 1.1rem !important;
+    }
 }
 
 @media (max-width: 768px) {
-    /* Ajustes específicos para cards no mobile */
+    .related-products-section {
+        margin-top: 4rem;
+        padding-top: 2.5rem;
+    }
+    
+    .related-products-title {
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+    }
+    
     .related-product-card {
         min-height: 330px !important;
+        border-radius: 10px !important;
     }
     
     .related-product-image-wrapper {
         height: 160px !important;
+        min-height: 160px !important;
+        padding: 15px 10px !important;
+    }
+    
+    .related-product-image-wrapper img {
+        max-height: 120px !important;
+    }
+    
+    .related-product-info {
+        padding: 12px 10px 10px !important;
     }
     
     .related-product-name {
         font-size: 0.8rem !important;
-        margin: 0 0 2px 0 !important;
-        line-height: 1.1 !important;
+        height: 2.4em !important;
+    }
+    
+    .related-shipping-tag {
+        font-size: 0.65rem !important;
+        padding: 4px 8px !important;
+    }
+    
+    .related-price-current {
+        font-size: 1rem !important;
+    }
+    
+    .related-view-details-btn {
+        padding: 7px 12px !important;
+        font-size: 0.7rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .related-products-section {
+        margin-top: 3rem;
+        padding-top: 2rem;
+    }
+    
+    .related-products-title {
+        font-size: 1.4rem;
+        margin-bottom: 1.2rem;
+        padding-bottom: 10px;
+    }
+    
+    .related-products-title::after {
+        width: 60px;
+        height: 2px;
+    }
+    
+    .related-product-card {
+        min-height: 300px !important;
+    }
+    
+    .related-product-image-wrapper {
+        height: 150px !important;
+        min-height: 150px !important;
+        padding: 12px 8px !important;
+    }
+    
+    .related-product-image-wrapper img {
+        max-height: 110px !important;
+    }
+    
+    .related-product-info {
+        padding: 10px 8px 8px !important;
+    }
+    
+    .related-product-name {
+        font-size: 0.75rem !important;
+        height: 2.2em !important;
+        margin-bottom: 8px !important;
     }
     
     .related-shipping-tag {
         font-size: 0.6rem !important;
-        margin: 0 0 2px 0 !important;
+        margin-bottom: 10px !important;
     }
     
     .related-price-current {
@@ -670,52 +445,7 @@ main.container {
     }
     
     .related-view-details-btn {
-        padding: 6px !important;
+        padding: 6px 10px !important;
         font-size: 0.65rem !important;
-        min-height: 30px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .product-images {
-        padding: 15px;
-    }
-    
-    .main-image-container {
-        min-height: 250px;
-        height: 280px;
-        padding: 15px;
-    }
-    
-    .thumbnail-item {
-        width: 70px;
-        height: 70px;
-    }
-    
-    .product-info h1 {
-        font-size: 1.6rem;
-    }
-    
-    .price-current {
-        font-size: 1.8rem;
-    }
-    
-    .buy-button {
-        padding: 16px;
-        font-size: 1.1rem;
-    }
-    
-    /* Cards relacionados no mobile pequeno */
-    .related-product-card {
-        min-height: 330px !important;
-    }
-    
-    .related-product-image-wrapper {
-        height: 160px !important;
-        padding: 5px !important;
-    }
-    
-    .related-product-name {
-        font-size: 0.8rem !important;
     }
 }
