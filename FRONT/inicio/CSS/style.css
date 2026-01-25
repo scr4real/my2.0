@@ -860,7 +860,7 @@
         color: #fff !important;
 
         /* ADICIONA A DIMINUIÇÃO DE TAMANHO */
-        padding: 0.6rem 1.2rem !important; /* Diminui altura e largura */
+        padding: 0.5rem 1.1rem !important; /* Diminui altura e largura */
         font-size: 0.85rem !important;      /* Diminui o texto */
         border-radius: 6px !important;    /* Ajuste opcional para arredondar menos */
         
