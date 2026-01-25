@@ -19,6 +19,31 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${BASE_URL}/${cleanPath}`;
     };
 
+    /**
+     * Configura os eventos de clique nos botões "Comprar"
+     */
+    const setupBuyButtons = () => {
+        const buyButtons = document.querySelectorAll('.add-to-cart-btn');
+        buyButtons.forEach(button => {
+            // Remove ouvintes antigos para evitar duplicidade ao atualizar a seção
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+
+            newButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                const productId = e.currentTarget.dataset.productId;
+                
+                // Tenta abrir o Quick View global (definido no main.js/header.js)
+                if (window.quickViewApp && typeof window.quickViewApp.openQuickView === 'function') {
+                    window.quickViewApp.openQuickView(productId);
+                } else {
+                    // Backup: Redireciona para a página do produto se o quickview falhar
+                    window.location.href = `/FRONT/produto/HTML/produto.html?id=${productId}`;
+                }
+            });
+        });
+    };
+
     const renderProductRow = (productsToRender, containerId, categoryName) => {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -27,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const limitedProducts = productsToRender.slice(0, 4);
             let htmlContent = limitedProducts.map((product, index) => {
                 const isPriority = index < 2; 
+                // Note que o imagemUrl é ajustado para .webp dinamicamente se necessário no seu back
                 return `
                 <div class="swiper-slide">
                     <div class="product-card" data-id="${product.id}">
@@ -81,6 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
             renderProductRow(filteredProducts, section.containerId, section.categoryName);
             initSwiper(section.swiperClass, section.prev, section.next);
         });
+        // Após injetar no DOM, ativa os botões
+        setupBuyButtons();
     };
 
     const fetchAndDistributeProducts = async () => {
@@ -93,6 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await axios.get(API_URL);
             const allProducts = response.data; 
             localStorage.setItem("japa_products_cache", JSON.stringify(allProducts));
+            
+            // Re-distribui se os dados da API forem diferentes ou se não houver cache
             requestAnimationFrame(() => distribute(allProducts));
         } catch (error) { 
             console.error("Erro API:", error); 
