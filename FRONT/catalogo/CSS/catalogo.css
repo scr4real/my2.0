@@ -538,7 +538,7 @@
     border-color: #333;
 }
 
-/* ===== RESPONSIVIDADE JAPA UNIVERSE (OTIMIZADO) ===== */
+/* ===== RESPONSIVIDADE JAPA UNIVERSE (MELHORADO COM ESTILO ORIGINAL) ===== */
 @media (max-width: 768px) {
     .products-grid { 
         grid-template-columns: repeat(2, 1fr) !important; 
@@ -547,40 +547,35 @@
     }
 
     .product-card { 
-        min-height: 300px !important;
+        /* Mantém a altura original ou ajusta conforme necessidade */
+        min-height: auto !important;
         height: auto !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: space-between !important;
         padding: 0 !important;
         margin-bottom: 5px !important;
-        border-radius: 8px !important;
-        overflow: hidden !important;
-        background: #fff !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+        /* NÃO ALTERA A COR DE FUNDO - mantém a original */
     }
 
     .product-image-wrapper {
-        height: 140px !important;
-        min-height: 140px !important;
+        /* Mantém a altura original da imagem */
+        height: 160px !important;
+        min-height: 160px !important;
         padding: 8px !important;
         margin: 0 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        background: #f8f8f8 !important;
+        /* NÃO ALTERA O BACKGROUND - mantém o original */
     }
 
     .product-image-wrapper img {
+        /* Mantém o zoom original da imagem */
+        transform: scale(1.05) !important;
         max-height: 100% !important;
         max-width: 100% !important;
         object-fit: contain !important;
-        transform: scale(1) !important;
-        transition: transform 0.3s ease !important;
-    }
-
-    .product-card:hover .product-image-wrapper img {
-        transform: scale(1.05) !important;
     }
 
     /* ÁREA DE INFORMAÇÕES DO PRODUTO */
@@ -590,6 +585,7 @@
         flex-direction: column !important;
         flex-grow: 1 !important;
         gap: 4px !important;
+        /* Mantém a cor de fundo original */
     }
 
     .product-name { 
@@ -604,7 +600,6 @@
         -webkit-box-orient: vertical !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
-        color: #333 !important;
     }
 
     .product-shipping-tag {
@@ -632,7 +627,6 @@
         font-size: 16px !important;
         line-height: 1 !important;
         font-weight: 700 !important;
-        color: #000 !important;
     }
 
     /* ÁREA DO BOTÃO */
@@ -662,18 +656,17 @@
 
     .add-to-cart-btn:hover {
         background: #333 !important;
-        transform: translateY(-1px) !important;
     }
 
     /* ETIQUETAS E BADGES */
     .product-badges { 
-        top: 8px !important; 
-        left: 8px !important;
+        top: 5px !important; 
+        left: 5px !important;
         z-index: 2 !important;
     }
     
     .badge { 
-        padding: 3px 6px !important; 
+        padding: 2px 5px !important; 
         font-size: 10px !important;
         font-weight: 600 !important;
         border-radius: 4px !important;
