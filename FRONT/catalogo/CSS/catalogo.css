@@ -418,10 +418,12 @@
 }
 
 .products-grid[data-view="list"] .product-shipping-tag {
+    margin-bottom: 2px !important;
     display: flex;
 }
 
 .products-grid[data-view="list"] .product-price {
+    margin-top: 0 !important;
     border: none;
 
 }
