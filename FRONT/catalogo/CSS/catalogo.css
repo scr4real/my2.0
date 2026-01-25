@@ -538,59 +538,90 @@
     border-color: #333;
 }
 
-/* ===== RESPONSIVIDADE JAPA UNIVERSE (ULTRA COMPACTO) ===== */
+/* ===== RESPONSIVIDADE JAPA UNIVERSE (OTIMIZADO) ===== */
 @media (max-width: 768px) {
     .products-grid { 
         grid-template-columns: repeat(2, 1fr) !important; 
-        gap: 8px !important; 
+        gap: 10px !important; 
+        padding: 0 5px !important;
     }
 
     .product-card { 
-        /* REDUÇÃO DE ALTURA: De 400px para 330px para sumir o vácuo no fundo */
-        min-height: 330px !important; 
+        min-height: 300px !important;
         height: auto !important;
         display: flex !important;
         flex-direction: column !important;
-        padding-bottom: 5px !important;
+        justify-content: space-between !important;
+        padding: 0 !important;
+        margin-bottom: 5px !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        background: #fff !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
     }
 
     .product-image-wrapper {
-        height: 160px !important; /* Reduzi um pouco a imagem para o card subir */
-        padding: 5px !important; 
-        margin-bottom: 0 !important;
+        height: 140px !important;
+        min-height: 140px !important;
+        padding: 8px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #f8f8f8 !important;
     }
 
     .product-image-wrapper img {
-        transform: scale(1.05) !important; 
+        max-height: 100% !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
+        transform: scale(1) !important;
+        transition: transform 0.3s ease !important;
     }
 
-    /* INFO: Força os textos a ficarem grudados no topo do bloco */
+    .product-card:hover .product-image-wrapper img {
+        transform: scale(1.05) !important;
+    }
+
+    /* ÁREA DE INFORMAÇÕES DO PRODUTO */
     .product-info {
-        padding: 0 0.8rem !important;
+        padding: 8px 10px 5px !important;
         display: flex !important;
         flex-direction: column !important;
-        justify-content: flex-start !important; /* Alinha tudo no topo */
-        flex-grow: 0 !important;
-        gap: 0 !important; /* Zera o espaço entre os filhos */
+        flex-grow: 1 !important;
+        gap: 4px !important;
     }
 
     .product-name { 
-        font-size: 0.8rem !important; 
+        font-size: 12px !important; 
+        line-height: 1.3 !important;
+        font-weight: 500 !important;
+        margin: 0 0 3px 0 !important;
         height: auto !important;
-        min-height: auto !important;
-        margin: 0 0 2px 0 !important;
-        line-height: 1.1 !important;
-        display: block !important;
+        min-height: 32px !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        color: #333 !important;
     }
 
     .product-shipping-tag {
-        font-size: 0.6rem !important;
-        margin: 0 0 2px 0 !important;
-        display: flex !important;
+        font-size: 10px !important;
+        margin: 0 0 5px 0 !important;
+        padding: 2px 6px !important;
+        background: #e8f5e9 !important;
+        color: #2e7d32 !important;
+        border-radius: 10px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        width: fit-content !important;
+        font-weight: 500 !important;
     }
 
     .product-price {
-        margin: 0 !important;
+        margin: auto 0 0 0 !important;
         padding: 0 !important;
         border-top: none !important;
         display: flex !important;
@@ -598,25 +629,56 @@
     }
 
     .current-price {
-        font-size: 0.95rem !important;
+        font-size: 16px !important;
         line-height: 1 !important;
+        font-weight: 700 !important;
+        color: #000 !important;
     }
 
-    /* BOTÃO: Agora ele fica logo abaixo do preço sem empurrar o card */
+    /* ÁREA DO BOTÃO */
     .product-footer {
-        margin-top: 8px !important;
-        padding: 0 0.8rem 0.8rem !important;
+        padding: 0 10px 10px !important;
+        margin-top: auto !important;
     }
 
     .add-to-cart-btn { 
-        padding: 6px !important; 
-        font-size: 0.65rem !important; 
-        min-height: 30px !important; 
+        padding: 8px 12px !important; 
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        min-height: 32px !important;
+        width: 100% !important;
+        background: #000 !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
     }
 
-    /* Etiquetas menores */
-    .product-badges { top: 5px !important; left: 5px !important; }
-    .badge { padding: 2px 5px !important; font-size: 0.5rem !important; }
+    .add-to-cart-btn:hover {
+        background: #333 !important;
+        transform: translateY(-1px) !important;
+    }
+
+    /* ETIQUETAS E BADGES */
+    .product-badges { 
+        top: 8px !important; 
+        left: 8px !important;
+        z-index: 2 !important;
+    }
+    
+    .badge { 
+        padding: 3px 6px !important; 
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        border-radius: 4px !important;
+        margin-bottom: 3px !important;
+    }
 }
 @media (max-width: 360px) {
     .products-grid { grid-template-columns: 1fr; }
