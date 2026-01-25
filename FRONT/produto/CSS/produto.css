@@ -644,38 +644,98 @@ main.container {
     }
 }
 
+/* ===== RESPONSIVIDADE JAPA UNIVERSE - VERSÃO CORRIGIDA ===== */
 @media (max-width: 768px) {
-    /* Ajustes específicos para cards no mobile */
-    .related-product-card {
-        min-height: 330px !important;
+    .products-grid { 
+        grid-template-columns: repeat(2, 1fr) !important; 
+        gap: 8px !important; 
+        padding: 0 5px !important;
     }
-    
-    .related-product-image-wrapper {
-        height: 160px !important;
-    }
-    
-    .related-product-name {
-        font-size: 0.8rem !important;
-        margin: 0 0 2px 0 !important;
-        line-height: 1.1 !important;
-    }
-    
-    .related-shipping-tag {
-        font-size: 0.6rem !important;
-        margin: 0 0 2px 0 !important;
-    }
-    
-    .related-price-current {
-        font-size: 0.95rem !important;
-    }
-    
-    .related-view-details-btn {
-        padding: 6px !important;
-        font-size: 0.65rem !important;
-        min-height: 30px !important;
-    }
-}
 
+    .product-card { 
+        min-height: 310px !important; /* Altura ideal para mobile */
+        height: auto !important;
+        background: var(--card-bg-gradient) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+    }
+
+    /* 1. IMAGEM: Área fixa para evitar que o texto suba demais */
+    .product-image-wrapper {
+        height: 150px !important; 
+        padding: 5px !important; 
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .product-image-wrapper img {
+        max-width: 90% !important;
+        max-height: 90% !important;
+        transform: scale(1.1) !important;
+        filter: drop-shadow(0px 5px 8px rgba(0,0,0,0.5)) !important;
+    }
+
+    /* 2. TEXTOS: Agrupados sem vácuo */
+    .product-info {
+        padding: 0 10px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0px !important; /* Remove vácuos entre os elementos */
+    }
+
+    .product-name { 
+        font-size: 0.8rem !important; 
+        line-height: 1.2 !important;
+        height: 2.4em !important; /* Garante espaço para até 2 linhas */
+        margin: 5px 0 2px 0 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+
+    .product-shipping-tag {
+        font-size: 0.6rem !important;
+        color: #00e676 !important;
+        margin: 0 0 4px 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+
+    .product-price {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        display: block !important; /* Impede que o preço tente se alinhar com flex */
+    }
+
+    .current-price {
+        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+        color: var(--brand-orange) !important;
+    }
+
+    /* 3. RODAPÉ: Botão fixo na base */
+    .product-footer {
+        padding: 10px !important;
+        margin-top: auto !important; /* Empurra o botão para o final do card */
+    }
+
+    .add-to-cart-btn { 
+        width: 100% !important;
+        padding: 6px 0 !important; 
+        font-size: 0.7rem !important; 
+        min-height: 32px !important;
+        border-radius: 6px !important;
+    }
+
+    /* Etiquetas menores para não cobrir o tênis */
+    .product-badges { top: 5px !important; left: 5px !important; gap: 2px !important; }
+    .badge { padding: 2px 4px !important; font-size: 0.5rem !important; }
+}
 @media (max-width: 480px) {
     .product-images {
         padding: 15px;
