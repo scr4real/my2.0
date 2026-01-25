@@ -500,7 +500,7 @@ main.container {
     flex-direction: column !important;
     height: 100% !important;
     width: 280px !important; /* Largura fixa reduzida */
-    min-height: 320px !important; /* Altura reduzida */
+    min-height: 340px !important; /* Altura AUMENTADA para acomodar imagem maior */
     background: #fff !important;
     border-radius: 12px !important;
     overflow: hidden !important;
@@ -516,11 +516,11 @@ main.container {
     border-color: var(--brand-orange) !important;
 }
 
-/* Container Imagem - Altura reduzida */
+/* Container Imagem - Altura AUMENTADA */
 .related-product-image-wrapper {
-    height: 160px !important; /* Reduzida de 180px */
-    min-height: 160px !important;
-    padding: 15px !important; /* Padding reduzido */
+    height: 190px !important; /* AUMENTADA de 160px para 190px */
+    min-height: 190px !important;
+    padding: 20px !important; /* Padding AUMENTADO */
     margin-bottom: 0 !important;
     display: flex !important;
     align-items: center !important;
@@ -531,28 +531,28 @@ main.container {
 }
 
 .related-product-image-wrapper img {
-    transform: scale(1.05) !important;
-    max-height: 130px !important; /* Reduzida de 140px */
-    max-width: 85% !important;
+    transform: scale(1.1) !important; /* ESCALA AUMENTADA de 1.05 para 1.1 */
+    max-height: 160px !important; /* AUMENTADA de 130px para 160px */
+    max-width: 90% !important; /* Largura AUMENTADA de 85% para 90% */
     object-fit: contain !important;
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 .related-product-card:hover .related-product-image-wrapper img {
-    transform: scale(1.12) !important;
+    transform: scale(1.18) !important; /* ESCALA AUMENTADA de 1.12 para 1.18 */
     filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
 }
 
 /* Badge - Ajustado para card menor */
 .related-discount-badge {
     position: absolute !important;
-    top: 10px !important; /* Posição ajustada */
-    left: 10px !important;
+    top: 12px !important; /* Posição ajustada */
+    left: 12px !important;
     background: linear-gradient(135deg, #e53935 0%, #c62828 100%) !important;
     color: #fff !important;
-    padding: 4px 10px !important; /* Padding reduzido */
-    font-size: 0.65rem !important; /* Fonte menor */
+    padding: 5px 12px !important;
+    font-size: 0.7rem !important;
     font-weight: 700 !important;
     border-radius: 20px !important;
     z-index: 2 !important;
@@ -562,7 +562,7 @@ main.container {
 
 /* Info do Produto - Mais compacto */
 .related-product-info {
-    padding: 15px 12px 12px !important; /* Padding reduzido */
+    padding: 15px 12px 12px !important;
     display: flex !important;
     flex-direction: column !important;
     flex: 1 !important;
@@ -572,31 +572,31 @@ main.container {
 
 /* Nome do Produto - Fonte menor */
 .related-product-name {
-    font-size: 0.8rem !important; /* Reduzida de 0.85rem */
+    font-size: 0.85rem !important; /* AUMENTADA de 0.8rem para 0.85rem */
     font-weight: 700 !important;
     color: #222 !important;
     text-transform: uppercase !important;
-    line-height: 1.3 !important; /* Line-height ajustado */
-    margin: 0 0 8px 0 !important; /* Margin reduzida */
+    line-height: 1.4 !important;
+    margin: 0 0 10px 0 !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
-    height: 2.6em !important; /* Altura reduzida */
+    height: 2.8em !important;
     letter-spacing: 0.3px !important;
 }
 
 /* Tag Frete - Mais compacta */
 .related-shipping-tag {
-    font-size: 0.65rem !important; /* Fonte menor */
-    margin: 0 0 10px 0 !important;
+    font-size: 0.7rem !important; /* AUMENTADA de 0.65rem para 0.7rem */
+    margin: 0 0 12px 0 !important;
     display: flex !important;
     align-items: center !important;
     gap: 6px !important;
     color: #2e7d32 !important;
     font-weight: 700 !important;
     background: rgba(46, 125, 50, 0.08) !important;
-    padding: 4px 8px !important; /* Padding reduzido */
+    padding: 5px 10px !important;
     border-radius: 4px !important;
     width: fit-content !important;
     letter-spacing: 0.5px;
@@ -604,13 +604,13 @@ main.container {
 
 .related-shipping-tag::before {
     content: '🚚';
-    font-size: 0.75rem; /* Fonte menor */
+    font-size: 0.8rem;
 }
 
 /* Preço - Tamanho ajustado */
 .related-price-line {
     margin-top: auto !important;
-    padding-top: 10px !important; /* Padding reduzido */
+    padding-top: 12px !important;
     border-top: 1px solid #f0f0f0 !important;
     display: flex !important;
     align-items: center !important;
@@ -618,7 +618,7 @@ main.container {
 }
 
 .related-price-current {
-    font-size: 1.1rem !important; /* Reduzida de 1.2rem */
+    font-size: 1.2rem !important; /* AUMENTADA de 1.1rem para 1.2rem */
     font-weight: 800 !important;
     color: #000 !important;
     line-height: 1 !important;
@@ -631,8 +631,8 @@ main.container {
     color: #fff !important;
     border: none !important;
     border-radius: 6px !important;
-    padding: 7px 12px !important; /* Padding reduzido */
-    font-size: 0.7rem !important; /* Fonte menor */
+    padding: 8px 15px !important;
+    font-size: 0.75rem !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     cursor: pointer !important;
@@ -654,7 +654,7 @@ main.container {
 
 .related-view-details-btn::after {
     content: '→';
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     transition: transform 0.3s ease;
 }
 
@@ -700,7 +700,7 @@ main.container {
     
     /* Ajuste do container principal */
     .related-products-container {
-        padding: 0 60px; /* Mais espaço nas laterais */
+        padding: 0 60px;
     }
     
     .related-products-title {
@@ -720,16 +720,22 @@ main.container {
     
     .related-product-card {
         width: 300px !important;
-        min-height: 340px !important;
+        min-height: 360px !important; /* AUMENTADA de 340px para 360px */
     }
     
     .related-product-image-wrapper {
-        height: 170px !important;
-        min-height: 170px !important;
+        height: 200px !important; /* AUMENTADA de 170px para 200px */
+        min-height: 200px !important;
+        padding: 25px !important; /* Padding AUMENTADO */
     }
     
     .related-product-image-wrapper img {
-        max-height: 140px !important;
+        max-height: 170px !important; /* AUMENTADA de 140px para 170px */
+        transform: scale(1.15) !important; /* ESCALA AUMENTADA */
+    }
+    
+    .related-product-card:hover .related-product-image-wrapper img {
+        transform: scale(1.22) !important; /* ESCALA AUMENTADA */
     }
     
     /* Botões de navegação mais afastados */
@@ -794,17 +800,22 @@ main.container {
     
     .related-product-card {
         width: 250px !important;
-        min-height: 320px !important;
+        min-height: 340px !important; /* AUMENTADA de 320px para 340px */
     }
     
     .related-product-image-wrapper {
-        height: 150px !important;
-        min-height: 150px !important;
-        padding: 12px 10px !important;
+        height: 170px !important; /* AUMENTADA de 150px para 170px */
+        min-height: 170px !important;
+        padding: 15px !important; /* Padding AUMENTADO */
     }
     
     .related-product-image-wrapper img {
-        max-height: 120px !important;
+        max-height: 140px !important; /* AUMENTADA de 120px para 140px */
+        transform: scale(1.12) !important; /* ESCALA AUMENTADA */
+    }
+    
+    .related-product-card:hover .related-product-image-wrapper img {
+        transform: scale(1.2) !important; /* ESCALA AUMENTADA */
     }
     
     /* Esconde botões de navegação no mobile */
@@ -834,7 +845,6 @@ main.container {
     }
 
     .product-card { 
-        /* Mantém a altura original ou ajusta conforme necessidade */
         min-height: auto !important;
         height: auto !important;
         display: flex !important;
@@ -842,11 +852,9 @@ main.container {
         justify-content: space-between !important;
         padding: 0 !important;
         margin-bottom: 5px !important;
-        /* NÃO ALTERA A COR DE FUNDO - mantém a original */
     }
 
     .product-image-wrapper {
-        /* Mantém a altura original da imagem */
         height: 160px !important;
         min-height: 160px !important;
         padding: 8px !important;
@@ -854,11 +862,9 @@ main.container {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        /* NÃO ALTERA O BACKGROUND - mantém o original */
     }
 
     .product-image-wrapper img {
-        /* Mantém o zoom original da imagem */
         transform: scale(1.05) !important;
         max-height: 100% !important;
         max-width: 100% !important;
@@ -872,7 +878,6 @@ main.container {
         flex-direction: column !important;
         flex-grow: 1 !important;
         gap: 4px !important;
-        /* Mantém a cor de fundo original */
     }
 
     .product-name { 
@@ -967,16 +972,22 @@ main.container {
     
     .related-product-card {
         width: 220px !important;
-        min-height: 300px !important;
+        min-height: 320px !important; /* AUMENTADA de 300px para 320px */
     }
     
     .related-product-image-wrapper {
-        height: 140px !important;
-        min-height: 140px !important;
+        height: 150px !important; /* AUMENTADA de 140px para 150px */
+        min-height: 150px !important;
+        padding: 12px !important;
     }
     
     .related-product-image-wrapper img {
-        max-height: 110px !important;
+        max-height: 120px !important; /* AUMENTADA de 110px para 120px */
+        transform: scale(1.1) !important; /* ESCALA AUMENTADA */
+    }
+    
+    .related-product-card:hover .related-product-image-wrapper img {
+        transform: scale(1.18) !important; /* ESCALA AUMENTADA */
     }
     
     .related-product-info {
@@ -1044,17 +1055,22 @@ main.container {
     
     .related-product-card {
         width: 180px !important;
-        min-height: 280px !important;
+        min-height: 300px !important; /* AUMENTADA de 280px para 300px */
     }
     
     .related-product-image-wrapper {
-        height: 130px !important;
-        min-height: 130px !important;
+        height: 140px !important; /* AUMENTADA de 130px para 140px */
+        min-height: 140px !important;
         padding: 10px 8px !important;
     }
     
     .related-product-image-wrapper img {
-        max-height: 100px !important;
+        max-height: 110px !important; /* AUMENTADA de 100px para 110px */
+        transform: scale(1.08) !important; /* ESCALA AUMENTADA */
+    }
+    
+    .related-product-card:hover .related-product-image-wrapper img {
+        transform: scale(1.15) !important; /* ESCALA AUMENTADA */
     }
     
     .related-product-info {
