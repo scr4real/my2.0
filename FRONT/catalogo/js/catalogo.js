@@ -1,6 +1,6 @@
 /**
  * JAPA UNIVERSE - CATALOGO JS (ULTRA OPTIMIZED)
- * Foco: Carregamento instantâneo de imagens e renderização em milissegundos.
+ * Foco: Carregamento instantâneo sem animações de loading.
  */
 
 (function() {
@@ -10,7 +10,6 @@
     const API_URL = `${BASE_URL}/api/produtos`;
     const CACHE_KEY = "japa_products_cache";
 
-    // Estado da aplicação (Privado para performance)
     let allProducts = [];
     let filteredProducts = [];
     let currentPage = 1;
@@ -18,25 +17,16 @@
 
     const grid = document.getElementById('products-grid');
 
-    /**
-     * Utilitários de Performance
-     */
     const Utils = {
         formatPrice: (p) => `R$ ${Number(p).toFixed(2).replace('.', ',')}`,
-        // Otimização de URL de Imagem: Garante que o navegador não se perca em caminhos relativos
         getImageUrl: (path) => {
             if (!path) return '/FRONT/assets/images/placeholder.jpg';
             if (path.startsWith('http')) return path;
             const cleanPath = path.startsWith('/') ? path.slice(1) : path;
             return `${BASE_URL}/${cleanPath}`;
-        },
-        // Gera esqueletos CSS puros (sem imagens) para ocupação de espaço imediata
-        getSkeleton: () => `<div class="product-card skeleton-card"><div class="product-image-wrapper skeleton"></div><div class="product-info"><div class="skeleton" style="height:20px;width:70%"></div><div class="skeleton" style="height:20px;width:40%"></div></div></div>`.repeat(6)
+        }
     };
 
-    /**
-     * Renderização de Alta Velocidade
-     */
     const Render = {
         products: () => {
             if (!grid) return;
@@ -49,10 +39,9 @@
                 return;
             }
 
-            // Fragmento de string para evitar múltiplos Reflows no DOM
             let html = '';
             toShow.forEach((p, idx) => {
-                const isCritical = idx < 4; // As 4 primeiras fotos são prioridade máxima
+                const isCritical = idx < 4; 
                 html += `
                     <div class="product-card" data-id="${p.id}">
                         <a href="/FRONT/produto/HTML/produto.html?id=${p.id}" class="product-card-link">
@@ -62,7 +51,7 @@
                                      loading="${isCritical ? 'eager' : 'lazy'}"
                                      fetchpriority="${isCritical ? 'high' : 'low'}"
                                      decoding="async"
-                                     onload="this.style.opacity='1'">
+                                     style="opacity: 1">
                             </div>
                         </a>
                         <div class="product-info">
@@ -97,9 +86,6 @@
         }
     };
 
-    /**
-     * Lógica de Busca e Filtro (Sem travamento de UI)
-     */
     const Logic = {
         filter: () => {
             const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase();
@@ -116,14 +102,8 @@
         }
     };
 
-    /**
-     * Orquestração de Carregamento
-     */
     const Init = async () => {
-        // 1. Mostrar Skeletons IMEDIATAMENTE
-        if (grid) grid.innerHTML = Utils.getSkeleton();
-
-        // 2. Tentar Cache (Instantâneo)
+        // 1. Tentar Cache primeiro (Exibição instantânea se já visitou)
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
             allProducts = JSON.parse(cached);
@@ -131,12 +111,15 @@
             Render.products();
         }
 
-        // 3. Buscar na API em Background (Stale-While-Revalidate)
+        // 2. Esconder qualquer elemento de loading que venha do HTML
+        const loader = document.getElementById('loadingState');
+        if (loader) loader.style.display = 'none';
+
+        // 3. Atualizar dados da API em background
         try {
             const res = await axios.get(API_URL);
             const freshData = res.data;
             
-            // Só re-renderiza se os dados mudaram
             if (JSON.stringify(freshData) !== cached) {
                 allProducts = freshData;
                 filteredProducts = [...allProducts];
@@ -145,22 +128,16 @@
             }
         } catch (err) {
             console.error("Erro API:", err);
-            if (!cached) grid.innerHTML = '<p>Erro ao carregar catálogo. Verifique sua conexão.</p>';
+            if (!cached && grid) grid.innerHTML = '<p>Erro ao carregar catálogo.</p>';
         }
-
-        // Ocultar spinner de loading se existir
-        const loader = document.getElementById('loadingState');
-        if (loader) loader.style.display = 'none';
     };
 
-    // Global para os botões de paginação
     window.setCatalogPage = (p) => {
         currentPage = p;
         Render.products();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Event Listeners Otimizados
     document.getElementById('searchInput')?.addEventListener('input', () => {
         clearTimeout(window.searchTimer);
         window.searchTimer = setTimeout(Logic.filter, 300);
@@ -168,7 +145,6 @@
 
     document.getElementById('brandFilter')?.addEventListener('change', Logic.filter);
 
-    // Start
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', Init);
     } else {
