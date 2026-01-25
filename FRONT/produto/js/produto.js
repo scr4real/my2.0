@@ -270,5 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    
     fetchProductData();
 });
+
+
