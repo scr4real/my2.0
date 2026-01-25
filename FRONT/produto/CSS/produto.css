@@ -784,53 +784,137 @@ main.container {
 }
 
 @media (max-width: 768px) {
-    /* Ajustes específicos para cards no mobile */
-    .related-products-section {
-        margin-top: 4rem;
-        padding-top: 2.5rem;
+    .products-grid { 
+        grid-template-columns: repeat(2, 1fr) !important; 
+        gap: 10px !important; 
+        padding: 0 5px !important;
     }
-    
-    .related-products-title {
-        font-size: 1.6rem;
-        margin-bottom: 1.5rem;
+
+    .product-card { 
+        /* Mantém a altura original ou ajusta conforme necessidade */
+        min-height: auto !important;
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        padding: 0 !important;
+        margin-bottom: 5px !important;
+        /* NÃO ALTERA A COR DE FUNDO - mantém a original */
     }
-    
-    .related-product-card {
-        min-height: 330px !important;
-        border-radius: 10px !important;
-    }
-    
-    .related-product-image-wrapper {
+
+    .product-image-wrapper {
+        /* Mantém a altura original da imagem */
         height: 160px !important;
         min-height: 160px !important;
-        padding: 15px 10px !important;
+        padding: 8px !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        /* NÃO ALTERA O BACKGROUND - mantém o original */
+    }
+
+    .product-image-wrapper img {
+        /* Mantém o zoom original da imagem */
+        transform: scale(1.05) !important;
+        max-height: 100% !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
+    }
+
+    /* ÁREA DE INFORMAÇÕES DO PRODUTO */
+    .product-info {
+        padding: 8px 10px 5px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        flex-grow: 1 !important;
+        gap: 4px !important;
+        /* Mantém a cor de fundo original */
+    }
+
+    .product-name { 
+        font-size: 12px !important; 
+        line-height: 1.3 !important;
+        font-weight: 500 !important;
+        margin: 0 0 3px 0 !important;
+        height: auto !important;
+        min-height: 32px !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .product-shipping-tag {
+        font-size: 10px !important;
+        margin: 0 0 5px 0 !important;
+        padding: 2px 6px !important;
+        background: #e8f5e9 !important;
+        color: #2e7d32 !important;
+        border-radius: 10px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        width: fit-content !important;
+        font-weight: 500 !important;
+    }
+
+    .product-price {
+        margin: auto 0 0 0 !important;
+        padding: 0 !important;
+        border-top: none !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .current-price {
+        font-size: 16px !important;
+        line-height: 1 !important;
+        font-weight: 700 !important;
+    }
+
+    /* ÁREA DO BOTÃO */
+    .product-footer {
+        padding: 0 10px 10px !important;
+        margin-top: auto !important;
+    }
+
+    .add-to-cart-btn { 
+        padding: 8px 12px !important; 
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        min-height: 32px !important;
+        width: 100% !important;
+        background: #000 !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 6px !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .add-to-cart-btn:hover {
+        background: #333 !important;
+    }
+
+    /* ETIQUETAS E BADGES */
+    .product-badges { 
+        top: 5px !important; 
+        left: 5px !important;
+        z-index: 2 !important;
     }
     
-    .related-product-image-wrapper img {
-        max-height: 120px !important;
-    }
-    
-    .related-product-info {
-        padding: 12px 10px 10px !important;
-    }
-    
-    .related-product-name {
-        font-size: 0.8rem !important;
-        height: 2.4em !important;
-    }
-    
-    .related-shipping-tag {
-        font-size: 0.65rem !important;
-        padding: 4px 8px !important;
-    }
-    
-    .related-price-current {
-        font-size: 1rem !important;
-    }
-    
-    .related-view-details-btn {
-        padding: 7px 12px !important;
-        font-size: 0.7rem !important;
+    .badge { 
+        padding: 2px 5px !important; 
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        border-radius: 4px !important;
+        margin-bottom: 3px !important;
     }
 }
 
