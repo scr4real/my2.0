@@ -731,3 +731,13 @@
   0% { transform: translate(-50%, -50%) rotate(0deg); }
   100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
+
+/* Preparação para Animações GSAP */
+.hero-title span, .section-titleRECEM, .product-card {
+    visibility: hidden; /* Evita o "flash" do conteúdo antes da animação carregar */
+}
+
+.gsap-reveal {
+    overflow: hidden;
+    display: block;
+}

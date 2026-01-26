@@ -20,25 +20,47 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     /**
-     * Configura os eventos de clique nos botões "Comprar"
+     * EFEITO F1: VELOCÍMETRO E REVELAÇÃO DOS CARDS
      */
-    const setupBuyButtons = () => {
-        const buyButtons = document.querySelectorAll('.add-to-cart-btn');
-        buyButtons.forEach(button => {
-            // Remove ouvintes antigos para evitar duplicidade ao atualizar a seção
-            const newButton = button.cloneNode(true);
-            button.parentNode.replaceChild(newButton, button);
+    const animateProductsF1 = (containerId) => {
+        const cards = document.querySelectorAll(`#${containerId} .product-card`);
+        if (!cards.length || typeof gsap === "undefined") return;
 
-            newButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                const productId = e.currentTarget.dataset.productId;
-                
-                // Tenta abrir o Quick View global (definido no main.js/header.js)
-                if (window.quickViewApp && typeof window.quickViewApp.openQuickView === 'function') {
-                    window.quickViewApp.openQuickView(productId);
-                } else {
-                    // Backup: Redireciona para a página do produto se o quickview falhar
-                    window.location.href = `/FRONT/produto/HTML/produto.html?id=${productId}`;
+        // 1. Torna os cards visíveis e faz o Stagger (Entrada um por um)
+        gsap.from(cards, {
+            scrollTrigger: {
+                trigger: `#${containerId}`,
+                start: "top 85%",
+            },
+            y: 50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power4.out"
+        });
+
+        // 2. Efeito Velocímetro nos Preços
+        cards.forEach(card => {
+            const priceElement = card.querySelector(".product-price");
+            if (!priceElement) return;
+
+            // Extrai o número do texto (ex: R$ 312,00 -> 312.00)
+            const priceText = priceElement.innerText.replace('R$', '').trim();
+            const finalValue = parseFloat(priceText.replace('.', '').replace(',', '.'));
+            
+            if (isNaN(finalValue)) return;
+
+            const counter = { value: 0 };
+            gsap.to(counter, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 90%",
+                },
+                value: finalValue,
+                duration: 2,
+                ease: "expo.out",
+                onUpdate: () => {
+                    priceElement.innerText = formatPrice(counter.value);
                 }
             });
         });
@@ -52,10 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const limitedProducts = productsToRender.slice(0, 4);
             let htmlContent = limitedProducts.map((product, index) => {
                 const isPriority = index < 2; 
-                // Note que o imagemUrl é ajustado para .webp dinamicamente se necessário no seu back
                 return `
                 <div class="swiper-slide">
-                    <div class="product-card" data-id="${product.id}">
+                    <div class="product-card" data-id="${product.id}" style="opacity: 1;">
                         <a href="/FRONT/produto/HTML/produto.html?id=${product.id}" class="product-card-link">
                             <div class="product-image-wrapper">
                                 <img src="${getImageUrl(product.imagemUrl)}" 
@@ -84,6 +105,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     </a>
                 </div>`;
             container.innerHTML = htmlContent;
+            
+            // Dispara a animação logo após inserir no DOM
+            requestAnimationFrame(() => animateProductsF1(containerId));
+
         } else {
             container.innerHTML = `<div class="swiper-slide"><p style="padding: 20px; text-align: center; color: #666;">Indisponível.</p></div>`;
         }
@@ -107,8 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
             renderProductRow(filteredProducts, section.containerId, section.categoryName);
             initSwiper(section.swiperClass, section.prev, section.next);
         });
-        // Após injetar no DOM, ativa os botões
-        setupBuyButtons();
     };
 
     const fetchAndDistributeProducts = async () => {
@@ -121,8 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await axios.get(API_URL);
             const allProducts = response.data; 
             localStorage.setItem("japa_products_cache", JSON.stringify(allProducts));
-            
-            // Re-distribui se os dados da API forem diferentes ou se não houver cache
             requestAnimationFrame(() => distribute(allProducts));
         } catch (error) { 
             console.error("Erro API:", error); 
