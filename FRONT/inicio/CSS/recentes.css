@@ -733,8 +733,9 @@
 }
 
 /* Preparação para Animações GSAP */
-.hero-title span, .section-titleRECEM, .product-card {
-    visibility: hidden; /* Evita o "flash" do conteúdo antes da animação carregar */
+.hero-title span, .section-titleRECEM,
+  .product-card {
+    opacity: 0;
 }
 
 .gsap-reveal {

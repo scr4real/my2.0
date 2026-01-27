@@ -26,14 +26,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const cards = document.querySelectorAll(`#${containerId} .product-card`);
         if (!cards.length || typeof gsap === "undefined") return;
 
-        // 1. Torna os cards visíveis e faz o Stagger (Entrada um por um)
+        // CORREÇÃO CRÍTICA: Força a visibilidade antes de iniciar a animação
+        gsap.set(cards, { opacity: 1, visibility: "visible" });
+
+        // 1. Entrada dos Cards com Stagger (Efeito Cascata)
         gsap.from(cards, {
             scrollTrigger: {
                 trigger: `#${containerId}`,
                 start: "top 85%",
             },
             y: 50,
-            opacity: 0,
+            opacity: 0, 
             duration: 0.8,
             stagger: 0.1,
             ease: "power4.out"
@@ -44,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const priceElement = card.querySelector(".product-price");
             if (!priceElement) return;
 
-            // Extrai o número do texto (ex: R$ 312,00 -> 312.00)
             const priceText = priceElement.innerText.replace('R$', '').trim();
             const finalValue = parseFloat(priceText.replace('.', '').replace(',', '.'));
             
@@ -76,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const isPriority = index < 2; 
                 return `
                 <div class="swiper-slide">
-                    <div class="product-card" data-id="${product.id}" style="opacity: 1;">
+                    <div class="product-card" data-id="${product.id}">
                         <a href="/FRONT/produto/HTML/produto.html?id=${product.id}" class="product-card-link">
                             <div class="product-image-wrapper">
                                 <img src="${getImageUrl(product.imagemUrl)}" 
@@ -106,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>`;
             container.innerHTML = htmlContent;
             
-            // Dispara a animação logo após inserir no DOM
+            // Dispara a animação imediatamente após a inserção no DOM
             requestAnimationFrame(() => animateProductsF1(containerId));
 
         } else {
