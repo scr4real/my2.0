@@ -32,54 +32,19 @@
             // Registra o plugin de Scroll
             gsap.registerPlugin(ScrollTrigger);
 
-            // 1. ENTRADA CINEMATOGRÁFICA DO HERO (KINETIC TYPOGRAPHY)
-            const heroTl = gsap.timeline({ defaults: { ease: "expo.out" } });
-            
-            // Força visibilidade antes de iniciar
-            gsap.set(".hero-title, .hero-subtitle, .hero-content .btn", { visibility: "visible", opacity: 1 });
-
-            heroTl.from(".hero-title", {
-                duration: 1.8,
-                y: 100,
-                skewY: 7,
-                stagger: 0.1,
-                opacity: 0
-            })
-            .from(".hero-subtitle", {
-                duration: 1.2,
+            // 1. EFEITO FADE-UP NA NEWSLETTER (O que você pediu para manter)
+            gsap.from(".newsletter .container", {
+                scrollTrigger: {
+                    trigger: ".newsletter",
+                    start: "top 80%",
+                },
+                y: 50,
                 opacity: 0,
-                y: 30,
-            }, "-=1.2")
-            .from(".hero-content .btn", {
                 duration: 1,
-                scale: 0.8,
-                opacity: 0,
-                ease: "back.out(1.7)"
-            }, "-=0.8")
-            .from(".hero-socials a", {
-                duration: 1,
-                x: -30,
-                opacity: 0,
-                stagger: 0.1
-            }, "-=0.5");
-
-            // 2. REVELAÇÃO MAGNÉTICA DAS BADGES (ZERO TAXAS / ÍCONES)
-            gsap.utils.toArray(".section-titleRECEM").forEach(badge => {
-                gsap.from(badge, {
-                    scrollTrigger: {
-                        trigger: badge,
-                        start: "top 90%",
-                        toggleActions: "play none none none"
-                    },
-                    x: -80,
-                    skewX: -15,
-                    opacity: 0,
-                    duration: 1.2,
-                    ease: "expo.out"
-                });
+                ease: "power2.out"
             });
 
-            // 3. ANIMAÇÃO DE FADE-UP PADRÃO (Para outros elementos)
+            // 2. ANIMAÇÃO DE FADE-UP PADRÃO (Para outros elementos com a classe)
             gsap.utils.toArray(".gsap-fade-up").forEach(el => {
                 gsap.from(el, {
                     scrollTrigger: {
@@ -96,18 +61,21 @@
     };
 
     /**
-     * Módulo do Carrinho
+     * Módulo do Carrinho (LOCAL STORAGE OPTIMIZED)
      */
     const CartModule = (function() {
         let cart = null;
+        
         const getCart = () => {
             if (!cart) cart = JSON.parse(localStorage.getItem("japaUniverseCart")) || [];
             return cart;
         };
+
         const saveCart = (newCart) => {
             cart = newCart;
             localStorage.setItem("japaUniverseCart", JSON.stringify(cart));
         };
+
         const formatPrice = (p) => `R$ ${Number(p).toFixed(2).replace('.', ',')}`;
 
         return {
@@ -160,7 +128,7 @@
     })();
 
     /**
-     * Módulo de Vídeo
+     * Módulo de Vídeo (DEFERRED & LIGHTWEIGHT)
      */
     const VideoEffectsModule = {
         init: () => {
@@ -168,6 +136,7 @@
             const video = document.querySelector('.crew-video-element');
             if (!container || !video) return;
 
+            // Só carrega o vídeo quando estiver perto da tela (Lazy Video)
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -185,22 +154,26 @@
         },
         setupInteractions: (container, video) => {
             let ticking = false;
+
             container.addEventListener('mousemove', (e) => {
                 if (!ticking) {
                     window.requestAnimationFrame(() => {
                         const rect = container.getBoundingClientRect();
                         const x = ((e.clientX - rect.left) / rect.width - 0.5) * 6;
                         const y = ((e.clientY - rect.top) / rect.height - 0.5) * -6;
+                        
                         container.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg) translateZ(5px)`;
                         ticking = false;
                     });
                     ticking = true;
                 }
             });
+
             container.addEventListener('mouseleave', () => {
                 container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
                 video.pause();
             });
+
             container.addEventListener('mouseenter', () => {
                 video.play().catch(() => {});
             });
@@ -211,24 +184,30 @@
      * Inicialização Orquestrada
      */
     const init = () => {
+        // 1. Esconde o loader e mostra o conteúdo base imediatamente
         LoadingModule.hide();
+        
+        // 2. Prioridade máxima: UI do Carrinho e Header
         CartModule.init();
         
-        // As animações iniciam após o loader sair
+        // 3. Prioridade média: Animações visuais (GSAP)
         requestAnimationFrame(() => {
             AnimationModule.init();
         });
 
+        // 4. Prioridade baixa: Vídeos e Recursos Pesados
         if ('requestIdleCallback' in window) {
             requestIdleCallback(() => VideoEffectsModule.init());
         } else {
             setTimeout(VideoEffectsModule.init, 200);
         }
 
+        // 5. Update Year
         const yearEl = document.getElementById("currentYear");
         if (yearEl) yearEl.textContent = new Date().getFullYear();
     };
 
+    // Trigger de inicialização mais rápido que DOMContentLoaded
     if (document.readyState === "interactive" || document.readyState === "complete") {
         init();
     } else {

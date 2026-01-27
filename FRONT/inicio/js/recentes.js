@@ -20,29 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     /**
-     * EFEITO F1: VELOCÍMETRO E REVELAÇÃO DOS CARDS
+     * APENAS EFEITO VELOCÍMETRO NOS PREÇOS
      */
-    const animateProductsF1 = (containerId) => {
+    const animatePriceCounter = (containerId) => {
         const cards = document.querySelectorAll(`#${containerId} .product-card`);
         if (!cards.length || typeof gsap === "undefined") return;
 
-        // CORREÇÃO CRÍTICA: Força a visibilidade antes de iniciar a animação
-        gsap.set(cards, { opacity: 1, visibility: "visible" });
-
-        // 1. Entrada dos Cards com Stagger (Efeito Cascata)
-        gsap.from(cards, {
-            scrollTrigger: {
-                trigger: `#${containerId}`,
-                start: "top 85%",
-            },
-            y: 50,
-            opacity: 0, 
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "power4.out"
-        });
-
-        // 2. Efeito Velocímetro nos Preços
         cards.forEach(card => {
             const priceElement = card.querySelector(".product-price");
             if (!priceElement) return;
@@ -108,8 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>`;
             container.innerHTML = htmlContent;
             
-            // Dispara a animação imediatamente após a inserção no DOM
-            requestAnimationFrame(() => animateProductsF1(containerId));
+            // Ativa o contador de preços após renderizar
+            requestAnimationFrame(() => animatePriceCounter(containerId));
 
         } else {
             container.innerHTML = `<div class="swiper-slide"><p style="padding: 20px; text-align: center; color: #666;">Indisponível.</p></div>`;

@@ -734,8 +734,10 @@
 
 /* Preparação para Animações GSAP */
 .hero-title span, .section-titleRECEM,
-  .product-card {
-    opacity: 0;
+/* Garante que os cards apareçam normalmente sem animação de entrada */
+.product-card {
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .gsap-reveal {
