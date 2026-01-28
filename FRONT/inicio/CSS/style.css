@@ -21,6 +21,7 @@
     width: 100%;
 }
 
+/* TÍTULO PRINCIPAL - CORREÇÃO CRÍTICA */
 .hero-title {
     font-size: clamp(3rem, 10vw, 7rem);
     line-height: 1;
@@ -28,9 +29,41 @@
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -0.02em;
-    overflow: hidden; /* Para animações GSAP */
+    margin: 0;
+    padding: 0;
+    /* IMPORTANTE: Mantém estrutura original */
+    display: block;
+    width: 100%;
+    white-space: normal;
+    word-break: normal;
+    overflow: visible;
 }
 
+/* Container para animação do título - NÃO modifica estrutura visual */
+.hero-title-container {
+    display: block;
+    overflow: hidden;
+}
+
+/* Palavras animadas - posicionamento correto */
+.hero-title-word {
+    display: inline-block;
+    position: relative;
+    opacity: 0; /* Começa invisível para animação */
+    transform: translateY(120%); /* Começa abaixo */
+    transform-origin: bottom;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    /* Mantém o estilo original */
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+}
+
+/* SUBTÍTULO - CORREÇÃO CRÍTICA */
 .hero-subtitle {
     font-size: 1.1rem;
     color: rgb(243, 229, 203);
@@ -38,7 +71,46 @@
     margin: var(--space-md) 0 var(--space-lg);
     line-height: 1.6;
     font-weight: 400;
-    overflow: hidden; /* Para animações GSAP */
+    /* IMPORTANTE: Mantém layout original */
+    display: block;
+    width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: visible;
+}
+
+/* Container para animação do subtítulo */
+.hero-subtitle-container {
+    display: inline;
+    position: relative;
+}
+
+/* Caracteres animados - mantém fluxo normal */
+.hero-subtitle-char {
+    display: inline;
+    position: relative;
+    opacity: 0; /* Começa invisível para animação */
+    will-change: opacity;
+    /* Mantém estilo original */
+    font-size: inherit;
+    color: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+
+/* Cursor piscante */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.hero-subtitle-cursor {
+    display: inline;
+    opacity: 0;
+    animation: blink 1s infinite;
+    color: var(--primary);
+    font-weight: bold;
+    margin-left: 2px;
 }
 
 .hero-background {
@@ -57,10 +129,11 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0; /* Inicialmente invisível para animação */
-    transform: scale(1.1); /* Zoom inicial para animação */
-    filter: brightness(1.3) blur(8px); /* Efeito inicial */
-    will-change: transform, opacity, filter; /* Otimização para GPU */
+    opacity: 0; /* Para animação */
+    transform: scale(1.1);
+    filter: brightness(1.3) blur(8px);
+    will-change: transform, opacity, filter;
+    transition: none;
 }
 
 .hero-background::after {
@@ -87,8 +160,8 @@
     color: var(--text-secondary);
     transition: var(--transition-fast);
     font-size: 1.2rem;
-    opacity: 0; /* Para animação GSAP */
-    transform: translateY(20px); /* Para animação GSAP */
+    opacity: 0;
+    transform: translateY(20px);
 }
 
 .hero-socials a:hover {
@@ -96,109 +169,24 @@
     transform: translateY(-3px);
 }
 
-/* ===== ANIMAÇÕES GSAP DO HERO (NOVO) ===== */
-.hero-title-line {
-    overflow: hidden;
-    display: block;
-    line-height: 0.9;
-    margin-bottom: 0.1em;
-}
-
-.hero-title-word {
-    display: inline-block;
-    opacity: 0; /* Inicialmente invisível */
-    transform: translateY(100%); /* Começa fora da tela */
-    transform-origin: bottom;
-    will-change: transform, opacity; /* Otimização GPU */
-    backface-visibility: hidden;
-    -webkit-font-smoothing: antialiased;
-}
-
-.hero-subtitle-char {
-    display: inline;
-    opacity: 0; /* Inicialmente invisível */
-    will-change: opacity; /* Otimização leve */
-}
-
-/* Cursor piscante para efeito de digitação */
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-/* Efeito de brilho nas palavras do título */
-.hero-title-word.glow {
-    text-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
-}
-
-/* Palavras-chave destacadas no subtítulo */
-.hero-subtitle-char.highlight {
-    color: var(--primary) !important;
-    font-weight: 600;
-    text-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
-}
-
-/* Botão com efeito pulsante */
+/* BOTÃO COM ANIMAÇÃO */
 .hero-content .btn {
-    opacity: 0; /* Para animação GSAP */
-    transform: translateY(20px); /* Para animação GSAP */
+    opacity: 0;
+    transform: translateY(30px);
     will-change: transform, opacity, box-shadow;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* Efeito de pulso contínuo no botão */
+/* Efeito de pulso suave */
 @keyframes pulseGlow {
     0%, 100% {
-        box-shadow: 0 0 0 0 rgba(255, 102, 0, 0.7);
+        box-shadow: 0 0 0 0 rgba(255, 102, 0, 0.4);
     }
     50% {
-        box-shadow: 0 0 0 10px rgba(255, 102, 0, 0);
-    }
-}
-
-/* Otimizações para mobile */
-@media (max-width: 768px) {
-    .hero-title-word {
-        font-weight: 900 !important;
-    }
-    
-    .hero-subtitle-char {
-        font-size: 1rem;
-    }
-    
-    /* Pulso mais sutil no mobile */
-    @keyframes pulseMobile {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.02); }
-    }
-    
-    .hero-content .btn {
-        animation: pulseMobile 2s infinite ease-in-out;
-    }
-}
-
-/* Acessibilidade - reduz movimento */
-@media (prefers-reduced-motion: reduce) {
-    .hero-title-word,
-    .hero-subtitle-char,
-    .hero-bg-image,
-    .hero-content .btn,
-    .hero-socials a {
-        animation: none !important;
-        transition: none !important;
-        opacity: 1 !important;
-        transform: none !important;
-        filter: none !important;
-    }
-    
-    .hero-title, .hero-subtitle {
-        opacity: 1 !important;
-        transform: none !important;
-    }
-    
-    .hero-bg-image {
-        opacity: 1 !important;
-        transform: scale(1) !important;
-        filter: none !important;
+        box-shadow: 0 0 0 8px rgba(255, 102, 0, 0);
     }
 }
 
@@ -848,7 +836,7 @@
 }
 
 /* ==========================================================
-    RESPONSIVIDADE MOBILE - CORREÇÃO DA BARRA PRETA
+    RESPONSIVIDADE MOBILE - CORREÇÃO COMPLETA
    ========================================================== */
 
 /* Mobile (até 768px) */
@@ -872,7 +860,7 @@
         margin: 0 auto !important;
     }
 
-    /* --- HERO SECTION MOBILE --- */
+    /* --- HERO SECTION MOBILE - CORREÇÃO CRÍTICA --- */
     .hero {
         height: 100vh;
         min-height: 100vh;
@@ -888,6 +876,7 @@
 
     .hero-content {
         padding-left: 1.5rem;
+        padding-right: 1.5rem;
         text-align: left;
         width: 100%;
         position: relative;
@@ -896,6 +885,7 @@
         max-width: 100%;
     }
 
+    /* TÍTULO NO MOBILE - CORREÇÃO */
     .hero-title {
         font-size: clamp(2.8rem, 14vw, 4.5rem);
         line-height: 0.9;
@@ -905,8 +895,21 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
         width: 100%;
+        display: block;
+        white-space: normal;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
 
+    /* Palavras animadas no mobile */
+    .hero-title-word {
+        font-size: inherit !important;
+        font-weight: 900 !important;
+        display: inline-block;
+    }
+
+    /* SUBTÍTULO NO MOBILE - CORREÇÃO */
     .hero-subtitle {
         font-size: 1rem;
         max-width: 320px;
@@ -915,6 +918,16 @@
         color: rgb(199, 185, 160);
         font-weight: 500;
         width: 100%;
+        display: block;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Caracteres animados no mobile */
+    .hero-subtitle-char {
+        font-size: 1rem !important;
+        display: inline;
     }
 
     .hero-background {
@@ -939,7 +952,6 @@
         position: absolute;
         left: 0;
         right: 0;
-        /* Reset para mobile se necessário */
         opacity: 0;
         filter: brightness(1.2) blur(5px);
     }
@@ -966,31 +978,25 @@
         gap: var(--space-md);
     }
 
-    /* Botão transparente no mobile */
+    /* Botão transparente no mobile - CORREÇÃO */
     .hero-content a, 
     .hero-content .btn {
-        /* MANTÉM SEU DESIGN TRANSPARENTE */
         background-color: rgba(255, 102, 0, 0.55) !important;
         backdrop-filter: blur(5px);
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
         color: #fff !important;
-
-        /* ADICIONA A DIMINUIÇÃO DE TAMANHO */
-        padding: 0.5rem 1.1rem !important; /* Diminui altura e largura */
-        font-size: 0.85rem !important;      /* Diminui o texto */
-        border-radius: 6px !important;    /* Ajuste opcional para arredondar menos */
-        
-        /* Garante alinhamento perfeito do texto e ícone */
+        padding: 0.5rem 1.1rem !important;
+        font-size: 0.85rem !important;
+        border-radius: 6px !important;
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        width: auto; /* Garante que ele não ocupe a largura toda da tela */
-        /* Estado inicial para animação */
+        width: auto;
         opacity: 0;
         transform: translateY(15px);
+        margin-top: 0.5rem;
     }
 
-    /* Diminui o ícone da setinha separadamente se necessário */
     .hero-content .btn i {
         font-size: 0.8rem !important;
     }
@@ -1062,11 +1068,11 @@
         max-width: 600px;
         margin: 0 auto;
         border-radius: 16px;
-        min-height: 480px; /* Aumentado proporcionalmente para mobile */
+        min-height: 480px;
     }
 
     .crew-video-element {
-        height: 480px; /* Aumentado de 350px para 480px no mobile */
+        height: 480px;
     }
 
     .video-overlay {
@@ -1109,6 +1115,7 @@
 
     .hero-content {
         padding-left: 1rem;
+        padding-right: 1rem;
         margin-top: 10vh;
     }
 
@@ -1131,7 +1138,7 @@
     }
 
     .crew-video-element {
-        height: 420px; /* Aumentado de 280px para 380px */
+        height: 420px;
     }
 
     .crew-video-container {
@@ -1151,6 +1158,7 @@
 @media (max-width: 414px) {
     .hero-content {
         padding-left: 1rem;
+        padding-right: 1rem;
         transform: translateY(-57px); 
     }
     
@@ -1168,7 +1176,7 @@
     }
     
     .crew-video-element {
-        height: 400px; /* Aumentado de 300px para 350px */
+        height: 400px;
     }
     
     .crew-video-container {
@@ -1402,24 +1410,24 @@
         font-size: 2.2rem;
         margin-top: 40px;
         margin-bottom: 20px;
-        text-align: left; /* Título alinhado à esquerda fica mais moderno no PC */
+        text-align: left;
     }
 
     .size-options-container {
-        justify-content: flex-start; /* Alinha os tamanhos à esquerda */
+        justify-content: flex-start;
         margin-bottom: 30px;
     }
 
     #addToCartModalBtn {
-        margin-bottom: 40px; /* Espaço no final */
+        margin-bottom: 40px;
     }
 
     /* Ajuste do botão de fechar (X) */
     .size-modal-content .close-button {
         top: 20px;
         right: 20px;
-        color: #333; /* Cor escura para contrastar com fundo branco */
-        background: rgba(0,0,0,0.05); /* Fundo sutil */
+        color: #333;
+        background: rgba(0,0,0,0.05);
         width: 40px;
         height: 40px;
         border-radius: 50%;
@@ -1437,7 +1445,7 @@
 
 /* OTIMIZAÇÃO: Avisa ao navegador para preparar a animação, evitando travamentos */
 .gsap-fade-up {
-    opacity: 1; /* Garante visibilidade inicial se o JS falhar */
+    opacity: 1;
     will-change: transform, opacity;
 }
 
@@ -1462,4 +1470,28 @@
         transform: none !important;
         filter: none !important;
     }
+    
+    .hero-title, .hero-subtitle {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* CORREÇÃO DE FALLBACK: Se JS falhar, texto ainda visível */
+.no-js .hero-title-word,
+.no-js .hero-subtitle-char {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+.no-js .hero-bg-image {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    filter: none !important;
+}
+
+.no-js .hero-content .btn,
+.no-js .hero-socials a {
+    opacity: 1 !important;
+    transform: none !important;
 }
