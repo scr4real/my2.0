@@ -1,6 +1,6 @@
 /**
- * JAPA UNIVERSE - MAIN JS (F1 ANIMATION EDITION)
- * Foco: Performance Máxima + Efeitos de Alto Impacto GSAP
+ * JAPA UNIVERSE - MAIN JS (REVISADO)
+ * Foco: Newsletter com efeito fade-up e Carrinho
  */
 
 (function() {
@@ -23,7 +23,7 @@
     };
 
     /**
-     * Módulo de Animações (ESTILO F1 / GSAP)
+     * Módulo de Animações (GSAP)
      */
     const AnimationModule = {
         init: () => {
@@ -32,50 +32,42 @@
             // Registra o plugin de Scroll
             gsap.registerPlugin(ScrollTrigger);
 
-            // 1. EFEITO FADE-UP NA NEWSLETTER (O que você pediu para manter)
-            gsap.from(".newsletter .container", {
-                scrollTrigger: {
-                    trigger: ".newsletter",
-                    start: "top 80%",
-                },
-                y: 50,
-                opacity: 0,
-                duration: 1,
-                ease: "power2.out"
-            });
+            // CORREÇÃO: EFEITO FADE-UP NA NEWSLETTER
+            // Usamos .newsletter diretamente para garantir que o trigger funcione
+            const newsletterContainer = document.querySelector(".newsletter .container");
+            
+            if (newsletterContainer) {
+                // Forçamos a visibilidade inicial via JS para evitar conflitos com CSS
+                gsap.set(newsletterContainer, { opacity: 0, y: 50 });
 
-            // 2. ANIMAÇÃO DE FADE-UP PADRÃO (Para outros elementos com a classe)
-            gsap.utils.toArray(".gsap-fade-up").forEach(el => {
-                gsap.from(el, {
+                gsap.to(newsletterContainer, {
                     scrollTrigger: {
-                        trigger: el,
-                        start: "top 85%",
+                        trigger: ".newsletter",
+                        start: "top 85%", // Dispara um pouco antes para garantir que o usuário veja
+                        toggleActions: "play none none none"
                     },
-                    y: 40,
-                    opacity: 0,
-                    duration: 1,
+                    y: 0,
+                    opacity: 1,
+                    duration: 1.2,
                     ease: "power2.out"
                 });
-            });
+            }
         }
     };
 
     /**
-     * Módulo do Carrinho (LOCAL STORAGE OPTIMIZED)
+     * Módulo do Carrinho
      */
     const CartModule = (function() {
         let cart = null;
-        
         const getCart = () => {
             if (!cart) cart = JSON.parse(localStorage.getItem("japaUniverseCart")) || [];
             return cart;
         };
-
         const saveCart = (newCart) => {
             cart = newCart;
             localStorage.setItem("japaUniverseCart", JSON.stringify(cart));
         };
-
         const formatPrice = (p) => `R$ ${Number(p).toFixed(2).replace('.', ',')}`;
 
         return {
@@ -128,7 +120,7 @@
     })();
 
     /**
-     * Módulo de Vídeo (DEFERRED & LIGHTWEIGHT)
+     * Módulo de Vídeo
      */
     const VideoEffectsModule = {
         init: () => {
@@ -136,7 +128,6 @@
             const video = document.querySelector('.crew-video-element');
             if (!container || !video) return;
 
-            // Só carrega o vídeo quando estiver perto da tela (Lazy Video)
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -154,26 +145,22 @@
         },
         setupInteractions: (container, video) => {
             let ticking = false;
-
             container.addEventListener('mousemove', (e) => {
                 if (!ticking) {
                     window.requestAnimationFrame(() => {
                         const rect = container.getBoundingClientRect();
                         const x = ((e.clientX - rect.left) / rect.width - 0.5) * 6;
                         const y = ((e.clientY - rect.top) / rect.height - 0.5) * -6;
-                        
                         container.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg) translateZ(5px)`;
                         ticking = false;
                     });
                     ticking = true;
                 }
             });
-
             container.addEventListener('mouseleave', () => {
                 container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
                 video.pause();
             });
-
             container.addEventListener('mouseenter', () => {
                 video.play().catch(() => {});
             });
@@ -184,30 +171,23 @@
      * Inicialização Orquestrada
      */
     const init = () => {
-        // 1. Esconde o loader e mostra o conteúdo base imediatamente
         LoadingModule.hide();
-        
-        // 2. Prioridade máxima: UI do Carrinho e Header
         CartModule.init();
         
-        // 3. Prioridade média: Animações visuais (GSAP)
         requestAnimationFrame(() => {
             AnimationModule.init();
         });
 
-        // 4. Prioridade baixa: Vídeos e Recursos Pesados
         if ('requestIdleCallback' in window) {
             requestIdleCallback(() => VideoEffectsModule.init());
         } else {
             setTimeout(VideoEffectsModule.init, 200);
         }
 
-        // 5. Update Year
         const yearEl = document.getElementById("currentYear");
         if (yearEl) yearEl.textContent = new Date().getFullYear();
     };
 
-    // Trigger de inicialização mais rápido que DOMContentLoaded
     if (document.readyState === "interactive" || document.readyState === "complete") {
         init();
     } else {
