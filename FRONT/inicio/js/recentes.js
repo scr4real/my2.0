@@ -20,15 +20,16 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     /**
-     * APENAS EFEITO VELOCÍMETRO NOS PREÇOS
+     * APENAS EFEITO VELOCÍMETRO NOS PREÇOS (CORRIGIDO)
      */
     const animatePriceCounter = (containerId) => {
-        const cards = document.querySelectorAll(`#${containerId} .product-card`);
-        if (!cards.length || typeof gsap === "undefined") return;
+        const container = document.getElementById(containerId);
+        const cards = container?.querySelectorAll(".product-card");
+        if (!cards?.length || typeof gsap === "undefined") return;
 
         cards.forEach(card => {
             const priceElement = card.querySelector(".product-price");
-            if (!priceElement) return;
+            if (!priceElement || priceElement.dataset.animated === "true") return;
 
             const priceText = priceElement.innerText.replace('R$', '').trim();
             const finalValue = parseFloat(priceText.replace('.', '').replace(',', '.'));
@@ -36,16 +37,29 @@ document.addEventListener("DOMContentLoaded", () => {
             if (isNaN(finalValue)) return;
 
             const counter = { value: 0 };
+            
             gsap.to(counter, {
                 scrollTrigger: {
                     trigger: card,
-                    start: "top 90%",
+                    start: "top 95%",
+                    // once: true garante que a animação ocorra apenas uma única vez
+                    once: true, 
+                    // toggleActions evita que a animação reinicie ao fazer scroll reverso
+                    toggleActions: "play none none none" 
                 },
                 value: finalValue,
-                duration: 2,
-                ease: "expo.out",
+                duration: 1.5,
+                ease: "power2.out",
+                onStart: () => {
+                    // Marca como animado para evitar duplicidade
+                    priceElement.dataset.animated = "true"; 
+                },
                 onUpdate: () => {
                     priceElement.innerText = formatPrice(counter.value);
+                },
+                onComplete: () => {
+                    // Garante que o valor final seja o exato do banco ao terminar
+                    priceElement.innerText = formatPrice(finalValue);
                 }
             });
         });
@@ -91,8 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>`;
             container.innerHTML = htmlContent;
             
-            // Ativa o contador de preços após renderizar
-            requestAnimationFrame(() => animatePriceCounter(containerId));
+            // Ativa o contador com um pequeno delay para garantir que o DOM está pronto
+            setTimeout(() => animatePriceCounter(containerId), 100);
 
         } else {
             container.innerHTML = `<div class="swiper-slide"><p style="padding: 20px; text-align: center; color: #666;">Indisponível.</p></div>`;
