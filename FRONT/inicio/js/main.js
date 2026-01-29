@@ -1,6 +1,6 @@
 /**
- * JAPA UNIVERSE - MAIN JS (ATUALIZADO COM ANIMAÇÕES ÉPICAS)
- * Revisado com efeitos GSAP premium no Hero
+ * JAPA UNIVERSE - MAIN JS (ATUALIZADO COM ANIMAÇÕES ÉPICAS FUNCIONAIS)
+ * Revisado com efeitos GSAP premium que não quebram layout
  */
 (function() {
     const API_BASE = window.location.hostname.includes('localhost') 
@@ -22,14 +22,14 @@
     };
 
     /**
-     * MÓDULO DE ANIMAÇÕES ÉPICAS DO HERO
+     * MÓDULO DE ANIMAÇÕES ÉPICAS DO HERO (VERSÃO FUNCIONAL)
      */
     const EpicHeroAnimations = {
         init: function() {
-            // Aguarda o carregamento completo e um pequeno delay
+            // Aguarda o carregamento completo
             setTimeout(() => {
                 this.animateHeroSection();
-            }, 100);
+            }, 300);
         },
 
         animateHeroSection: function() {
@@ -45,221 +45,132 @@
                 return;
             }
 
-            // Cria uma timeline master para controle preciso
+            // Cria uma timeline master para controle
             const masterTL = gsap.timeline({
                 defaults: { ease: "power3.out" }
             });
 
-            // 1. ANIMAÇÃO DA IMAGEM DE FUNDO - EFEITO "REVEAL GLITCH"
-            // Pré-configuração
+            // SALVA OS CONTEÚDOS ORIGINAIS
+            const originalTitleHTML = heroTitle.innerHTML;
+            const originalSubtitleHTML = heroSubtitle.innerHTML;
+
+            // 1. ANIMAÇÃO DA IMAGEM DE FUNDO - EFEITO SUAVE
             gsap.set(heroBg, {
                 opacity: 0,
-                scale: 1.15,
-                filter: 'brightness(1.3) blur(8px)'
+                scale: 1.1,
+                filter: 'brightness(1.2) blur(5px)'
             });
 
-            // Animação principal do background
             masterTL.to(heroBg, {
                 opacity: 1,
                 scale: 1,
                 filter: 'brightness(1) blur(0px)',
-                duration: 2.2,
-                ease: "power4.out"
+                duration: 1.8,
+                ease: "power3.out"
             }, 0);
 
-            // 2. ANIMAÇÃO DO TÍTULO "IMPORTE SEM TAXAS" - EFEITO SPLIT TEXT GLITCH
+            // 2. ANIMAÇÃO DO TÍTULO - VERSÃO SIMPLES QUE NÃO QUEBRA LAYOUT
             const animateTitle = () => {
-                const originalText = heroTitle.textContent;
-                const lines = originalText.split('<br>').map(line => line.trim());
-                
-                // Limpa e recria o título com estrutura para animação
-                heroTitle.innerHTML = '';
-                
-                lines.forEach((line, lineIndex) => {
-                    const lineDiv = document.createElement('div');
-                    lineDiv.className = 'hero-title-line';
-                    lineDiv.style.cssText = `
-                        overflow: hidden;
-                        line-height: 0.9;
-                        margin-bottom: ${lineIndex === 0 ? '0.1em' : '0'};
-                    `;
-                    
-                    const words = line.split(' ');
-                    words.forEach((word, wordIndex) => {
-                        const wordSpan = document.createElement('span');
-                        wordSpan.className = 'hero-title-word';
-                        wordSpan.textContent = word + (wordIndex < words.length - 1 ? ' ' : '');
-                        wordSpan.style.cssText = `
-                            display: inline-block;
-                            opacity: 0;
-                            transform: translateY(100%);
-                            will-change: transform, opacity;
-                        `;
-                        lineDiv.appendChild(wordSpan);
-                    });
-                    
-                    heroTitle.appendChild(lineDiv);
+                // Define estado inicial invisível
+                gsap.set(heroTitle, {
+                    opacity: 0,
+                    y: 30
                 });
 
-                // Anima cada palavra com stagger aleatório
-                const titleWords = heroTitle.querySelectorAll('.hero-title-word');
-                masterTL.to(titleWords, {
-                    y: 0,
+                // Anima o título completo
+                masterTL.to(heroTitle, {
                     opacity: 1,
-                    duration: 1.4,
-                    stagger: {
-                        each: 0.08,
-                        from: "random",
-                        grid: "auto",
-                        ease: "back.out(1.8)"
-                    },
-                    onStart: () => {
-                        // Efeito sonoro visual (glitch rápido)
-                        gsap.to(titleWords, {
-                            duration: 0.1,
-                            x: () => gsap.utils.random(-15, 15),
-                            y: () => gsap.utils.random(-10, 10),
-                            repeat: 3,
-                            yoyo: true,
-                            ease: "none"
-                        });
-                    }
-                }, 0.5);
+                    y: 0,
+                    duration: 1.2,
+                    ease: "back.out(1.7)"
+                }, 0.3);
 
-                // Efeito de brilho final nas palavras
-                masterTL.to(titleWords, {
-                    duration: 0.8,
-                    textShadow: '0 0 30px rgba(255, 102, 0, 0.5)',
+                // Efeito adicional: pulso sutil no texto
+                masterTL.to(heroTitle, {
+                    textShadow: '0 0 20px rgba(255, 102, 0, 0.4)',
+                    duration: 0.5,
                     yoyo: true,
                     repeat: 1,
                     ease: "sine.inOut"
-                }, 1.8);
+                }, 1.0);
             };
 
-            // 3. ANIMAÇÃO DO SUBTÍTULO - EFEITO "TYPING" MODERNO
+            // 3. ANIMAÇÃO DO SUBTÍTULO - VERSÃO SIMPLES
             const animateSubtitle = () => {
-                const originalText = heroSubtitle.textContent;
-                heroSubtitle.innerHTML = '';
-                heroSubtitle.style.cssText = `
-                    opacity: 1;
-                    overflow: hidden;
-                `;
-
-                // Divide em spans para animação de digitação
-                const chars = originalText.split('');
-                chars.forEach((char, index) => {
-                    const span = document.createElement('span');
-                    span.className = 'hero-subtitle-char';
-                    span.textContent = char === ' ' ? '\u00A0' : char;
-                    span.style.cssText = `
-                        display: inline;
-                        opacity: 0;
-                        will-change: opacity;
-                    `;
-                    
-                    // Destaque palavras-chave
-                    if (['Japa', 'Universe', 'exclusivos', 'fit'].some(keyword => 
-                        originalText.toLowerCase().includes(keyword.toLowerCase()) && 
-                        originalText.indexOf(char) >= originalText.toLowerCase().indexOf(keyword.toLowerCase()) &&
-                        originalText.indexOf(char) < originalText.toLowerCase().indexOf(keyword.toLowerCase()) + keyword.length
-                    )) {
-                        span.style.color = 'var(--primary)';
-                        span.style.fontWeight = '600';
-                    }
-                    
-                    heroSubtitle.appendChild(span);
+                // Define estado inicial invisível
+                gsap.set(heroSubtitle, {
+                    opacity: 0,
+                    y: 20
                 });
 
-                const subtitleChars = heroSubtitle.querySelectorAll('.hero-subtitle-char');
+                // Anima o subtítulo completo
+                masterTL.to(heroSubtitle, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1.0,
+                    ease: "power2.out"
+                }, 0.8);
+
+                // Efeito de digitação simplificado (sem quebrar layout)
+                const subtitleText = heroSubtitle.textContent;
+                const words = subtitleText.split(' ');
                 
-                // Efeito de digitação com cursor
-                const cursor = document.createElement('span');
-                cursor.innerHTML = '▌';
-                cursor.style.cssText = `
-                    display: inline;
-                    animation: blink 1s infinite;
-                    color: var(--primary);
-                    font-weight: bold;
-                    opacity: 0;
-                `;
-                heroSubtitle.appendChild(cursor);
-
-                masterTL.to(cursor, {
-                    opacity: 1,
-                    duration: 0.3
-                }, 1.5);
-
-                masterTL.to(subtitleChars, {
-                    opacity: 1,
-                    duration: 0.03,
-                    stagger: {
-                        each: 0.03,
-                        from: "start"
-                    },
-                    onComplete: () => {
-                        if (cursor.parentNode) cursor.remove();
-                    }
-                }, 1.6);
-
-                // Remove cursor ao finalizar
-                setTimeout(() => {
-                    if (cursor.parentNode) cursor.remove();
-                }, (chars.length * 0.03 * 1000) + 2000);
+                // Cria um efeito visual de palavras aparecendo
+                words.forEach((word, index) => {
+                    const delay = 1.0 + (index * 0.05);
+                    masterTL.to(heroSubtitle, {
+                        duration: 0.01,
+                        onStart: () => {
+                            // Efeito visual sutil
+                            heroSubtitle.style.textShadow = '0 0 10px rgba(255, 102, 0, 0.3)';
+                        },
+                        onComplete: () => {
+                            heroSubtitle.style.textShadow = 'none';
+                        }
+                    }, delay);
+                });
             };
 
-            // 4. ANIMAÇÃO DO BOTÃO - EFEITO "PULSE ATRAENTE"
+            // 4. ANIMAÇÃO DO BOTÃO
             const animateButton = () => {
                 if (!heroButton) return;
                 
                 gsap.set(heroButton, {
                     opacity: 0,
-                    y: 30,
-                    scale: 0.9
+                    y: 15,
+                    scale: 0.95
                 });
 
                 masterTL.to(heroButton, {
                     opacity: 1,
                     y: 0,
                     scale: 1,
-                    duration: 1.2,
-                    ease: "elastic.out(1, 0.5)"
-                }, 2.2);
+                    duration: 0.9,
+                    ease: "back.out(1.5)"
+                }, 1.5);
 
-                // Efeito de brilho pulsante contínuo
-                const pulseAnimation = () => {
-                    gsap.to(heroButton, {
-                        boxShadow: '0 0 0 0 rgba(255, 102, 0, 0.7)',
-                        duration: 0.01,
-                        onComplete: () => {
-                            gsap.to(heroButton, {
-                                boxShadow: '0 0 0 10px rgba(255, 102, 0, 0)',
-                                duration: 1.5,
-                                ease: "power2.out",
-                                repeat: -1,
-                                delay: 1
-                            });
-                        }
-                    });
-                };
-
-                // Inicia o pulso após a entrada
-                masterTL.call(pulseAnimation, null, 2.5);
+                // Efeito de pulso sutil
+                masterTL.to(heroButton, {
+                    boxShadow: '0 0 0 5px rgba(255, 102, 0, 0.3)',
+                    duration: 0.5,
+                    yoyo: true,
+                    repeat: 1,
+                    ease: "sine.inOut"
+                }, 1.8);
 
                 // Efeitos de hover
                 heroButton.addEventListener('mouseenter', () => {
                     gsap.to(heroButton, {
                         scale: 1.05,
-                        y: -2,
-                        duration: 0.3,
-                        ease: "back.out(1.7)"
+                        duration: 0.2,
+                        ease: "power2.out"
                     });
                 });
 
                 heroButton.addEventListener('mouseleave', () => {
                     gsap.to(heroButton, {
                         scale: 1,
-                        y: 0,
-                        duration: 0.3,
+                        duration: 0.2,
                         ease: "power2.out"
                     });
                 });
@@ -270,15 +181,15 @@
                 if (!heroSocials) return;
                 
                 const socialIcons = heroSocials.querySelectorAll('a');
-                gsap.set(socialIcons, { opacity: 0, y: 20 });
+                gsap.set(socialIcons, { opacity: 0, y: 10 });
                 
                 masterTL.to(socialIcons, {
                     opacity: 1,
                     y: 0,
-                    duration: 0.8,
+                    duration: 0.6,
                     stagger: 0.1,
-                    ease: "back.out(1.7)"
-                }, 2.8);
+                    ease: "back.out(1.5)"
+                }, 1.8);
             };
 
             // Executa todas as animações
@@ -287,15 +198,25 @@
             animateButton();
             animateSocials();
 
+            // Restaura conteúdos originais após um tempo para garantir
+            setTimeout(() => {
+                heroTitle.innerHTML = originalTitleHTML;
+                heroSubtitle.innerHTML = originalSubtitleHTML;
+                
+                // Remove qualquer estilo inline problemático
+                heroTitle.removeAttribute('style');
+                heroSubtitle.removeAttribute('style');
+            }, 3000);
+
             // 6. OTIMIZAÇÕES DE PERFORMANCE
             this.optimizeAnimations();
         },
 
         optimizeAnimations: function() {
-            // Reduz FPS em dispositivos móveis para economia de bateria
+            // Reduz FPS em dispositivos móveis
             const isMobile = window.innerWidth <= 768;
             if (isMobile && gsap.ticker) {
-                gsap.ticker.fps(50); // Reduz para 50fps no mobile
+                gsap.ticker.fps(50);
             }
 
             // Pausa animações quando a aba não está visível
