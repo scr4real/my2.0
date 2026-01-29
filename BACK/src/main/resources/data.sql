@@ -90,8 +90,8 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 
 -- --- LOTE 3: AIR FORCE 1 ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Air Force 1 Triple Black', 'Nike Air Force 1 Triple Black\n\nA lenda das ruas. AF1 todo preto é sinônimo de atitude. Durabilidade infinita e visual que impõe presença.', '/uploads/airforce/1.webp', 312.00, 14, 15, 1, 'AF1'),
-('Nike Air Force 1 Triple White', 'Nike Air Force 1 Triple White\n\nO tênis mais icônico da história. Branco no branco. Limpo, clássico e essencial pra aquele visual fresh.', '/uploads/airforce/2.webp', 312.00, 14, 15, 1, 'AF1'),
+('Nike Air Force 1 Triple Black', 'Nike Air Force 1 Triple Black\n\nA lenda das ruas. AF1 todo preto é sinônimo de atitude. Durabilidade infinita e visual que impõe presença.', '/uploads/airforce/1.webp', 258.00, 14, 15, 1, 'AF1'),
+('Nike Air Force 1 Triple White', 'Nike Air Force 1 Triple White\n\nO tênis mais icônico da história. Branco no branco. Limpo, clássico e essencial pra aquele visual fresh.', '/uploads/airforce/2.webp', 258.00, 14, 15, 1, 'AF1'),
 ('Nike Air Force 1 x CPFM Black', 'Nike Air Force 1 x CPFM Black\n\nColab insana. Letras gigantes "AIR" inspiradas no Uptempo. Preto total, couro premium. Obra de arte no pé.', '/uploads/cpfm/1.webp', 468.00, 21, 2, 1, 'CPFM'),
 ('Nike Air Force 1 x CPFM White', 'Nike Air Force 1 x CPFM White\n\nA versão branca da colab mais desejada. Letreiro "AIR" com contorno refletivo. Exclusividade nível hard.', '/uploads/cpfm/2.webp', 468.00, 21, 2, 1, 'CPFM');
 
