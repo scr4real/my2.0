@@ -1,7 +1,91 @@
 /* ===================================================================
-    ARQUIVO DE ESTILO DA PÁGINA INICIAL - TN DO JAPA (OTIMIZADO)
-    VERSÃO COMPLETA COM VÍDEO APERFEIÇOADO + ANIMAÇÕES GSAP FUNCIONAIS
+    ARQUIVO DE ESTILO DA PÁGINA INICIAL - TN DO JAPA (VERSÃO FINAL)
+    CORRIGIDO: Sem piscadas, animações suaves
    =================================================================== */
+
+/* ===== ESTADOS INICIAIS CRÍTICOS (EVITA PISCADA) ===== */
+/* IMPORTANTE: Todos os elementos animados começam INVISÍVEIS */
+.hero-bg-image {
+    opacity: 0 !important;
+    transform: scale(1.1) !important;
+    filter: brightness(1.3) blur(8px) !important;
+    will-change: opacity, transform, filter;
+    transition: none !important;
+}
+
+.hero-title {
+    opacity: 0 !important;
+    transform: translateY(30px) !important;
+    will-change: opacity, transform;
+    transition: none !important;
+}
+
+.hero-subtitle {
+    opacity: 0 !important;
+    transform: translateY(20px) !important;
+    will-change: opacity, transform;
+    transition: none !important;
+}
+
+.hero-content .btn {
+    opacity: 0 !important;
+    transform: translateY(15px) !important;
+    will-change: opacity, transform;
+    transition: none !important;
+}
+
+.hero-socials a {
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+    will-change: opacity, transform;
+    transition: none !important;
+}
+
+/* Classe adicionada quando animação do Hero termina */
+.hero-animation-complete .hero-bg-image,
+.hero-animation-complete .hero-title,
+.hero-animation-complete .hero-subtitle,
+.hero-animation-complete .hero-content .btn,
+.hero-animation-complete .hero-socials a {
+    will-change: auto !important;
+    transition: all var(--transition-fast) !important;
+}
+
+/* ===== LOADING OVERLAY (MELHORADO) ===== */
+.loading-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: var(--background) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 9999 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: opacity 0.6s ease, visibility 0.6s ease !important;
+}
+
+.loading-overlay.hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.loader-logo {
+    font-size: 3rem;
+    font-family: var(--font-display);
+    font-weight: 900;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
+
+.loader-logo span {
+    color: var(--primary);
+}
 
 /* ===== HERO SECTION ===== */
 .hero {
@@ -21,7 +105,6 @@
     width: 100%;
 }
 
-/* TÍTULO PRINCIPAL - ESTRUTURA ORIGINAL PRESERVADA */
 .hero-title {
     font-size: clamp(3rem, 10vw, 7rem);
     line-height: 1;
@@ -31,34 +114,8 @@
     letter-spacing: -0.02em;
     margin: 0;
     padding: 0;
-    display: block;
-    width: 100%;
-    /* Para animação sem quebrar layout */
-    opacity: 1;
-    transform: translateY(0);
 }
 
-/* Container para título animado - MANTÉM LAYOUT */
-.hero-title-animated {
-    display: block;
-    line-height: 1;
-    margin-bottom: 0.1em;
-}
-
-/* Palavras individuais - NÃO QUEBRAM LAYOUT */
-.hero-title-word {
-    display: inline-block;
-    opacity: 1; /* Visível por padrão */
-    transform: translateY(0);
-    /* Mantém estilo do título */
-    font-size: inherit;
-    font-family: inherit;
-    font-weight: inherit;
-    letter-spacing: inherit;
-    line-height: inherit;
-}
-
-/* SUBTÍTULO - ESTRUTURA ORIGINAL PRESERVADA */
 .hero-subtitle {
     font-size: 1.1rem;
     color: rgb(243, 229, 203);
@@ -66,32 +123,6 @@
     margin: var(--space-md) 0 var(--space-lg);
     line-height: 1.6;
     font-weight: 400;
-    display: block;
-    width: 100%;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Container para subtítulo animado */
-.hero-subtitle-animated {
-    display: inline;
-}
-
-/* Caracteres individuais - NÃO QUEBRAM LAYOUT */
-.hero-subtitle-char {
-    display: inline;
-    opacity: 1; /* Visível por padrão */
-    /* Mantém estilo do subtítulo */
-    font-size: inherit;
-    color: inherit;
-    font-weight: inherit;
-    line-height: inherit;
-}
-
-/* Remove cores aleatórias no subtítulo */
-.hero-subtitle-char[style*="color"] {
-    color: inherit !important;
-    font-weight: inherit !important;
 }
 
 .hero-background {
@@ -110,10 +141,6 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 1; /* Visível por padrão */
-    transform: scale(1);
-    filter: brightness(1) blur(0px);
-    will-change: transform, opacity, filter;
 }
 
 .hero-background::after {
@@ -140,22 +167,11 @@
     color: var(--text-secondary);
     transition: var(--transition-fast);
     font-size: 1.2rem;
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .hero-socials a:hover {
     color: var(--primary);
     transform: translateY(-3px);
-}
-
-/* BOTÃO */
-.hero-content .btn {
-    opacity: 1;
-    transform: translateY(0);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
 }
 
 /* ===== FEATURED SNEAKER SECTION ===== */
@@ -344,6 +360,7 @@
     flex-direction: column;
     height: 100%;
     transition: all 0.3s ease;
+    will-change: transform; /* Otimização para hover */
 }
 
 .collection-section .product-card:hover {
@@ -413,12 +430,21 @@
     line-height: 1.3;
 }
 
+/* PREÇO DOS PRODUTOS - OTIMIZADO PARA ANIMAÇÃO */
 .collection-section .product-price {
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--primary);
     margin-bottom: var(--space-md);
     letter-spacing: -0.5px;
+    will-change: contents; /* Otimização para animação GSAP */
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Estado final após animação */
+.product-price[data-price-animated="completed"] {
+    will-change: auto;
 }
 
 .collection-section .product-info .btn {
@@ -828,7 +854,7 @@
         margin: 0 auto !important;
     }
 
-    /* --- HERO SECTION MOBILE - CORREÇÃO CRÍTICA --- */
+    /* --- HERO SECTION MOBILE --- */
     .hero {
         height: 100vh;
         min-height: 100vh;
@@ -853,7 +879,6 @@
         max-width: 100%;
     }
 
-    /* TÍTULO NO MOBILE - FUNCIONAL */
     .hero-title {
         font-size: clamp(2.8rem, 14vw, 4.5rem);
         line-height: 0.9;
@@ -870,14 +895,6 @@
         hyphens: auto;
     }
 
-    /* Palavras animadas no mobile */
-    .hero-title-word {
-        display: inline-block !important;
-        font-size: inherit !important;
-        font-weight: 900 !important;
-    }
-
-    /* SUBTÍTULO NO MOBILE - FUNCIONAL */
     .hero-subtitle {
         font-size: 1rem;
         max-width: 320px;
@@ -890,13 +907,6 @@
         white-space: normal;
         word-wrap: break-word;
         overflow-wrap: break-word;
-    }
-
-    /* Remove cores laranja aleatórias */
-    .hero-subtitle-char {
-        color: inherit !important;
-        font-weight: inherit !important;
-        display: inline !important;
     }
 
     .hero-background {
@@ -1407,13 +1417,28 @@
     }
 }
 
-/* OTIMIZAÇÃO: Avisa ao navegador para preparar a animação */
-.gsap-fade-up {
-    opacity: 1;
-    will-change: transform, opacity;
+/* ===== OTIMIZAÇÕES DE PERFORMANCE ===== */
+/* Evita animações em elementos ocultos ou já animados */
+.product-card[data-price-animated="completed"] .product-price {
+    will-change: auto !important;
 }
 
-/* Acessibilidade - Reduzir movimento */
+/* Otimização para elementos animados */
+.gsap-animated {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    transform: translateZ(0);
+}
+
+/* Remove transições durante carregamento */
+.loading .hero-title,
+.loading .hero-subtitle,
+.loading .hero-bg-image,
+.loading .hero-content .btn {
+    transition: none !important;
+}
+
+/* Acessibilidade - reduz movimento */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -1423,33 +1448,33 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+    
+    .hero-bg-image,
+    .hero-title,
+    .hero-subtitle,
+    .hero-content .btn,
+    .hero-socials a,
+    .product-price {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        transition: none !important;
+    }
+    
+    /* Remove animações GSAP */
+    .gsap-animated {
+        animation: none !important;
+    }
 }
 
-/* ============================================
-   CORREÇÃO DE EMERGÊNCIA - SE O JS BUGAR
-   ============================================ */
-
-/* Força o texto a aparecer mesmo se o JS bugar */
-.hero-title br {
-    display: block;
-    content: "";
-    margin-bottom: 0.3em;
-}
-
-/* Remove qualquer estilo problemático do JS */
-.hero-title span,
-.hero-subtitle span {
-    color: inherit !important;
-    font-weight: inherit !important;
-    background: none !important;
-}
-
-/* Fallback seguro: Se houver problema, mostra texto normal */
-.hero-title:empty::before {
-    content: "Importe \A sem taxas";
-    white-space: pre;
-}
-
-.hero-subtitle:empty::before {
-    content: "Importe os tênis mais procurados na Japa Universe. Garanta qualidade máxima, segurança e um estilo inconfundível. Encontre aqui os modelos exclusivos que definem o seu fit. Seu próximo par te espera!";
+/* Fallback para quando JS está desabilitado */
+.no-js .hero-bg-image,
+.no-js .hero-title,
+.no-js .hero-subtitle,
+.no-js .hero-content .btn,
+.no-js .hero-socials a {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
 }
