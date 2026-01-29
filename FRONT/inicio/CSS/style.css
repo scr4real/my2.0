@@ -1,6 +1,6 @@
 /* ===================================================================
     ARQUIVO DE ESTILO DA PÁGINA INICIAL - TN DO JAPA (OTIMIZADO)
-    VERSÃO COMPLETA COM VÍDEO APERFEIÇOADO + ANIMAÇÕES GSAP ÉPICAS
+    VERSÃO COMPLETA COM VÍDEO APERFEIÇOADO + ANIMAÇÕES GSAP FUNCIONAIS
    =================================================================== */
 
 /* ===== HERO SECTION ===== */
@@ -21,7 +21,7 @@
     width: 100%;
 }
 
-/* TÍTULO PRINCIPAL - CORREÇÃO CRÍTICA */
+/* TÍTULO PRINCIPAL - ESTRUTURA ORIGINAL PRESERVADA */
 .hero-title {
     font-size: clamp(3rem, 10vw, 7rem);
     line-height: 1;
@@ -31,31 +31,26 @@
     letter-spacing: -0.02em;
     margin: 0;
     padding: 0;
-    /* IMPORTANTE: Mantém estrutura original */
     display: block;
     width: 100%;
-    white-space: normal;
-    word-break: normal;
-    overflow: visible;
+    /* Para animação sem quebrar layout */
+    opacity: 1;
+    transform: translateY(0);
 }
 
-/* Container para animação do título - NÃO modifica estrutura visual */
-.hero-title-container {
+/* Container para título animado - MANTÉM LAYOUT */
+.hero-title-animated {
     display: block;
-    overflow: hidden;
+    line-height: 1;
+    margin-bottom: 0.1em;
 }
 
-/* Palavras animadas - posicionamento correto */
+/* Palavras individuais - NÃO QUEBRAM LAYOUT */
 .hero-title-word {
     display: inline-block;
-    position: relative;
-    opacity: 0; /* Começa invisível para animação */
-    transform: translateY(120%); /* Começa abaixo */
-    transform-origin: bottom;
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-    -webkit-font-smoothing: antialiased;
-    /* Mantém o estilo original */
+    opacity: 1; /* Visível por padrão */
+    transform: translateY(0);
+    /* Mantém estilo do título */
     font-size: inherit;
     font-family: inherit;
     font-weight: inherit;
@@ -63,7 +58,7 @@
     line-height: inherit;
 }
 
-/* SUBTÍTULO - CORREÇÃO CRÍTICA */
+/* SUBTÍTULO - ESTRUTURA ORIGINAL PRESERVADA */
 .hero-subtitle {
     font-size: 1.1rem;
     color: rgb(243, 229, 203);
@@ -71,46 +66,32 @@
     margin: var(--space-md) 0 var(--space-lg);
     line-height: 1.6;
     font-weight: 400;
-    /* IMPORTANTE: Mantém layout original */
     display: block;
     width: 100%;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow: visible;
+    opacity: 1;
+    transform: translateY(0);
 }
 
-/* Container para animação do subtítulo */
-.hero-subtitle-container {
+/* Container para subtítulo animado */
+.hero-subtitle-animated {
     display: inline;
-    position: relative;
 }
 
-/* Caracteres animados - mantém fluxo normal */
+/* Caracteres individuais - NÃO QUEBRAM LAYOUT */
 .hero-subtitle-char {
     display: inline;
-    position: relative;
-    opacity: 0; /* Começa invisível para animação */
-    will-change: opacity;
-    /* Mantém estilo original */
+    opacity: 1; /* Visível por padrão */
+    /* Mantém estilo do subtítulo */
     font-size: inherit;
     color: inherit;
     font-weight: inherit;
     line-height: inherit;
 }
 
-/* Cursor piscante */
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-.hero-subtitle-cursor {
-    display: inline;
-    opacity: 0;
-    animation: blink 1s infinite;
-    color: var(--primary);
-    font-weight: bold;
-    margin-left: 2px;
+/* Remove cores aleatórias no subtítulo */
+.hero-subtitle-char[style*="color"] {
+    color: inherit !important;
+    font-weight: inherit !important;
 }
 
 .hero-background {
@@ -129,11 +110,10 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0; /* Para animação */
-    transform: scale(1.1);
-    filter: brightness(1.3) blur(8px);
+    opacity: 1; /* Visível por padrão */
+    transform: scale(1);
+    filter: brightness(1) blur(0px);
     will-change: transform, opacity, filter;
-    transition: none;
 }
 
 .hero-background::after {
@@ -160,8 +140,8 @@
     color: var(--text-secondary);
     transition: var(--transition-fast);
     font-size: 1.2rem;
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .hero-socials a:hover {
@@ -169,25 +149,13 @@
     transform: translateY(-3px);
 }
 
-/* BOTÃO COM ANIMAÇÃO */
+/* BOTÃO */
 .hero-content .btn {
-    opacity: 0;
-    transform: translateY(30px);
-    will-change: transform, opacity, box-shadow;
-    position: relative;
+    opacity: 1;
+    transform: translateY(0);
     display: inline-flex;
     align-items: center;
     gap: 8px;
-}
-
-/* Efeito de pulso suave */
-@keyframes pulseGlow {
-    0%, 100% {
-        box-shadow: 0 0 0 0 rgba(255, 102, 0, 0.4);
-    }
-    50% {
-        box-shadow: 0 0 0 8px rgba(255, 102, 0, 0);
-    }
 }
 
 /* ===== FEATURED SNEAKER SECTION ===== */
@@ -885,7 +853,7 @@
         max-width: 100%;
     }
 
-    /* TÍTULO NO MOBILE - CORREÇÃO */
+    /* TÍTULO NO MOBILE - FUNCIONAL */
     .hero-title {
         font-size: clamp(2.8rem, 14vw, 4.5rem);
         line-height: 0.9;
@@ -904,12 +872,12 @@
 
     /* Palavras animadas no mobile */
     .hero-title-word {
+        display: inline-block !important;
         font-size: inherit !important;
         font-weight: 900 !important;
-        display: inline-block;
     }
 
-    /* SUBTÍTULO NO MOBILE - CORREÇÃO */
+    /* SUBTÍTULO NO MOBILE - FUNCIONAL */
     .hero-subtitle {
         font-size: 1rem;
         max-width: 320px;
@@ -924,10 +892,11 @@
         overflow-wrap: break-word;
     }
 
-    /* Caracteres animados no mobile */
+    /* Remove cores laranja aleatórias */
     .hero-subtitle-char {
-        font-size: 1rem !important;
-        display: inline;
+        color: inherit !important;
+        font-weight: inherit !important;
+        display: inline !important;
     }
 
     .hero-background {
@@ -948,12 +917,9 @@
         background-size: cover;
         background-position: center 30%;
         background-repeat: no-repeat;
-        transform: scale(1);
         position: absolute;
         left: 0;
         right: 0;
-        opacity: 0;
-        filter: brightness(1.2) blur(5px);
     }
 
     .hero-background::after {
@@ -978,7 +944,7 @@
         gap: var(--space-md);
     }
 
-    /* Botão transparente no mobile - CORREÇÃO */
+    /* Botão transparente no mobile */
     .hero-content a, 
     .hero-content .btn {
         background-color: rgba(255, 102, 0, 0.55) !important;
@@ -992,8 +958,6 @@
         align-items: center;
         gap: 8px;
         width: auto;
-        opacity: 0;
-        transform: translateY(15px);
         margin-top: 0.5rem;
     }
 
@@ -1443,7 +1407,7 @@
     }
 }
 
-/* OTIMIZAÇÃO: Avisa ao navegador para preparar a animação, evitando travamentos */
+/* OTIMIZAÇÃO: Avisa ao navegador para preparar a animação */
 .gsap-fade-up {
     opacity: 1;
     will-change: transform, opacity;
@@ -1459,39 +1423,33 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
-    
-    /* Força estados visíveis para elementos animados */
-    .hero-title-word,
-    .hero-subtitle-char,
-    .hero-bg-image,
-    .hero-content .btn,
-    .hero-socials a {
-        opacity: 1 !important;
-        transform: none !important;
-        filter: none !important;
-    }
-    
-    .hero-title, .hero-subtitle {
-        opacity: 1 !important;
-        transform: none !important;
-    }
 }
 
-/* CORREÇÃO DE FALLBACK: Se JS falhar, texto ainda visível */
-.no-js .hero-title-word,
-.no-js .hero-subtitle-char {
-    opacity: 1 !important;
-    transform: none !important;
+/* ============================================
+   CORREÇÃO DE EMERGÊNCIA - SE O JS BUGAR
+   ============================================ */
+
+/* Força o texto a aparecer mesmo se o JS bugar */
+.hero-title br {
+    display: block;
+    content: "";
+    margin-bottom: 0.3em;
 }
 
-.no-js .hero-bg-image {
-    opacity: 1 !important;
-    transform: scale(1) !important;
-    filter: none !important;
+/* Remove qualquer estilo problemático do JS */
+.hero-title span,
+.hero-subtitle span {
+    color: inherit !important;
+    font-weight: inherit !important;
+    background: none !important;
 }
 
-.no-js .hero-content .btn,
-.no-js .hero-socials a {
-    opacity: 1 !important;
-    transform: none !important;
+/* Fallback seguro: Se houver problema, mostra texto normal */
+.hero-title:empty::before {
+    content: "Importe \A sem taxas";
+    white-space: pre;
+}
+
+.hero-subtitle:empty::before {
+    content: "Importe os tênis mais procurados na Japa Universe. Garanta qualidade máxima, segurança e um estilo inconfundível. Encontre aqui os modelos exclusivos que definem o seu fit. Seu próximo par te espera!";
 }
