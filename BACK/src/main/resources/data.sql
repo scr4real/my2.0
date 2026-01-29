@@ -290,10 +290,10 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 
 -- --- LOTE 23: NEW BALANCE 1000 ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('New Balance 1000 Angora', 'New Balance 1000 Angora\n\nDesign inovador e texturas premium em tons claros de bege e rosa.', '/uploads/nb1000/1.webp', 273.00, 34, 6, 6, 'NB1000'),
-('New Balance 1000 Silver', 'New Balance 1000 Silver\n\nVisual técnico e moderno em prata. Parece que veio do futuro.', '/uploads/nb1000/2.webp', 273.00, 34, 6, 6, 'NB1000'),
-('New Balance 1000 Black Ice', 'New Balance 1000 Black Ice\n\nBrilho e sofisticação em preto degradê. Muito style.', '/uploads/nb1000/3.webp', 273.00, 34, 6, 6, 'NB1000'),
-('New Balance 1000 Pink', 'New Balance 1000 Pink\n\nCombinação de cores única com rosa e marrom. Diferenciado.', '/uploads/nb1000/4.webp', 273.00, 34, 6, 6, 'NB1000');
+('New Balance 1000 Angora', 'New Balance 1000 Angora\n\nDesign inovador e texturas premium em tons claros de bege e rosa.', '/uploads/nb1000/1.webp', 312.00, 34, 6, 6, 'NB1000'),
+('New Balance 1000 Silver', 'New Balance 1000 Silver\n\nVisual técnico e moderno em prata. Parece que veio do futuro.', '/uploads/nb1000/2.webp', 312.00, 34, 6, 6, 'NB1000'),
+('New Balance 1000 Black Ice', 'New Balance 1000 Black Ice\n\nBrilho e sofisticação em preto degradê. Muito style.', '/uploads/nb1000/3.webp', 312.00, 34, 6, 6, 'NB1000'),
+('New Balance 1000 Pink', 'New Balance 1000 Pink\n\nCombinação de cores única com rosa e marrom. Diferenciado.', '/uploads/nb1000/4.webp', 312.00, 34, 6, 6, 'NB1000');
 
 -- --- LOTE 24: NEW BALANCE 9060 ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
@@ -347,8 +347,8 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 
 -- --- LOTE 30: YEEZY SLIDE ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Yeezy Slide Slate', 'Yeezy Slide Slate\n\nConforto minimalista revolucionário. Tom cinza escuro. Pra relaxar com hype.', '/uploads/slide/1.webp', 276.00, 41, 20, 12, 'SLIDE'),
-('Yeezy Slide Bone', 'Yeezy Slide Bone\n\nEstilo orgânico e neutro. Cor osso. O chinelo mais desejado.', '/uploads/slide/2.webp', 276.00, 41, 20, 12, 'SLIDE');
+('Yeezy Slide Slate', 'Yeezy Slide Slate\n\nConforto minimalista revolucionário. Tom cinza escuro. Pra relaxar com hype.', '/uploads/slide/1.webp', 255.00, 41, 20, 12, 'SLIDE'),
+('Yeezy Slide Bone', 'Yeezy Slide Bone\n\nEstilo orgânico e neutro. Cor osso. O chinelo mais desejado.', '/uploads/slide/2.webp', 255.00, 41, 20, 12, 'SLIDE');
 
 -- --- LOTE 31: PUMA SUEDE XL ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
@@ -363,37 +363,37 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 
 -- --- LOTE 32: TIMBERLAND ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Timberland Chocolate', 'Timberland 6-Inch Chocolate\n\nA bota amarela original à prova d''água. Marrom escuro. Indestrutível.', '/uploads/timbis/1.webp', 504.00, 10, 5, 8, 'TIMBERLAND'),
-('Timberland Black', 'Timberland 6-Inch Black\n\nDurabilidade e estilo urbano. Preto nobuck. Pesada.', '/uploads/timbis/2.webp', 504.00, 10, 5, 8, 'TIMBERLAND'),
-('Timberland Olive', 'Timberland 6-Inch Olive\n\nToque militar e robusto. Verde oliva. Pra qualquer terreno.', '/uploads/timbis/3.webp', 504.00, 10, 5, 8, 'TIMBERLAND'),
-('Timberland Wheat', 'Timberland 6-Inch Wheat\n\nO clássico absoluto. Amarelo trigo. O ícone de Nova York.', '/uploads/timbis/4.webp', 504.00, 10, 5, 8, 'TIMBERLAND');
+('Timberland Chocolate', 'Timberland 6-Inch Chocolate\n\nA bota amarela original à prova d''água. Marrom escuro. Indestrutível.', '/uploads/timbis/1.webp', 359.00, 10, 5, 8, 'TIMBERLAND'),
+('Timberland Black', 'Timberland 6-Inch Black\n\nDurabilidade e estilo urbano. Preto nobuck. Pesada.', '/uploads/timbis/2.webp', 359.00, 10, 5, 8, 'TIMBERLAND'),
+('Timberland Olive', 'Timberland 6-Inch Olive\n\nToque militar e robusto. Verde oliva. Pra qualquer terreno.', '/uploads/timbis/3.webp', 359.00, 10, 5, 8, 'TIMBERLAND'),
+('Timberland Wheat', 'Timberland 6-Inch Wheat\n\nO clássico absoluto. Amarelo trigo. O ícone de Nova York.', '/uploads/timbis/4.webp', 359.00, 10, 5, 8, 'TIMBERLAND');
 
 -- --- LOTE 33: AIR MAX TN (TN1) ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Air Max TN Black Blue', 'Nike Air Max TN Black Blue\n\nO Tubarão original com tecnologia Tuned Air. Preto e azul. Agressivo.', '/uploads/tn1/1.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Tiger', 'Nike Air Max TN Tiger\n\nDegradê agressivo laranja. O famoso Tigre. Clássico das ruas.', '/uploads/tn1/2.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Grey', 'Nike Air Max TN Grey\n\nSóbrio e icônico. Cinza e preto. Combina com tudo.', '/uploads/tn1/3.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Black Swoosh', 'Nike Air Max TN Black Swoosh\n\nBase preta com destaque branco no logo. Simples e chave.', '/uploads/tn1/4.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Purple', 'Nike Air Max TN Purple\n\nRoxo elétrico que chama atenção. Voltage Purple. Histórico.', '/uploads/tn1/5.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Hyper Blue', 'Nike Air Max TN Hyper Blue\n\nO azul clássico do TN. Original de 98. Lenda viva.', '/uploads/tn1/6.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN France', 'Nike Air Max TN France\n\nCores inspiradas na bandeira francesa. Estampa xadrez. Exclusivo.', '/uploads/tn1/7.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Glacier', 'Nike Air Max TN Glacier\n\nFresco e impactante. Azul gelo. Visual clean.', '/uploads/tn1/8.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN White', 'Nike Air Max TN White\n\nLimpo e futurista. Branco total. Cuidado onde pisa.', '/uploads/tn1/9.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Triple Black', 'Nike Air Max TN Triple Black\n\nStealth total. O mais procurado. Preto total. O verdadeiro tubarão.', '/uploads/tn1/10.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Deadpool', 'Nike Air Max TN Deadpool\n\nVermelho e preto intenso. Agressivo e perigoso.', '/uploads/tn1/11.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Sunset', 'Nike Air Max TN Sunset\n\nDegradê pôr do sol inconfundível. Laranja e vermelho. Obra de arte.', '/uploads/tn1/12.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Celtics', 'Nike Air Max TN Celtics\n\nBranco com detalhes verdes e dourados. Raro.', '/uploads/tn1/13.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Royal', 'Nike Air Max TN Royal\n\nElegância esportiva. Branco e azul real.', '/uploads/tn1/14.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Orange', 'Nike Air Max TN Orange\n\nContraste forte. Preto e laranja. Halloween vibe.', '/uploads/tn1/15.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Grape', 'Nike Air Max TN Grape\n\nRoxo clássico e atemporal. Preto e roxo.', '/uploads/tn1/16.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Sky', 'Nike Air Max TN Sky\n\nAzul céu vibrante com branco. Leve e estiloso.', '/uploads/tn1/17.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Red', 'Nike Air Max TN Red\n\nBranco com detalhes vermelhos. Esportivo clássico.', '/uploads/tn1/18.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Silver', 'Nike Air Max TN Silver\n\nPreto com brilho prata metálico. Futurista.', '/uploads/tn1/19.webp', 312.00, 3, 8, 1, 'TN'),
-('Air Max TN Aqua', 'Nike Air Max TN Aqua\n\nTurquesa que se destaca no pé. Diferenciado.', '/uploads/tn1/20.webp', 312.00, 3, 8, 1, 'TN');
+('Air Max TN Black Blue', 'Nike Air Max TN Black Blue\n\nO Tubarão original com tecnologia Tuned Air. Preto e azul. Agressivo.', '/uploads/tn1/1.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Tiger', 'Nike Air Max TN Tiger\n\nDegradê agressivo laranja. O famoso Tigre. Clássico das ruas.', '/uploads/tn1/2.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Grey', 'Nike Air Max TN Grey\n\nSóbrio e icônico. Cinza e preto. Combina com tudo.', '/uploads/tn1/3.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Black Swoosh', 'Nike Air Max TN Black Swoosh\n\nBase preta com destaque branco no logo. Simples e chave.', '/uploads/tn1/4.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Purple', 'Nike Air Max TN Purple\n\nRoxo elétrico que chama atenção. Voltage Purple. Histórico.', '/uploads/tn1/5.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Hyper Blue', 'Nike Air Max TN Hyper Blue\n\nO azul clássico do TN. Original de 98. Lenda viva.', '/uploads/tn1/6.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN France', 'Nike Air Max TN France\n\nCores inspiradas na bandeira francesa. Estampa xadrez. Exclusivo.', '/uploads/tn1/7.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Glacier', 'Nike Air Max TN Glacier\n\nFresco e impactante. Azul gelo. Visual clean.', '/uploads/tn1/8.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN White', 'Nike Air Max TN White\n\nLimpo e futurista. Branco total. Cuidado onde pisa.', '/uploads/tn1/9.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Triple Black', 'Nike Air Max TN Triple Black\n\nStealth total. O mais procurado. Preto total. O verdadeiro tubarão.', '/uploads/tn1/10.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Deadpool', 'Nike Air Max TN Deadpool\n\nVermelho e preto intenso. Agressivo e perigoso.', '/uploads/tn1/11.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Sunset', 'Nike Air Max TN Sunset\n\nDegradê pôr do sol inconfundível. Laranja e vermelho. Obra de arte.', '/uploads/tn1/12.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Celtics', 'Nike Air Max TN Celtics\n\nBranco com detalhes verdes e dourados. Raro.', '/uploads/tn1/13.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Royal', 'Nike Air Max TN Royal\n\nElegância esportiva. Branco e azul real.', '/uploads/tn1/14.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Orange', 'Nike Air Max TN Orange\n\nContraste forte. Preto e laranja. Halloween vibe.', '/uploads/tn1/15.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Grape', 'Nike Air Max TN Grape\n\nRoxo clássico e atemporal. Preto e roxo.', '/uploads/tn1/16.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Sky', 'Nike Air Max TN Sky\n\nAzul céu vibrante com branco. Leve e estiloso.', '/uploads/tn1/17.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Red', 'Nike Air Max TN Red\n\nBranco com detalhes vermelhos. Esportivo clássico.', '/uploads/tn1/18.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Silver', 'Nike Air Max TN Silver\n\nPreto com brilho prata metálico. Futurista.', '/uploads/tn1/19.webp', 299.00, 3, 8, 1, 'TN'),
+('Air Max TN Aqua', 'Nike Air Max TN Aqua\n\nTurquesa que se destaca no pé. Diferenciado.', '/uploads/tn1/20.webp', 299.00, 3, 8, 1, 'TN');
 
 -- --- LOTE 34: AIR MAX TN3 ---
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Air Max TN3 Blue', 'Nike Air Max TN3 Blue\n\nA evolução aerodinâmica do TN. Preto e azul. Velocidade.', '/uploads/tn3/1.webp', 351.00, 43, 6, 1, 'TN3'),
-('Air Max TN3 White Blue', 'Nike Air Max TN3 White Blue\n\nDesign rápido e futurista. Branco e azul.', '/uploads/tn3/2.webp', 351.00, 43, 6, 1, 'TN3'),
-('Air Max TN3 White', 'Nike Air Max TN3 White\n\nVisual clean com linhas agressivas. Branco total.', '/uploads/tn3/3.webp', 351.00, 43, 6, 1, 'TN3'),
-('Air Max TN3 Red', 'Nike Air Max TN3 Red\n\nPreto e vermelho poderoso. Design técnico.', '/uploads/tn3/4.webp', 351.00, 43, 6, 1, 'TN3');
+('Air Max TN3 Blue', 'Nike Air Max TN3 Blue\n\nA evolução aerodinâmica do TN. Preto e azul. Velocidade.', '/uploads/tn3/1.webp', 341.00, 43, 6, 1, 'TN3'),
+('Air Max TN3 White Blue', 'Nike Air Max TN3 White Blue\n\nDesign rápido e futurista. Branco e azul.', '/uploads/tn3/2.webp', 341.00, 43, 6, 1, 'TN3'),
+('Air Max TN3 White', 'Nike Air Max TN3 White\n\nVisual clean com linhas agressivas. Branco total.', '/uploads/tn3/3.webp', 341.00, 43, 6, 1, 'TN3'),
+('Air Max TN3 Red', 'Nike Air Max TN3 Red\n\nPreto e vermelho poderoso. Design técnico.', '/uploads/tn3/4.webp', 341.00, 43, 6, 1, 'TN3');
