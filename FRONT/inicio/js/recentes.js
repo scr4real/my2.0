@@ -1,481 +1,356 @@
-/**
- * JAPA UNIVERSE - RECENTES JS (VERSÃO CORRIGIDA)
- * Animações de preço sem piscadas ou reexecução
- */
 document.addEventListener("DOMContentLoaded", () => {
-    // Inicializa tracker global se não existir
-    if (!window.animationTracker) {
-        window.animationTracker = {
-            priceAnimations: new Set(),
-            scrollAnimations: new Set(),
-            heroAnimated: false,
-            
-            isPriceAnimated: function(id) {
-                return this.priceAnimations.has(id);
-            },
-            
-            markPriceAnimated: function(id) {
-                this.priceAnimations.add(id);
-            },
-            
-            isScrollAnimated: function(id) {
-                return this.scrollAnimations.has(id);
-            },
-            
-            markScrollAnimated: function(id) {
-                this.scrollAnimations.add(id);
-            },
-            
-            isHeroAnimated: function() {
-                return this.heroAnimated;
-            },
-            
-            markHeroAnimated: function() {
-                this.heroAnimated = true;
-            }
-        };
-    }
-
     const BASE_URL = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')
         ? 'http://localhost:8080' 
         : 'https://back-production-e565.up.railway.app';
-    const API_URL = `${BASE_URL}/api/produtos`; 
+    const API_URL = `${BASE_URL}/api/produtos`;
+    const CACHE_KEY = "japa_products_cache";
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
     const sectionsToBuild = [
-        { categoryName: "Air Max TN", containerId: "products-95", swiperClass: ".collection-swiper-95", prev: ".collection-prev-95", next: ".collection-next-95" },
-        { categoryName: "Asics Gel NYC", containerId: "products-dn", swiperClass: ".collection-swiper-dn", prev: ".collection-prev-dn", next: ".collection-next-dn" },
-        { categoryName: "Bape Sta", containerId: "products-tn", swiperClass: ".collection-swiper-tn", prev: ".collection-prev-tn", next: ".collection-next-tn" },
+        { 
+            categoryName: "Air Max TN", 
+            containerId: "products-95", 
+            swiperClass: ".collection-swiper-95", 
+            prev: ".collection-prev-95", 
+            next: ".collection-next-95" 
+        },
+        { 
+            categoryName: "Asics Gel NYC", 
+            containerId: "products-dn", 
+            swiperClass: ".collection-swiper-dn", 
+            prev: ".collection-prev-dn", 
+            next: ".collection-next-dn" 
+        },
+        { 
+            categoryName: "Bape Sta", 
+            containerId: "products-tn", 
+            swiperClass: ".collection-swiper-tn", 
+            prev: ".collection-prev-tn", 
+            next: ".collection-next-tn" 
+        },
     ];
 
     const formatPrice = (price) => {
-        if (typeof price === 'number') {
-            return `R$ ${price.toFixed(2).replace('.', ',')}`;
+        if (typeof price !== 'number' || isNaN(price)) {
+            return 'R$ --,--';
         }
-        return 'R$ --,--';
+        return `R$ ${price.toFixed(2).replace('.', ',')}`;
     };
 
     const getImageUrl = (path) => {
-        if (!path) return 'FRONT/assets/images/placeholder-product.jpg';
+        if (!path) return '/FRONT/assets/images/placeholder-product.jpg';
         if (path.startsWith('http')) return path;
+        
         const cleanPath = path.startsWith('/') ? path.substring(1) : path;
         return `${BASE_URL}/${cleanPath}`;
     };
 
+    const isCacheValid = () => {
+        const cachedTimestamp = localStorage.getItem(`${CACHE_KEY}_timestamp`);
+        if (!cachedTimestamp) return false;
+        
+        const now = Date.now();
+        return (now - parseInt(cachedTimestamp)) < CACHE_DURATION;
+    };
+
+    const getCachedData = () => {
+        if (!isCacheValid()) {
+            localStorage.removeItem(CACHE_KEY);
+            localStorage.removeItem(`${CACHE_KEY}_timestamp`);
+            return null;
+        }
+        
+        const cachedData = localStorage.getItem(CACHE_KEY);
+        return cachedData ? JSON.parse(cachedData) : null;
+    };
+
+    const setCacheData = (data) => {
+        try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+            localStorage.setItem(`${CACHE_KEY}_timestamp`, Date.now().toString());
+        } catch (e) {
+            console.warn("Falha ao salvar cache:", e);
+            // Limpa cache antigo se storage estiver cheio
+            localStorage.clear();
+        }
+    };
+
     /**
-     * ANIMAÇÃO DE PREÇO CORRIGIDA (SEM PISCADA)
+     * Efeito velocímetro nos preços
      */
     const animatePriceCounter = (containerId) => {
         const container = document.getElementById(containerId);
-        const cards = container?.querySelectorAll(".product-card");
+        if (!container) return;
         
-        if (!cards?.length || typeof gsap === "undefined") {
-            // Se GSAP não estiver disponível, garante que preços estão visíveis
-            cards?.forEach(card => {
-                const priceElement = card.querySelector(".product-price");
-                if (priceElement) {
-                    priceElement.style.opacity = "1";
-                    priceElement.style.transform = "none";
-                }
-            });
-            return;
-        }
+        const cards = container.querySelectorAll(".product-card");
+        if (!cards.length || typeof gsap === "undefined") return;
 
-        // Aguarda ScrollTrigger estar disponível
-        const checkScrollTrigger = () => {
-            if (typeof ScrollTrigger !== 'undefined') {
-                setupPriceAnimations(containerId, cards);
-            } else {
-                setTimeout(checkScrollTrigger, 100);
-            }
-        };
-        
-        checkScrollTrigger();
-    };
-
-    /**
-     * Configura animações de preço com ScrollTrigger
-     */
-    const setupPriceAnimations = (containerId, cards) => {
-        cards.forEach((card, index) => {
+        cards.forEach(card => {
             const priceElement = card.querySelector(".product-price");
-            if (!priceElement) return;
+            if (!priceElement || priceElement.dataset.animated === "true") return;
 
-            // ID único para tracking
-            const cardId = `price-${containerId}-${index}-${card.dataset.id || Date.now()}`;
+            const priceText = priceElement.textContent.replace('R$', '').trim();
+            const finalValue = parseFloat(priceText.replace('.', '').replace(',', '.'));
             
-            // Verifica se já foi animado
-            if (window.animationTracker.isPriceAnimated(cardId) || 
-                priceElement.dataset.priceAnimated === "true" ||
-                priceElement.dataset.priceAnimated === "completed") {
-                return;
-            }
+            if (isNaN(finalValue)) return;
 
-            // Marca como sendo processado
-            priceElement.dataset.priceAnimated = "processing";
-            window.animationTracker.markPriceAnimated(cardId);
+            const counter = { value: 0 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && priceElement.dataset.animated !== "true") {
+                        priceElement.dataset.animated = "true";
+                        
+                        gsap.to(counter, {
+                            value: finalValue,
+                            duration: 1.5,
+                            ease: "power2.out",
+                            onUpdate: () => {
+                                priceElement.textContent = formatPrice(counter.value);
+                            },
+                            onComplete: () => {
+                                priceElement.textContent = formatPrice(finalValue);
+                                observer.disconnect();
+                            }
+                        });
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: "50px" });
 
-            // Extrai valor do preço
-            const priceText = extractPriceValue(priceElement.textContent);
-            if (priceText === null) {
-                priceElement.dataset.priceAnimated = "completed";
-                return;
-            }
-
-            // Configura ScrollTrigger com once: true
-            ScrollTrigger.create({
-                trigger: card,
-                start: "top 85%",
-                once: true, // EXECUTA APENAS UMA VEZ
-                markers: false,
-                onEnter: () => {
-                    executePriceAnimation(priceElement, priceText, card, cardId);
-                },
-                onEnterBack: () => {}, // Não faz nada
-                onLeave: () => {}, // Não faz nada
-                onLeaveBack: () => {} // Não faz nada
-            });
+            observer.observe(card);
         });
     };
 
-    /**
-     * Extrai valor numérico do texto do preço
-     */
-    const extractPriceValue = (priceText) => {
-        try {
-            const cleanText = priceText
-                .replace('R$', '')
-                .replace(/\./g, '')
-                .replace(',', '.')
-                .trim();
-            
-            const value = parseFloat(cleanText);
-            return isNaN(value) ? null : value;
-        } catch (e) {
-            console.warn('Erro ao extrair valor do preço:', e);
-            return null;
-        }
-    };
-
-    /**
-     * Executa animação do preço
-     */
-    const executePriceAnimation = (priceElement, finalValue, card, cardId) => {
-        if (priceElement.dataset.priceAnimated === "completed") {
-            return;
-        }
-
-        // Guarda texto original para fallback
-        const originalText = priceElement.textContent;
-        const counter = { value: 0 };
-        
-        // Otimização para animação
-        priceElement.style.willChange = "contents";
-        priceElement.style.backfaceVisibility = "hidden";
-        priceElement.style.webkitFontSmoothing = "antialiased";
-
-        // Animação do contador
-        const animation = gsap.to(counter, {
-            value: finalValue,
-            duration: 1.2,
-            ease: "power2.out",
-            overwrite: true, // Previne múltiplas animações
-            onUpdate: () => {
-                priceElement.textContent = formatPrice(counter.value);
-            },
-            onComplete: () => {
-                // Garante valor final exato
-                priceElement.textContent = formatPrice(finalValue);
-                priceElement.dataset.priceAnimated = "completed";
-                
-                // Limpa otimizações
-                priceElement.style.willChange = "auto";
-                priceElement.style.backfaceVisibility = "";
-                priceElement.style.webkitFontSmoothing = "";
-                
-                // Marca como concluído no tracker
-                if (window.animationTracker) {
-                    window.animationTracker.markPriceAnimated(cardId);
-                }
-            },
-            onInterrupt: () => {
-                // Se interrompido, garante valor final
-                priceElement.textContent = formatPrice(finalValue);
-                priceElement.dataset.priceAnimated = "completed";
-                priceElement.style.willChange = "auto";
-            }
-        });
-
-        // Adiciona referência para possível cancelamento
-        card._priceAnimation = animation;
-    };
-
-    /**
-     * Renderiza produtos em uma seção
-     */
     const renderProductRow = (productsToRender, containerId, categoryName) => {
         const container = document.getElementById(containerId);
-        if (!container) return;
+        if (!container) {
+            console.warn(`Container ${containerId} não encontrado`);
+            return;
+        }
 
-        if (productsToRender && productsToRender.length > 0) {
-            const limitedProducts = productsToRender.slice(0, 4);
-            let htmlContent = limitedProducts.map((product, index) => {
-                const isPriority = index < 2; 
-                const productId = product.id || `product-${categoryName}-${index}`;
-                
-                return `
-                <div class="swiper-slide">
-                    <div class="product-card" data-id="${productId}" data-category="${categoryName}">
-                        <a href="/FRONT/produto/HTML/produto.html?id=${product.id || productId}" class="product-card-link">
-                            <div class="product-image-wrapper">
-                                <img src="${getImageUrl(product.imagemUrl)}" 
-                                     alt="${product.nome}"
-                                     loading="${isPriority ? 'eager' : 'lazy'}"
-                                     fetchpriority="${isPriority ? 'high' : 'auto'}"
-                                     decoding="async"
-                                     width="300" 
-                                     height="300">
-                            </div>
-                            <div class="product-info">
-                                <span class="product-brand">${product.marca?.nome || 'Japa Universe'}</span>
-                                <h3 class="product-name">${product.nome || 'Produto'}</h3>
-                                <div class="product-shipping-tag">
-                                    <i class="fas fa-truck"></i>
-                                    <span>Frete Grátis</span>
-                                </div>
-                                <p class="product-price" data-original-price="${product.preco || 0}">
-                                    ${formatPrice(product.preco)}
-                                </p>
-                            </div>
-                        </a>
-                        <button class="add-to-cart-btn" data-product-id="${product.id || productId}">
-                            Comprar
-                        </button>
-                    </div>
-                </div>`;
-            }).join("");
+        // Limpa o container antes de renderizar
+        container.innerHTML = '';
 
-            const seeAllLink = `/FRONT/catalogo/HTML/catalogo.html?search=${encodeURIComponent(categoryName)}`;
-            htmlContent += `
-                <div class="swiper-slide">
-                    <a href="${seeAllLink}" class="see-all-card">
-                        <span>Ver Todos</span>
-                        <h3>${categoryName}</h3>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>`;
-            
-            container.innerHTML = htmlContent;
-            
-            // Configura eventos dos botões
-            setupAddToCartButtons(container);
-            
-            // Inicia animações de preço com delay
-            setTimeout(() => {
-                animatePriceCounter(containerId);
-            }, 300);
-            
-        } else {
+        if (!productsToRender || productsToRender.length === 0) {
             container.innerHTML = `
                 <div class="swiper-slide">
-                    <div class="no-products-message">
-                        <p>Nenhum produto disponível no momento.</p>
-                        <a href="/FRONT/catalogo/HTML/catalogo.html" class="btn btn-outline">
-                            Ver todos os produtos
-                        </a>
+                    <div class="empty-product-card">
+                        <p>Nenhum produto disponível na categoria ${categoryName}</p>
                     </div>
                 </div>`;
+            return;
         }
-    };
 
-    /**
-     * Configura eventos dos botões "Comprar"
-     */
-    const setupAddToCartButtons = (container) => {
-        const buttons = container.querySelectorAll('.add-to-cart-btn');
-        buttons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const productId = button.dataset.productId;
-                const productCard = button.closest('.product-card');
-                
-                if (!productCard) return;
-                
-                // Coleta dados do produto
-                const productName = productCard.querySelector('.product-name')?.textContent || 'Produto';
-                const productPrice = parseFloat(
-                    productCard.querySelector('.product-price')?.dataset.originalPrice || '0'
-                );
-                const productImage = productCard.querySelector('img')?.src || '';
-                
-                // Cria objeto do produto
-                const product = {
-                    id: productId,
-                    name: productName,
-                    price: productPrice,
-                    image: productImage,
-                    size: '41', // Tamanho padrão
-                    category: productCard.dataset.category || 'Geral'
-                };
-                
-                // Adiciona ao carrinho (função global do main.js)
-                if (typeof window.addToCart === 'function') {
-                    window.addToCart(product);
-                    
-                    // Feedback visual
-                    const originalText = button.textContent;
-                    button.textContent = '✓ Adicionado!';
-                    button.style.backgroundColor = 'var(--success-color, #28a745)';
-                    
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.style.backgroundColor = '';
-                    }, 2000);
-                } else {
-                    console.error('Função addToCart não disponível');
-                    alert('Erro ao adicionar ao carrinho. Recarregue a página.');
-                }
-            });
+        // Ordena por mais recente (assumindo que há campo de data)
+        const sortedProducts = [...productsToRender]
+            .sort((a, b) => new Date(b.dataCriacao || 0) - new Date(a.dataCriacao || 0))
+            .slice(0, 4);
+
+        let htmlContent = sortedProducts.map((product, index) => {
+            const isPriority = index < 2;
+            const productName = product.nome || 'Produto sem nome';
+            const brandName = product.marca?.nome || 'Japa Universe';
+            const price = product.preco ? formatPrice(product.preco) : 'R$ --,--';
+            const imageUrl = getImageUrl(product.imagemUrl);
+            const productUrl = `/FRONT/produto/HTML/produto.html?id=${product.id}`;
+
+            return `
+            <div class="swiper-slide">
+                <div class="product-card" data-id="${product.id}">
+                    <a href="${productUrl}" class="product-card-link" aria-label="${productName} - ${brandName}">
+                        <div class="product-image-wrapper">
+                            <img src="${imageUrl}" 
+                                 alt="${productName}"
+                                 loading="${isPriority ? 'eager' : 'lazy'}"
+                                 width="300" 
+                                 height="300"
+                                 onerror="this.src='/FRONT/assets/images/placeholder-product.jpg'">
+                        </div>
+                        <div class="product-info">
+                            <span class="product-brand">${brandName}</span>
+                            <h3 class="product-name">${productName}</h3>
+                            <div class="product-shipping-tag">
+                                <i class="fas fa-truck" aria-hidden="true"></i>
+                                <span>Frete Grátis</span>
+                            </div>
+                            <p class="product-price" data-price="${product.preco || 0}">${price}</p>
+                        </div>
+                    </a>
+                    <button class="add-to-cart-btn" 
+                            data-product-id="${product.id}"
+                            aria-label="Adicionar ${productName} ao carrinho">
+                        Comprar
+                    </button>
+                </div>
+            </div>`;
+        }).join("");
+
+        const seeAllLink = `/FRONT/catalogo/HTML/catalogo.html?search=${encodeURIComponent(categoryName)}`;
+        htmlContent += `
+            <div class="swiper-slide">
+                <a href="${seeAllLink}" class="see-all-card" aria-label="Ver todos os ${categoryName}">
+                    <span>Ver Todos</span>
+                    <h3>${categoryName}</h3>
+                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>`;
+
+        container.innerHTML = htmlContent;
+
+        // Adiciona event listeners aos botões de compra
+        container.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', handleAddToCart);
+        });
+
+        // Inicia animação dos preços
+        requestAnimationFrame(() => {
+            setTimeout(() => animatePriceCounter(containerId), 50);
         });
     };
 
-    /**
-     * Inicializa Swiper para uma seção
-     */
+    const handleAddToCart = (event) => {
+        event.preventDefault();
+        const button = event.currentTarget;
+        const productId = button.dataset.productId;
+        
+        if (!productId) {
+            console.warn("ID do produto não encontrado");
+            return;
+        }
+
+        // Adiciona feedback visual
+        const originalText = button.textContent;
+        button.textContent = "Adicionando...";
+        button.disabled = true;
+
+        // Simula adição ao carrinho (substitua pela sua lógica real)
+        setTimeout(() => {
+            console.log(`Produto ${productId} adicionado ao carrinho`);
+            button.textContent = "✓ Adicionado";
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+            }, 1500);
+        }, 500);
+    };
+
     const initSwiper = (containerClass, navPrevClass, navNextClass) => {
         const swiperEl = document.querySelector(containerClass);
         if (!swiperEl || swiperEl.swiper) return;
         
         try {
-            new Swiper(containerClass, {
-                slidesPerView: "auto",
+            const swiper = new Swiper(containerClass, {
+                slidesPerView: 'auto',
                 spaceBetween: 24,
                 freeMode: true,
                 grabCursor: true,
-                resistance: true,
                 resistanceRatio: 0.5,
                 navigation: {
                     nextEl: navNextClass,
                     prevEl: navPrevClass,
                     disabledClass: 'swiper-button-disabled'
                 },
-                scrollbar: {
-                    el: '.swiper-scrollbar',
-                    draggable: true,
-                    hide: false
-                },
                 breakpoints: {
                     320: {
-                        spaceBetween: 15,
+                        spaceBetween: 12,
                         slidesOffsetBefore: 16,
                         slidesOffsetAfter: 16
                     },
                     640: {
-                        spaceBetween: 20,
-                        slidesOffsetBefore: 20,
-                        slidesOffsetAfter: 20
+                        spaceBetween: 16,
+                        slidesOffsetBefore: 24,
+                        slidesOffsetAfter: 24
                     },
                     1024: {
                         spaceBetween: 24,
-                        slidesOffsetBefore: 0,
-                        slidesOffsetAfter: 0
-                    }
-                },
-                on: {
-                    init: function() {
-                        // Marca como inicializado
-                        this.el.dataset.swiperInitialized = "true";
+                        slidesOffsetBefore: 32,
+                        slidesOffsetAfter: 32
                     }
                 }
             });
+
+            // Adiciona classe quando Swiper estiver no início/fim
+            swiper.on('reachEnd', () => {
+                swiperEl.classList.add('is-end');
+                swiperEl.classList.remove('is-beginning');
+            });
+
+            swiper.on('reachBeginning', () => {
+                swiperEl.classList.add('is-beginning');
+                swiperEl.classList.remove('is-end');
+            });
+
+            swiper.on('fromEdge', () => {
+                swiperEl.classList.remove('is-end', 'is-beginning');
+            });
+
         } catch (error) {
-            console.error('Erro ao inicializar Swiper:', error);
+            console.error(`Erro ao inicializar Swiper ${containerClass}:`, error);
         }
     };
 
-    /**
-     * Distribui produtos pelas seções
-     */
     const distributeProducts = (products) => {
-        if (!products || !Array.isArray(products)) {
-            console.error('Dados de produtos inválidos:', products);
+        if (!Array.isArray(products)) {
+            console.error("Dados de produtos inválidos");
             return;
         }
 
         sectionsToBuild.forEach((section) => {
-            // Filtra produtos por categoria
-            const filteredProducts = products.filter(p => {
-                if (!p || !p.categoria) return false;
-                return p.categoria.nome === section.categoryName || 
-                       p.nome?.toLowerCase().includes(section.categoryName.toLowerCase());
-            });
+            const filteredProducts = products.filter(p => 
+                p.categoria?.nome === section.categoryName
+            );
             
-            // Renderiza a seção
             renderProductRow(filteredProducts, section.containerId, section.categoryName);
             
-            // Inicializa Swiper com delay para garantir DOM renderizado
+            // Inicializa Swiper após um pequeno delay para garantir que o DOM foi renderizado
             setTimeout(() => {
                 initSwiper(section.swiperClass, section.prev, section.next);
             }, 100);
         });
     };
 
-    /**
-     * Busca e distribui produtos
-     */
-    const fetchAndDistributeProducts = async () => {
-        // Tenta usar cache primeiro para resposta mais rápida
-        const cachedData = localStorage.getItem("japa_products_cache");
-        const cacheTimestamp = localStorage.getItem("japa_products_cache_timestamp");
-        const now = Date.now();
-        const cacheValid = cacheTimestamp && (now - parseInt(cacheTimestamp)) < (5 * 60 * 1000); // 5 minutos
+    const fetchProducts = async () => {
+        let products = getCachedData();
         
-        if (cachedData && cacheValid) {
-            try {
-                const parsedData = JSON.parse(cachedData);
-                distributeProducts(parsedData);
-            } catch (e) {
-                console.warn('Cache inválido, buscando da API...');
-                localStorage.removeItem("japa_products_cache");
-                localStorage.removeItem("japa_products_cache_timestamp");
-            }
+        // Se tem cache válido, usa ele
+        if (products) {
+            console.log("Usando dados do cache");
+            distributeProducts(products);
         }
 
-        // Busca dados atualizados da API
         try {
+            console.log("Buscando dados da API...");
             const response = await axios.get(API_URL, {
                 timeout: 10000, // 10 segundos timeout
                 headers: {
-                    'Cache-Control': 'no-cache'
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
                 }
             });
             
-            const allProducts = response.data;
-            
-            if (allProducts && Array.isArray(allProducts)) {
-                // Atualiza cache
-                localStorage.setItem("japa_products_cache", JSON.stringify(allProducts));
-                localStorage.setItem("japa_products_cache_timestamp", now.toString());
+            if (response.status === 200 && Array.isArray(response.data)) {
+                const freshProducts = response.data;
+                setCacheData(freshProducts);
                 
-                // Distribui produtos
-                distributeProducts(allProducts);
-            } else {
-                console.error('Formato de dados inválido da API:', allProducts);
+                // Atualiza a interface com os dados frescos
+                if (!products || JSON.stringify(products) !== JSON.stringify(freshProducts)) {
+                    distributeProducts(freshProducts);
+                }
             }
         } catch (error) {
             console.error("Erro ao buscar produtos:", error);
             
-            // Se falhar e não tiver cache, mostra mensagem de erro
-            if (!cachedData || !cacheValid) {
+            // Se não há cache e a API falhou, mostra mensagem de erro
+            if (!products) {
                 sectionsToBuild.forEach(section => {
                     const container = document.getElementById(section.containerId);
                     if (container) {
                         container.innerHTML = `
                             <div class="swiper-slide">
-                                <div class="error-message">
-                                    <p>Erro ao carregar produtos.</p>
-                                    <button onclick="fetchAndDistributeProducts()" class="btn btn-outline">
+                                <div class="error-card">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <p>Erro ao carregar produtos</p>
+                                    <button onclick="window.location.reload()" class="retry-btn">
                                         Tentar novamente
                                     </button>
                                 </div>
@@ -486,150 +361,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    /**
-     * Configura observador para lazy loading de imagens
-     */
-    const setupImageObservers = () => {
-        if (!('IntersectionObserver' in window)) return;
-        
-        const imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                    }
-                    imageObserver.unobserve(img);
-                }
-            });
-        }, {
-            rootMargin: '100px',
-            threshold: 0.1
-        });
-        
-        // Observa imagens após um tempo
-        setTimeout(() => {
-            document.querySelectorAll('.product-image-wrapper img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
-        }, 1000);
-    };
-
-    /**
-     * Inicialização principal
-     */
     const init = () => {
-        // Verifica se GSAP está disponível
-        if (typeof gsap === 'undefined') {
-            console.warn('GSAP não carregado. Animações de preço desativadas.');
-            
-            // Fallback: mostra preços normalmente
-            setTimeout(() => {
-                document.querySelectorAll('.product-price').forEach(priceEl => {
-                    priceEl.style.opacity = '1';
-                    priceEl.style.transform = 'none';
-                });
-            }, 500);
+        // Verifica se todas as dependências estão carregadas
+        if (typeof Swiper === 'undefined') {
+            console.error("Swiper não carregado");
+            return;
         }
-        
-        // Busca e distribui produtos
-        fetchAndDistributeProducts();
-        
-        // Configura observadores de imagem
-        setupImageObservers();
-        
-        // Configura botões de navegação
-        setupNavigationButtons();
-        
-        // Adiciona classes para controle
-        document.body.classList.add('recentes-loaded');
+
+        if (typeof axios === 'undefined') {
+            console.error("Axios não carregado");
+            return;
+        }
+
+        // Inicia o carregamento dos produtos
+        fetchProducts();
+
+        // Atualiza automaticamente a cada 5 minutos
+        setInterval(fetchProducts, CACHE_DURATION);
     };
 
-    /**
-     * Configura eventos dos botões de navegação
-     */
-    const setupNavigationButtons = () => {
-        sectionsToBuild.forEach(section => {
-            const prevBtn = document.querySelector(section.prev);
-            const nextBtn = document.querySelector(section.next);
-            
-            if (prevBtn) {
-                prevBtn.addEventListener('click', () => {
-                    const swiper = document.querySelector(section.swiperClass)?.swiper;
-                    if (swiper) swiper.slidePrev();
-                });
-            }
-            
-            if (nextBtn) {
-                nextBtn.addEventListener('click', () => {
-                    const swiper = document.querySelector(section.swiperClass)?.swiper;
-                    if (swiper) swiper.slideNext();
-                });
-            }
-        });
-    };
-
-    /**
-     * Funções utilitárias para debug
-     */
-    window.recentesDebug = {
-        resetPriceAnimations: () => {
-            if (window.animationTracker) {
-                window.animationTracker.priceAnimations.clear();
-            }
-            
-            document.querySelectorAll('[data-price-animated]').forEach(el => {
-                el.removeAttribute('data-price-animated');
-            });
-            
-            sectionsToBuild.forEach(section => {
-                animatePriceCounter(section.containerId);
-            });
-            
-            console.log('Animações de preço resetadas');
-        },
-        
-        getAnimationStatus: () => {
-            if (!window.animationTracker) return { error: 'Tracker não inicializado' };
-            
-            return {
-                priceAnimations: window.animationTracker.priceAnimations.size,
-                scrollAnimations: window.animationTracker.scrollAnimations.size,
-                heroAnimated: window.animationTracker.heroAnimated
-            };
-        },
-        
-        forcePriceAnimation: (containerId) => {
-            const container = document.getElementById(containerId);
-            if (!container) {
-                console.error('Container não encontrado:', containerId);
-                return;
-            }
-            
-            const cards = container.querySelectorAll('.product-card');
-            cards.forEach((card, index) => {
-                const priceElement = card.querySelector('.product-price');
-                if (!priceElement) return;
-                
-                const priceText = extractPriceValue(priceElement.textContent);
-                if (priceText === null) return;
-                
-                const cardId = `forced-${containerId}-${index}`;
-                executePriceAnimation(priceElement, priceText, card, cardId);
-            });
-        }
-    };
-
-    // Aguarda um pouco antes de iniciar para não competir com outras inicializações
-    const startDelay = window.animationTracker?.isHeroAnimated() ? 300 : 800;
-    
-    setTimeout(() => {
-        // Verifica se o DOM está estável
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
-    }, startDelay);
+    // Inicializa quando o DOM estiver pronto
+    init();
 });
