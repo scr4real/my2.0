@@ -1,6 +1,8 @@
 /**
- * JAPA UNIVERSE - MAIN JS (VERSÃO FINAL SEM BUGS)
- * Animações suaves sem piscadas ou reexecução
+ * JAPA UNIVERSE - MAIN JS (VERSÃO FINAL COMPLETA)
+ * - Animações suaves (AnimationTracker)
+ * - Carrinho funcional (Checkout)
+ * - Integração com Recentes.js
  */
 (function() {
     const API_BASE = window.location.hostname.includes('localhost') 
@@ -332,8 +334,8 @@
             allProductCards = [...new Set(allProductCards)];
             
             if (!allProductCards.length) {
-                // Tenta novamente mais tarde
-                setTimeout(() => this.setupPriceAnimations(), 500);
+                // Tenta novamente mais tarde (útil se recente.js demorar)
+                // setTimeout(() => this.setupPriceAnimations(), 500);
                 return;
             }
             
@@ -370,9 +372,9 @@
                 once: true, // EXECUTA APENAS UMA VEZ
                 markers: false, // Desative em produção
                 onEnter: () => this.animatePrice(priceElement, priceText, card),
-                onEnterBack: () => {}, // Não faz nada ao voltar
-                onLeave: () => {}, // Não faz nada ao sair
-                onLeaveBack: () => {} // Não faz nada ao voltar para trás
+                onEnterBack: () => {}, 
+                onLeave: () => {}, 
+                onLeaveBack: () => {} 
             });
         },
         
@@ -397,7 +399,6 @@
             }
             
             const counter = { value: 0 };
-            const originalText = priceElement.textContent;
             
             // Animação do contador
             gsap.to(counter, {
@@ -412,12 +413,9 @@
                     // Garante valor final exato
                     priceElement.textContent = this.formatPrice(finalValue);
                     card.dataset.priceAnimated = 'completed';
-                    
-                    // Limpa evento após conclusão
                     priceElement.style.willChange = 'auto';
                 },
                 onInterrupt: () => {
-                    // Se interrompido, garante valor final
                     priceElement.textContent = this.formatPrice(finalValue);
                     card.dataset.priceAnimated = 'completed';
                 }
@@ -477,7 +475,7 @@
     };
 
     /**
-     * Módulo do Carrinho
+     * Módulo do Carrinho (COM CHECKOUT)
      */
     const CartModule = (function() {
         let cart = null;
@@ -539,6 +537,20 @@
                 const overlay = document.getElementById("modalOverlay");
                 const modal = document.getElementById("cartModal");
                 
+                // === NOVO: BOTÃO DE CHECKOUT ===
+                const checkoutBtn = document.querySelector(".checkout-btn");
+                if (checkoutBtn) {
+                    checkoutBtn.addEventListener("click", () => {
+                        const currentCart = getCart();
+                        if (currentCart.length === 0) {
+                            alert("O seu carrinho está vazio!");
+                            return;
+                        }
+                        // Redireciona para a página de checkout
+                        window.location.href = "/FRONT/checkout/HTML/checkout.html";
+                    });
+                }
+                
                 if (closeBtn) {
                     closeBtn.onclick = () => {
                         if (modal) modal.classList.remove("active");
@@ -592,7 +604,6 @@
      */
     const VideoEffectsModule = {
         init: function() {
-            // Aguarda um pouco para não competir com animações principais
             setTimeout(() => {
                 this.setupVideoObservers();
             }, 1000);
@@ -604,11 +615,9 @@
             
             if (!container || !video) return;
             
-            // Carrega vídeo apenas quando visível
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        // Carrega vídeo se tiver data-src
                         if (video.dataset.src) {
                             video.src = video.dataset.src;
                             video.load();
@@ -630,7 +639,6 @@
         setupVideoInteractions: function(container, video) {
             let animationFrame = null;
             
-            // Efeito 3D no hover
             container.addEventListener('mousemove', (e) => {
                 if (animationFrame) {
                     cancelAnimationFrame(animationFrame);
@@ -650,7 +658,6 @@
                 });
             });
             
-            // Reset ao sair
             container.addEventListener('mouseleave', () => {
                 if (animationFrame) {
                     cancelAnimationFrame(animationFrame);
@@ -658,20 +665,17 @@
                 
                 container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
                 
-                // Pausa vídeo
                 if (!video.paused) {
                     video.pause();
                 }
             });
             
-            // Play no hover
             container.addEventListener('mouseenter', () => {
                 video.play().catch(e => {
                     console.log('Autoplay não permitido:', e);
                 });
             });
             
-            // Suporte a touch para mobile
             container.addEventListener('touchstart', () => {
                 video.play().catch(e => {
                     console.log('Autoplay não permitido:', e);
@@ -687,38 +691,31 @@
         // 1. Inicializa funcionalidades críticas primeiro
         CartModule.init();
         
-        // 2. Inicia loading (que por sua vez inicia as animações do Hero)
+        // 2. Inicia loading
         LoadingModule.hide();
         
         // 3. Inicializa módulos de animação com delay
         setTimeout(() => {
-            // Animações de scroll (newsletter)
             if (typeof gsap !== 'undefined') {
                 ScrollAnimationsModule.init();
             }
-            
-            // Animações de preço
             PriceAnimationsModule.init();
         }, 800);
         
-        // 4. Efeitos de vídeo (baixa prioridade)
+        // 4. Efeitos de vídeo
         setTimeout(() => {
             VideoEffectsModule.init();
         }, 1500);
         
-        // 5. Atualiza ano no footer
         const yearEl = document.getElementById("currentYear");
         if (yearEl) {
             yearEl.textContent = new Date().getFullYear();
         }
         
-        // 6. Remove classe de não-JS se necessário
         document.documentElement.classList.remove('no-js');
     };
 
-    // Estratégia de inicialização robusta
     const startApp = () => {
-        // Espera um pouco para garantir DOM estável
         const startDelay = document.readyState === 'loading' ? 100 : 50;
         
         setTimeout(() => {
@@ -726,8 +723,6 @@
                 init();
             } catch (error) {
                 console.error('Erro na inicialização:', error);
-                
-                // Fallback: mostra conteúdo mesmo com erro
                 const fallbackElements = document.querySelectorAll('.hero-title, .hero-subtitle, .hero-bg-image');
                 fallbackElements.forEach(el => {
                     if (el) {
@@ -740,14 +735,19 @@
         }, startDelay);
     };
 
-    // Inicia quando DOM estiver pronto
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', startApp);
     } else {
         startApp();
     }
 
-    // Utilitários para debug (remover em produção)
+    // === NOVO: EXPOSIÇÃO PARA O RECENTES.JS ===
+    // Isso permite que o recentes.js chame a animação de preço
+    // assim que os produtos do banco de dados chegarem.
+    window.initPriceAnimations = () => {
+        PriceAnimationsModule.init();
+    };
+
     window.debugAnimations = {
         resetPriceAnimations: () => {
             animationTracker.priceAnimations.clear();
@@ -755,9 +755,7 @@
                 el.removeAttribute('data-price-animated');
             });
             PriceAnimationsModule.init();
-            console.log('Animações de preço resetadas');
         },
-        
         getAnimationStatus: () => {
             return {
                 heroAnimated: animationTracker.isHeroAnimated(),

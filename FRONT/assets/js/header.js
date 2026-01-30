@@ -19,9 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userData = token ? parseJwt(token) : null;
   const isLoggedIn = userData !== null;
   
-  // === CORREÇÃO APLICADA AQUI ===
-  // Agora usamos caminhos absolutos a partir da raiz do site.
-  // Isso garante que os links funcionem em qualquer página.
+  // Caminhos absolutos para garantir que funcionam em qualquer pasta
   const homeUrl = "/index.html";
   const catalogoUrl = "/FRONT/catalogo/HTML/catalogo.html";
   const contatoUrl = "/FRONT/contato/HTML/contato.html";
@@ -113,7 +111,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Insere o HTML dos botões
   headerActions.innerHTML = actionsHTML;
+
+  // === CORREÇÃO: Adiciona o evento de clique APÓS inserir o HTML ===
+  const cartBtn = document.getElementById("cartButton");
+  if (cartBtn) {
+      cartBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          const cartModal = document.getElementById("cartModal");
+          if (cartModal) {
+              cartModal.classList.add("active");
+              // Se o módulo do carrinho estiver disponível (carregado pelo main.js), atualiza a lista
+              if (window.CartModule && typeof window.CartModule.updateUI === 'function') {
+                  window.CartModule.updateUI();
+              }
+          } else {
+              console.error("Erro: Elemento #cartModal não encontrado na página.");
+          }
+      });
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
