@@ -97,6 +97,13 @@
                 return matchesSearch && matchesBrand;
             });
 
+            // --- ADICIONE ESTA ORDENAÇÃO AQUI ---
+            filteredProducts.sort((a, b) => {
+                if (a.codigoModelo < b.codigoModelo) return -1;
+                if (a.codigoModelo > b.codigoModelo) return 1;
+                return 0;
+            });
+
             currentPage = 1;
             Render.products();
         }
@@ -120,6 +127,13 @@
             const res = await axios.get(API_URL);
             const freshData = res.data;
             
+            // --- ORDENAÇÃO DOS DADOS FRESCOS ---
+            freshData.sort((a, b) => {
+                if (a.codigoModelo < b.codigoModelo) return -1;
+                if (a.codigoModelo > b.codigoModelo) return 1;
+                return 0;
+            });
+
             if (JSON.stringify(freshData) !== cached) {
                 allProducts = freshData;
                 filteredProducts = [...allProducts];
