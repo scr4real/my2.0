@@ -1,6 +1,5 @@
 /**
- * JAPA UNIVERSE - CATALOGO JS (ULTRA OPTIMIZED + ROBUST SORTING)
- * Foco: Carregamento instantâneo e ordenação automática por lote/modelo.
+ * JAPA UNIVERSE - CATALOGO JS (ULTRA OPTIMIZED + FIXED SORTING)
  */
 
 (function() {
@@ -87,16 +86,21 @@
     };
 
     const Logic = {
-        // Função auxiliar de ordenação para evitar repetição de código
+        // Função de ordenação corrigida: itens vazios vão para o fim
         sortProducts: (list) => {
             return list.sort((a, b) => {
-                // Tenta pegar o código do modelo independente da nomenclatura (camelCase ou snake_case)
-                const modeloA = (a.codigoModelo || a.codigo_modelo || "").toString().toUpperCase();
-                const modeloB = (b.codigoModelo || b.codigo_modelo || "").toString().toUpperCase();
+                const modeloA = (a.codigoModelo || a.codigo_modelo || "").toString().trim().toUpperCase();
+                const modeloB = (b.codigoModelo || b.codigo_modelo || "").toString().trim().toUpperCase();
+                
+                // Se um dos modelos estiver vazio, joga para o final da lista
+                if (modeloA === "" && modeloB !== "") return 1;
+                if (modeloA !== "" && modeloB === "") return -1;
                 
                 if (modeloA < modeloB) return -1;
                 if (modeloA > modeloB) return 1;
-                return 0;
+                
+                // Se o modelo for igual, ordena pelo nome para manter o Triple White perto dos outros 95
+                return a.nome.localeCompare(b.nome);
             });
         },
 
@@ -110,7 +114,6 @@
                 return matchesSearch && matchesBrand;
             });
 
-            // Aplica a ordenação robusta após filtrar
             Logic.sortProducts(filteredProducts);
 
             currentPage = 1;
@@ -119,26 +122,21 @@
     };
 
     const Init = async () => {
-        // 1. Tentar Cache primeiro
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
             allProducts = JSON.parse(cached);
-            // Garante que o cache também seja exibido ordenado
             Logic.sortProducts(allProducts);
             filteredProducts = [...allProducts];
             Render.products();
         }
 
-        // 2. Esconder loader
         const loader = document.getElementById('loadingState');
         if (loader) loader.style.display = 'none';
 
-        // 3. Atualizar dados da API em background
         try {
             const res = await axios.get(API_URL);
             const freshData = res.data;
             
-            // Ordena os dados vindos da API
             Logic.sortProducts(freshData);
 
             if (JSON.stringify(freshData) !== cached) {
