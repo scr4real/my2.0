@@ -1,3 +1,7 @@
+/**
+ * JAPA UNIVERSE - CHECKOUT JS (INTEGRADO MERCADO PAGO V2)
+ */
+
 // Atualiza visual dos cards de seleção (Frete/Caixa)
 window.updatePreferenceUI = function(input) {
     const name = input.name;
@@ -8,11 +12,29 @@ window.updatePreferenceUI = function(input) {
     input.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+// Troca interface entre PIX e Cartão
+window.togglePaymentUI = function(input) {
+    const cardFormEl = document.getElementById('card-payment-form');
+    document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+    input.closest('.payment-option').classList.add('selected');
+    
+    if(input.value === 'card') {
+        cardFormEl.style.display = 'block';
+    } else {
+        cardFormEl.style.display = 'none';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // === ELEMENTOS ===
     const cartItemsContainer = document.getElementById('cart-items-container');
     const checkoutButton = document.getElementById('checkout-button');
     const token = localStorage.getItem('jwtToken');
+    const checkoutForm = document.getElementById('form-checkout');
+
+    // Inicialização Mercado Pago
+    // ATENÇÃO: Substitua pela sua PUBLIC_KEY real do painel do Mercado Pago
+    const mp = new MercadoPago('SUA_PUBLIC_KEY_AQUI'); 
 
     // Totais e Resumo
     const summarySubtotal = document.getElementById('summary-subtotal');
@@ -30,22 +52,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const cpfEl = document.getElementById('cpfDestinatario');
     const emailEl = document.getElementById('email');
     const telefoneEl = document.getElementById('telefone');
-    const confirmTelEl = document.getElementById('confirmacaoTelefone');
+    const confirmTelEl = document.getElementById('confirmTel');
     const obsEl = document.getElementById('observacoes');
-    
-    // Checkboxes Obrigatórios
     const confirmaEnderecoCheckbox = document.getElementById('confirmaEndereco');
     const confirmaMaioridadeCheckbox = document.getElementById('confirmaMaioridade');
 
+    let totalGeral = 0;
     let selectedAddressId = null;
-    let currentSubtotal = 0;
 
-    // Definição da URL da API
     const BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
         ? 'http://localhost:8080/api'
         : 'https://back-production-e565.up.railway.app/api';
 
-    // Redireciona se não estiver logado
     if (!token) {
         window.location.href = '../../login/HTML/login.html';
         return;
@@ -63,279 +81,184 @@ document.addEventListener('DOMContentLoaded', () => {
         PADRAO: { BR: '15-20 dias', CASA: '23-28 dias' }
     };
 
-    // === FUNÇÃO DE VALIDAÇÃO FORTE DE CPF (MÓDULO 11) ===
+    // === INICIALIZAÇÃO DO CARD FORM MERCADO PAGO ===
+    const cardForm = mp.cardForm({
+        amount: "0",
+        iframe: true,
+        form: {
+            id: "form-checkout",
+            cardNumber: { id: "form-checkout__cardNumber", placeholder: "Número do cartão" },
+            expirationDate: { id: "form-checkout__expirationDate", placeholder: "MM/AA" },
+            securityCode: { id: "form-checkout__securityCode", placeholder: "CVV" },
+            cardholderName: { id: "form-checkout__cardholderName" },
+            cardholderEmail: { id: "form-checkout__cardholderEmail" },
+            installments: { id: "form-checkout__installments" },
+            identificationNumber: { id: "form-checkout__identificationNumber" },
+        },
+        callbacks: {
+            onFormMounted: error => {
+                if (error) return console.warn("Erro ao montar formulário: ", error);
+            }
+        },
+    });
+
+    // === VALIDAÇÃO E MÁSCARAS (SUA LÓGICA ANTERIOR) ===
     const validarCPF = (cpf) => {
-        cpf = cpf.replace(/[^\d]+/g, ''); // Limpa pontos e traços
-        
-        if (cpf == '') return false;
-        
-        // Bloqueia CPFs com todos os números iguais (ex: 111.111.111-11)
-        if (cpf.length != 11 || 
-            /^(\d)\1{10}$/.test(cpf))
-                return false;
-        
-        // Valida 1º Dígito
+        cpf = cpf.replace(/[^\d]+/g, '');
+        if (cpf == '' || cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) return false;
         let add = 0;
         for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
         let rev = 11 - (add % 11);
         if (rev == 10 || rev == 11) rev = 0;
         if (rev != parseInt(cpf.charAt(9))) return false;
-        
-        // Valida 2º Dígito
         add = 0;
         for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
         rev = 11 - (add % 11);
         if (rev == 10 || rev == 11) rev = 0;
-        if (rev != parseInt(cpf.charAt(10))) return false;
-        
-        return true;
+        return rev == parseInt(cpf.charAt(10));
     };
 
-    // === ATUALIZAÇÃO DE RESUMO DE VALORES ===
+    const mascaraCPF = (v) => v.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})/, '$1-$2').replace(/(-\d{2})\d+?$/, '$1');
+    const mascaraTelefone = (v) => v.replace(/\D/g, '').replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2').replace(/(-\d{4})\d+?$/, '$1');
+
+    cpfEl?.addEventListener('input', (e) => e.target.value = mascaraCPF(e.target.value));
+    telefoneEl?.addEventListener('input', (e) => { e.target.value = mascaraTelefone(e.target.value); validatePhone(); });
+    confirmTelEl?.addEventListener('input', (e) => { e.target.value = mascaraTelefone(e.target.value); validatePhone(); });
+
+    // === ATUALIZAÇÃO DE RESUMO ===
     const updateSummary = () => {
         const cart = getCart();
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        let total = subtotal;
+        const subtotal = cart.reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+        let extra = 0;
 
-        const comCaixa = document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'true';
+        const comCaixa = document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'com' || document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'true';
+        const isPrioritaria = document.querySelector('input[name="opcaoPrioritaria"]:checked')?.value === 'prioritaria' || document.querySelector('input[name="opcaoPrioritaria"]:checked')?.value === 'true';
+
         if (comCaixa) {
             const val = subtotal * 0.05;
-            total += val;
             taxaCaixaEl.textContent = `R$ ${val.toFixed(2).replace('.', ',')}`;
             rowTaxaCaixa.classList.remove('hidden');
-        } else {
-            rowTaxaCaixa.classList.add('hidden');
-        }
+            extra += val;
+        } else { rowTaxaCaixa.classList.add('hidden'); }
 
-        const prioritaria = document.querySelector('input[name="opcaoPrioritaria"]:checked')?.value === 'true';
-        if (prioritaria) {
+        if (isPrioritaria) {
             const val = subtotal * 0.05;
-            total += val;
             taxaPrioritariaEl.textContent = `R$ ${val.toFixed(2).replace('.', ',')}`;
             rowTaxaPrioridade.classList.remove('hidden');
-        } else {
-            rowTaxaPrioridade.classList.add('hidden');
-        }
+            extra += val;
+        } else { rowTaxaPrioridade.classList.add('hidden'); }
 
+        totalGeral = subtotal + extra;
         summarySubtotal.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-        summaryTotal.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        summaryTotal.textContent = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
         
-        const p = prioritaria ? PRAZO.PRIORITARIA : PRAZO.PADRAO;
+        const p = isPrioritaria ? PRAZO.PRIORITARIA : PRAZO.PADRAO;
         prazoCorreiosEl.textContent = `Brasil: ${p.BR}`;
         prazoResidenciaEl.textContent = `Sua Casa: ${p.CASA}`;
 
-        currentSubtotal = subtotal;
+        if(cardForm) cardForm.update({ amount: totalGeral.toString() });
     };
 
-    const renderCart = () => {
+    const loadData = async () => {
         const cart = getCart();
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p style="color:#aaa">Carrinho vazio.</p>';
-            checkoutButton.disabled = true;
-            updateSummary();
-            return;
-        }
+        if (cart.length === 0) { window.location.href = "/index.html"; return; }
 
-        checkoutButton.disabled = false;
         cartItemsContainer.innerHTML = cart.map(item => `
             <div class="summary-item">
-                <img src="${item.image}" alt="${item.name}">
+                <img src="${item.imagemUrl || item.image}" alt="${item.nome || item.name}">
                 <div class="info">
-                    <h4>${item.name}</h4>
-                    <p>Tam: ${item.size} | Qtd: ${item.quantity}</p>
-                    <p>R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}</p>
+                    <h4>${item.nome || item.name}</h4>
+                    <p>Tam: ${item.tamanho || item.size} | Qtd: ${item.quantidade || item.quantity}</p>
+                    <p>R$ ${(item.preco * item.quantidade).toFixed(2).replace('.', ',')}</p>
                 </div>
             </div>
         `).join('');
+
         updateSummary();
-    };
 
-    // === MÁSCARAS DE INPUT ===
-    
-    const mascaraCPF = (value) => {
-        return value
-            .replace(/\D/g, '') 
-            .replace(/(\d{3})(\d)/, '$1.$2') 
-            .replace(/(\d{3})(\d)/, '$1.$2') 
-            .replace(/(\d{3})(\d{1,2})/, '$1-$2') 
-            .replace(/(-\d{2})\d+?$/, '$1'); 
-    };
-
-    const mascaraTelefone = (value) => {
-        return value
-            .replace(/\D/g, '') 
-            .replace(/(\d{2})(\d)/, '($1) $2') 
-            .replace(/(\d{5})(\d)/, '$1-$2') 
-            .replace(/(-\d{4})\d+?$/, '$1'); 
-    };
-
-    // Eventos de Input (Formatação enquanto digita)
-    if (cpfEl) {
-        cpfEl.addEventListener('input', (e) => {
-            e.target.value = mascaraCPF(e.target.value);
-        });
-
-        // CORREÇÃO DO BUG "FUNDO BRANCO": 
-        // Agora usamos cores escuras transparentes para não sumir com o texto branco
-        cpfEl.addEventListener('blur', (e) => {
-            const valorLimpo = e.target.value.replace(/\D/g, '');
-            if (valorLimpo.length === 11) {
-                if (validarCPF(valorLimpo)) {
-                    // CPF Válido: Borda Verde, Fundo Verde Escuro Transparente
-                    cpfEl.style.borderColor = '#28a745';
-                    cpfEl.style.backgroundColor = 'rgba(40, 167, 69, 0.1)'; 
-                } else {
-                    // CPF Inválido: Borda Vermelha, Fundo Vermelho Escuro Transparente
-                    cpfEl.style.borderColor = '#dc3545';
-                    cpfEl.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
-                }
-            } else {
-                // Reseta se estiver incompleto
-                cpfEl.style.borderColor = '';
-                cpfEl.style.backgroundColor = '';
-            }
-        });
-    }
-
-    if (telefoneEl) {
-        telefoneEl.addEventListener('input', (e) => {
-            e.target.value = mascaraTelefone(e.target.value);
-            validatePhone(); 
-        });
-    }
-
-    if (confirmTelEl) {
-        confirmTelEl.addEventListener('input', (e) => {
-            e.target.value = mascaraTelefone(e.target.value);
-            validatePhone(); 
-        });
-    }
-
-    const loadAddresses = async () => {
         try {
             const res = await apiClient.get('/usuario/meus-dados');
             const addresses = res.data.enderecos || [];
-            
             if (res.data.nome) nomeEl.value = res.data.nome;
             if (res.data.cpf) cpfEl.value = mascaraCPF(res.data.cpf);
-            if (res.data.email) emailEl.value = res.data.email;
             if (res.data.telefone) telefoneEl.value = mascaraTelefone(res.data.telefone);
 
-            if (addresses.length === 0) {
-                addressSelectionContainer.innerHTML = `<p>Nenhum endereço. <a href="../../perfil/HTML/perfil.html" style="color:var(--primary)">Cadastrar agora</a></p>`;
-                return;
-            }
-
             addressSelectionContainer.innerHTML = addresses.map((addr, idx) => `
-                <label class="address-option">
-                    <input type="radio" name="selectedAddress" value="${addr.id}" ${idx === 0 ? 'checked' : ''}>
-                    <div class="address-details">
-                        <strong>${addr.rua}, ${addr.numero} ${addr.complemento || ''}</strong>
-                        <p>${addr.bairro} - ${addr.cidade}/${addr.estado}</p>
-                        <p>CEP: ${addr.cep}</p>
+                <label class="address-card ${idx === 0 ? 'selected' : ''}">
+                    <input type="radio" name="addressId" value="${addr.id}" ${idx === 0 ? 'checked' : ''} 
+                           onchange="document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected')); this.closest('.address-card').classList.add('selected'); window.selectedAddressId = this.value">
+                    <div class="address-info">
+                        <strong>${addr.rua || addr.logradouro}, ${addr.numero}</strong>
+                        <span>${addr.bairro} - ${addr.cidade}/${addr.estado || addr.uf}</span>
                     </div>
                 </label>
-            `).join('') + `<a href="../../perfil/HTML/perfil.html" style="color:var(--primary); font-size:0.9rem; margin-top:10px; display:block;">Gerenciar Endereços</a>`;
-
-            const radios = addressSelectionContainer.querySelectorAll('input[name="selectedAddress"]');
-            selectedAddressId = radios[0].value;
-            radios.forEach(r => r.addEventListener('change', e => selectedAddressId = e.target.value));
-
-        } catch (err) {
-            console.error(err);
-            addressSelectionContainer.innerHTML = '<p style="color:red">Erro ao carregar dados.</p>';
-        }
+            `).join('');
+            window.selectedAddressId = addresses[0]?.id;
+        } catch (error) { console.error(error); }
     };
 
-    // === PROCESSAMENTO DO CHECKOUT ===
     const handleCheckout = async (e) => {
         e.preventDefault();
-        
-        if (!selectedAddressId) return alert('Selecione um endereço.');
-        
-        const telLimpo = telefoneEl.value.replace(/\D/g, '');
-        const confTelLimpo = confirmTelEl.value.replace(/\D/g, '');
+        const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
         const cpfLimpo = cpfEl.value.replace(/\D/g, '');
 
-        // 1. Validação de Telefones
-        if (telLimpo !== confTelLimpo) return alert('Os telefones não conferem.');
-        if (telLimpo.length < 10) return alert('Telefone inválido.');
+        if (!window.selectedAddressId) return alert("Selecione um endereço.");
+        if (!validarCPF(cpfLimpo)) return alert("CPF inválido.");
+        if (confirmaMaioridadeCheckbox && !confirmaMaioridadeCheckbox.checked) return alert("Declare maioridade.");
 
-        // 2. Validação Rigorosa de CPF
-        if (!validarCPF(cpfLimpo)) {
-            cpfEl.style.borderColor = '#dc3545';
-            cpfEl.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
-            cpfEl.focus();
-            return alert('O CPF informado é inválido. Verifique os números.');
-        }
-
-        // 3. Validação da Declaração de Maioridade
-        if (confirmaMaioridadeCheckbox && !confirmaMaioridadeCheckbox.checked) {
-            return alert('Você deve declarar que é maior de 18 anos para continuar.');
-        }
-        
-        // 4. Validação da Confirmação de Endereço
-        if (!confirmaEnderecoCheckbox.checked) {
-            return alert('Por favor, confirme se o endereço está correto.');
-        }
+        checkoutButton.disabled = true;
+        checkoutButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
 
         const cart = getCart();
         const checkoutData = {
-            itens: cart.map(i => ({ produtoId: i.id, quantidade: i.quantity, tamanho: i.size })),
-            enderecoEntregaId: parseInt(selectedAddressId),
+            itens: cart.map(i => ({ produtoId: i.id, quantidade: i.quantidade || i.quantity, tamanho: i.tamanho || i.size })),
+            enderecoEntregaId: window.selectedAddressId,
             nomeDestinatario: nomeEl.value,
-            cpfDestinatario: cpfLimpo, 
-            telefoneDestinatario: telLimpo, 
+            cpfDestinatario: cpfLimpo,
+            telefoneDestinatario: telefoneEl.value.replace(/\D/g, ''),
             observacoes: obsEl.value,
-            comCaixa: document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'true',
-            entregaPrioritaria: document.querySelector('input[name="opcaoPrioritaria"]:checked')?.value === 'true',
-            metodoPagamento: "PIX"
+            comCaixa: document.querySelector('input[name="opcaoCaixa"]:checked').value === 'com' || document.querySelector('input[name="opcaoCaixa"]:checked').value === 'true',
+            entregaPrioritaria: document.querySelector('input[name="opcaoPrioritaria"]:checked').value === 'prioritaria' || document.querySelector('input[name="opcaoPrioritaria"]:checked').value === 'true',
+            metodoPagamento: paymentType.toUpperCase()
         };
 
+        if(paymentType === 'card') {
+            try {
+                const cardData = await cardForm.createCardToken();
+                checkoutData.token = cardData.token;
+                checkoutData.installments = document.getElementById('form-checkout__installments').value;
+            } catch (err) {
+                alert("Erro no cartão. Verifique os dados.");
+                checkoutButton.disabled = false;
+                checkoutButton.innerHTML = 'Finalizar Compra';
+                return;
+            }
+        }
+
         try {
-            checkoutButton.disabled = true;
-            checkoutButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
-
             const res = await apiClient.post('/pedidos', checkoutData);
-            
             localStorage.removeItem('japaUniverseCart');
-            if(window.updateCartCounter) window.updateCartCounter();
-
             sessionStorage.setItem('ultimoPedidoId', res.data.id);
             window.location.href = `../../pagamento/HTML/pagamento.html?id=${res.data.id}`;
-
         } catch (error) {
-            console.error(error);
             alert(error.response?.data?.message || 'Erro ao processar pedido.');
             checkoutButton.disabled = false;
-            checkoutButton.innerHTML = 'Finalizar Compra <i class="fas fa-arrow-right"></i>';
+            checkoutButton.innerHTML = 'Finalizar Compra';
         }
     };
 
-    document.querySelectorAll('input[name="opcaoCaixa"], input[name="opcaoPrioritaria"]').forEach(el => {
-        el.addEventListener('change', updateSummary);
-    });
-
-    checkoutButton.addEventListener('click', handleCheckout);
-    
     const validatePhone = () => {
         const msg = document.getElementById('phone-match-message');
+        if(!msg) return;
         const t1 = telefoneEl.value.replace(/\D/g, '');
         const t2 = confirmTelEl.value.replace(/\D/g, '');
-
         if(t1 && t2) {
-            if(t1 === t2) {
-                msg.textContent = "Ok!";
-                msg.style.color = "var(--success)"; 
-            } else {
-                msg.textContent = "Números não conferem";
-                msg.style.color = "#ff4444"; 
-            }
-        } else {
-            msg.textContent = "";
+            msg.textContent = t1 === t2 ? "Ok!" : "Números não conferem";
+            msg.style.color = t1 === t2 ? "var(--success)" : "#ff4444";
         }
     };
 
-    loadAddresses();
-    renderCart();
+    document.querySelectorAll('input[name="opcaoCaixa"], input[name="opcaoPrioritaria"]').forEach(el => el.addEventListener('change', updateSummary));
+    checkoutButton.addEventListener('click', handleCheckout);
+    loadData();
 });
