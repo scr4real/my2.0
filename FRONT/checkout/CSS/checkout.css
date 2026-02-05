@@ -1,5 +1,6 @@
 /**
- * JAPA UNIVERSE - CHECKOUT CSS (APRIMORADO)
+ * JAPA UNIVERSE - CHECKOUT CSS
+ * Estilos completos incluindo formulário de cartão de crédito Mercado Pago
  */
 
 :root {
@@ -395,19 +396,18 @@ textarea {
     margin-top: 4px;
 }
 
-/* ===== PAGAMENTO ===== */
+/* ===== MÉTODOS DE PAGAMENTO (NOVO) ===== */
 .payment-methods {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
-    padding: 25px;
+    margin-bottom: 20px;
 }
 
-.payment-option {
+.payment-method-card {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
+    gap: 15px;
     padding: 20px;
     border: 2px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -417,53 +417,211 @@ textarea {
     position: relative;
 }
 
-.payment-option:hover {
+.payment-method-card:hover {
     border-color: var(--border-light);
     transform: translateY(-2px);
 }
 
-.payment-option.selected {
+.payment-method-card.selected {
     border-color: var(--primary);
     background-color: var(--primary-light);
-    transform: translateY(-2px);
 }
 
-.payment-option input[type="radio"] {
+.payment-method-card input[type="radio"] {
     position: absolute;
     opacity: 0;
+    pointer-events: none;
 }
 
-.payment-content {
+.payment-method-card .payment-icon {
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-weight: 600;
-    color: var(--text-light);
+    justify-content: center;
+    background-color: var(--bg-input);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
 }
 
-.payment-content i {
-    font-size: 1.5rem;
+.payment-method-card .payment-icon i {
+    font-size: 1.8rem;
     color: var(--primary);
 }
 
-/* ===== FORMULÁRIO CARTÃO (MERCADO PAGO) ===== */
-#card-payment-form {
-    padding: 0 25px 25px;
+.payment-method-card .payment-info {
+    flex: 1;
 }
 
-.mp-input {
+.payment-method-card .payment-info h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 4px;
+}
+
+.payment-method-card .payment-info p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.payment-method-card .payment-check {
+    color: var(--primary);
+    font-size: 1.4rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.payment-method-card.selected .payment-check {
+    opacity: 1;
+}
+
+/* ===== FORMULÁRIO DE CARTÃO DE CRÉDITO (NOVO) ===== */
+.credit-card-section {
+    border-top: 1px solid var(--border-color);
+    padding-top: 25px;
+    margin-top: 10px;
+    animation: slideDown 0.3s ease;
+}
+
+.credit-card-section.hidden {
+    display: none;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-form-header {
+    margin-bottom: 25px;
+}
+
+.card-brands {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    background-color: var(--bg-input);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.card-brands .mp-logo {
+    height: 28px;
+    object-fit: contain;
+}
+
+.card-brands .accepted-cards {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.card-form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card-form-body .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Containers dos Secure Fields do Mercado Pago */
+.mp-input-container {
     height: 48px;
     background-color: var(--bg-input);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 12px;
+    overflow: hidden;
     transition: all 0.3s ease;
 }
 
-.mp-input:focus-within {
+.mp-input-container:focus-within,
+.mp-input-container:hover {
+    border-color: var(--border-light);
+}
+
+.mp-input-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Select de Parcelas */
+.installments-select {
+    width: 100%;
+    padding: 14px 16px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 16px) center;
+    padding-right: 40px;
+}
+
+.installments-select:focus {
+    outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.installments-select option {
     background-color: var(--bg-card);
+    color: var(--text-main);
+    padding: 10px;
+}
+
+/* Mensagens de Erro */
+.field-error {
+    font-size: 0.8rem;
+    color: var(--error);
+    margin-top: 6px;
+    min-height: 18px;
+}
+
+.field-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: block;
+}
+
+/* Aviso de Segurança */
+.secure-payment-notice {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    background-color: var(--success-light);
+    border: 1px solid rgba(0, 200, 83, 0.3);
+    border-radius: var(--radius-md);
+    margin-top: 20px;
+}
+
+.secure-payment-notice i {
+    font-size: 1.4rem;
+    color: var(--success);
+}
+
+.secure-payment-notice span {
+    font-size: 0.85rem;
+    color: var(--success);
+    line-height: 1.4;
 }
 
 /* ===== RESUMO DO PEDIDO ===== */
@@ -683,7 +841,8 @@ textarea {
     .form-grid,
     .preference-grid,
     .payment-methods,
-    .row {
+    .row,
+    .card-form-body .form-row {
         grid-template-columns: 1fr;
         gap: 15px;
     }
@@ -723,6 +882,29 @@ textarea {
     .logo {
         font-size: 1.6rem;
     }
+
+    .payment-method-card {
+        padding: 15px;
+    }
+
+    .payment-method-card .payment-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .payment-method-card .payment-icon i {
+        font-size: 1.4rem;
+    }
+
+    .payment-method-card .payment-info h3 {
+        font-size: 1rem;
+    }
+
+    .card-brands {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -761,6 +943,10 @@ textarea {
     .btn-finish-checkout {
         padding: 16px;
         font-size: 1rem;
+    }
+
+    .payment-methods {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -818,4 +1004,15 @@ input:valid:not(:placeholder-shown) {
 :focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
+}
+
+/* ===== UTILITÁRIOS ===== */
+.hidden {
+    display: none !important;
+}
+
+.validation-message {
+    font-size: 0.8rem;
+    margin-top: 5px;
+    min-height: 18px;
 }

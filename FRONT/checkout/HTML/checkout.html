@@ -12,6 +12,9 @@
     
     <link rel="stylesheet" href="/FRONT/assets/CSS/base.css">
     <link rel="stylesheet" href="/FRONT/checkout/CSS/checkout.css">
+
+    <!-- SDK do Mercado Pago para Tokenização Segura -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 <body>
 
@@ -25,188 +28,269 @@
     </header>
     
     <div class="page-wrapper">
-        <main class="checkout-main container">
-            <form id="form-checkout" class="checkout-form">
-                <div class="checkout-content">
+        <main class="checkout-container">
+            <h1 class="page-title">Checkout Seguro</h1>
+            
+            <form id="checkoutForm" class="checkout-layout">
+                
+                <div class="checkout-main-content">
                     
-                    <section class="checkout-section">
-                        <div class="section-header">
-                            <span class="step-number">1</span>
-                            <h2>Dados para Entrega</h2>
+                    <!-- SEÇÃO 1: DADOS PESSOAIS -->
+                    <section class="checkout-card">
+                        <div class="card-header">
+                            <i class="fas fa-user-circle"></i>
+                            <h2>Dados Pessoais</h2>
                         </div>
-                        <div class="form-grid">
-                            <div class="form-group full-width">
-                                <label for="nomeCompleto">Nome do Destinatário</label>
-                                <input type="text" id="nomeCompleto" placeholder="Quem receberá o pacote?" required>
-                            </div>
+                        <div class="card-body">
                             <div class="form-group">
-                                <label for="cpfDestinatario">CPF do Destinatário</label>
-                                <input type="text" id="cpfDestinatario" placeholder="000.000.000-00" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="telefone">Telefone / WhatsApp</label>
-                                <input type="tel" id="telefone" placeholder="(00) 00000-0000" required>
-                            </div>
-                            <div class="form-group full-width">
-                                <label for="confirmTel">Confirme o Telefone</label>
-                                <input type="tel" id="confirmTel" placeholder="Digite novamente o telefone" required>
-                                <span id="phone-match-message" class="match-message"></span>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="checkout-section">
-                        <div class="section-header">
-                            <span class="step-number">2</span>
-                            <h2>Endereço de Entrega</h2>
-                        </div>
-                        <div id="address-selection" class="address-list">
-                            </div>
-                        <button type="button" class="btn-new-address" onclick="window.location.href='/FRONT/perfil/HTML/perfil.html?tab=enderecos'">
-                            <i class="fas fa-plus"></i> Novo Endereço
-                        </button>
-                    </section>
-
-                    <section class="checkout-section">
-                        <div class="section-header">
-                            <span class="step-number">3</span>
-                            <h2>Opções de Entrega e Envio</h2>
-                        </div>
-                        
-                        <div class="preference-grid">
-                            <div class="preference-card">
-                                <h3>Proteção do Produto</h3>
-                                <div class="radio-group">
-                                    <label class="radio-card selected">
-                                        <input type="radio" name="opcaoCaixa" value="sem" checked onchange="updatePreferenceUI(this)">
-                                        <div class="radio-content">
-                                            <span class="radio-title">Sem Caixa Original</span>
-                                            <span class="radio-desc">Envio padrão em Bag de proteção</span>
-                                            <span class="radio-price">Grátis</span>
-                                        </div>
-                                    </label>
-                                    <label class="radio-card">
-                                        <input type="radio" name="opcaoCaixa" value="com" onchange="updatePreferenceUI(this)">
-                                        <div class="radio-content">
-                                            <span class="radio-title">Com Caixa Original</span>
-                                            <span class="radio-desc">Proteção extra e caixa da marca</span>
-                                            <span class="radio-price">+5%</span>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="preference-card">
-                                <h3>Velocidade de Processamento</h3>
-                                <div class="radio-group">
-                                    <label class="radio-card selected">
-                                        <input type="radio" name="opcaoPrioritaria" value="padrao" checked onchange="updatePreferenceUI(this)">
-                                        <div class="radio-content">
-                                            <span class="radio-title">Processamento Padrão</span>
-                                            <span class="radio-desc">Fila normal de separação</span>
-                                            <span class="radio-price">Grátis</span>
-                                        </div>
-                                    </label>
-                                    <label class="radio-card">
-                                        <input type="radio" name="opcaoPrioritaria" value="prioritaria" onchange="updatePreferenceUI(this)">
-                                        <div class="radio-content">
-                                            <span class="radio-title">Envio Prioritário</span>
-                                            <span class="radio-desc">Sua ordem no topo da fila</span>
-                                            <span class="radio-price">+5%</span>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width" style="margin-top: 20px;">
-                            <label for="observacoes">Observações do Pedido</label>
-                            <textarea id="observacoes" placeholder="Ex: Deixar na portaria, casa de portão azul..."></textarea>
-                        </div>
-                    </section>
-
-                    <section class="checkout-section">
-                        <div class="section-header">
-                            <span class="step-number">4</span>
-                            <h2>Forma de Pagamento</h2>
-                        </div>
-                        <div class="payment-methods">
-                            <label class="payment-option selected">
-                                <input type="radio" name="paymentType" value="pix" checked onchange="togglePaymentUI(this)">
-                                <div class="payment-content">
-                                    <i class="fas fa-pix"></i>
-                                    <span>PIX (Aprovação Instantânea)</span>
-                                </div>
-                            </label>
-                            <label class="payment-option">
-                                <input type="radio" name="paymentType" value="card" onchange="togglePaymentUI(this)">
-                                <div class="payment-content">
-                                    <i class="fas fa-credit-card"></i>
-                                    <span>Cartão de Crédito</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="card-payment-form" style="display: none; margin-top: 25px;">
-                            <div class="form-group">
-                                <label for="form-checkout__cardNumber">Número do Cartão</label>
-                                <div id="form-checkout__cardNumber" class="container mp-input"></div>
+                                <label for="nomeCompleto">Nome Completo</label>
+                                <input type="text" id="nomeCompleto" placeholder="Ex: João da Silva" required>
                             </div>
                             
-                            <div class="row">
-                                <div class="form-group col">
-                                    <label for="form-checkout__expirationDate">Validade (MM/AA)</label>
-                                    <div id="form-checkout__expirationDate" class="container mp-input"></div>
+                            <div class="form-group">
+                                <label for="cpfDestinatario">CPF (Obrigatório para pagamentos)</label>
+                                <input type="text" id="cpfDestinatario" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" required>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 15px; margin-bottom: 5px;">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="confirmaMaioridade" required>
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-text">Declaro que sou <strong>maior de 18 anos</strong>.</span>
+                                </label>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="email">E-mail</label>
+                                    <input type="email" id="email" placeholder="seu@email.com" required>
                                 </div>
-                                <div class="form-group col">
-                                    <label for="form-checkout__securityCode">CVV</label>
-                                    <div id="form-checkout__securityCode" class="container mp-input"></div>
+                                <div class="form-group">
+                                    <label for="telefone">WhatsApp</label>
+                                    <input type="text" id="telefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="confirmacaoTelefone">Confirmar WhatsApp</label>
+                                <input type="text" id="confirmacaoTelefone" placeholder="Repita o número" maxlength="15" inputmode="numeric" required>
+                                <div id="phone-match-message" class="validation-message"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SEÇÃO 2: ENDEREÇO -->
+                    <section class="checkout-card">
+                        <div class="card-header">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h2>Endereço de Entrega</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="address-selection" class="address-list-container">
+                                <p class="loading-text">Carregando seus endereços...</p>
+                            </div>
+
+                            <div class="address-confirmation-box">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="confirmaEndereco" required>
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-text">Confirmo que o endereço selecionado acima está correto e atualizado.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SEÇÃO 3: PREFERÊNCIAS DE ENVIO -->
+                    <section class="checkout-card preferences-section">
+                        <div class="card-header">
+                            <i class="fas fa-box-open"></i>
+                            <h2>Preferências de Envio</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="preference-group">
+                                <h3 class="pref-title">Embalagem</h3>
+                                <div class="radio-grid">
+                                    <label class="radio-card selected">
+                                        <input type="radio" name="opcaoCaixa" value="false" checked onchange="updatePreferenceUI(this)">
+                                        <div class="radio-content">
+                                            <span class="radio-title">Padrão</span>
+                                            <span class="radio-desc">Saco de envio seguro (Grátis)</span>
+                                        </div>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="opcaoCaixa" value="true" onchange="updatePreferenceUI(this)">
+                                        <div class="radio-content">
+                                            <span class="radio-title">Caixa Original</span>
+                                            <span class="radio-desc">+5% do valor</span>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="form-checkout__cardholderName">Nome no Cartão</label>
-                                <input type="text" id="form-checkout__cardholderName" class="form-control" placeholder="Como está escrito no cartão" />
+                            <div class="divider"></div>
+
+                            <div class="preference-group">
+                                <h3 class="pref-title">Velocidade</h3>
+                                <div class="radio-grid">
+                                    <label class="radio-card selected">
+                                        <input type="radio" name="opcaoPrioritaria" value="false" checked onchange="updatePreferenceUI(this)">
+                                        <div class="radio-content">
+                                            <span class="radio-title">Normal</span>
+                                            <span class="radio-desc">Prazo padrão</span>
+                                        </div>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="opcaoPrioritaria" value="true" onchange="updatePreferenceUI(this)">
+                                        <div class="radio-content">
+                                            <span class="radio-title">Prioritária</span>
+                                            <span class="radio-desc">Envio Expresso (+5%)</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SEÇÃO 4: PAGAMENTO (ATUALIZADA COM CARTÃO) -->
+                    <section class="checkout-card">
+                        <div class="card-header">
+                            <i class="fas fa-wallet"></i>
+                            <h2>Método de Pagamento</h2>
+                        </div>
+                        <div class="card-body">
+                            
+                            <!-- Seleção do Método de Pagamento -->
+                            <div class="payment-methods">
+                                <label class="payment-method-card selected" data-method="PIX">
+                                    <input type="radio" name="metodoPagamento" value="PIX" checked>
+                                    <div class="payment-icon">
+                                        <i class="fa-brands fa-pix"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h3>PIX</h3>
+                                        <p>Aprovação instantânea</p>
+                                    </div>
+                                    <div class="payment-check">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                </label>
+
+                                <label class="payment-method-card" data-method="CREDIT_CARD">
+                                    <input type="radio" name="metodoPagamento" value="CREDIT_CARD">
+                                    <div class="payment-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h3>Cartão de Crédito</h3>
+                                        <p>Parcele em até 12x</p>
+                                    </div>
+                                    <div class="payment-check">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                </label>
                             </div>
 
-                            <div class="form-group">
-                                <label for="form-checkout__identificationNumber">CPF do Titular</label>
-                                <input type="text" id="form-checkout__identificationNumber" class="form-control" placeholder="000.000.000-00"/>
+                            <!-- Formulário de Cartão de Crédito (Mercado Pago) -->
+                            <div id="credit-card-form" class="credit-card-section hidden">
+                                <div class="card-form-header">
+                                    <div class="card-brands">
+                                        <img src="https://imgmp.mlstatic.com/org-img/MLB/MP/LOGO/logo-mp-40.png" alt="Mercado Pago" class="mp-logo">
+                                        <span class="accepted-cards">Visa, Master, Elo, Amex, Hipercard</span>
+                                    </div>
+                                </div>
+
+                                <div class="card-form-body">
+                                    <!-- Número do Cartão (Secure Field do MP) -->
+                                    <div class="form-group">
+                                        <label for="cardNumber">Número do Cartão</label>
+                                        <div id="cardNumber" class="mp-input-container"></div>
+                                        <div id="cardNumber-error" class="field-error"></div>
+                                    </div>
+
+                                    <!-- Nome no Cartão -->
+                                    <div class="form-group">
+                                        <label for="cardholderName">Nome no Cartão</label>
+                                        <input type="text" id="cardholderName" placeholder="COMO ESTÁ IMPRESSO NO CARTÃO" autocomplete="cc-name" required>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <!-- Data de Validade (Secure Field do MP) -->
+                                        <div class="form-group">
+                                            <label for="expirationDate">Validade</label>
+                                            <div id="expirationDate" class="mp-input-container"></div>
+                                            <div id="expirationDate-error" class="field-error"></div>
+                                        </div>
+
+                                        <!-- CVV (Secure Field do MP) -->
+                                        <div class="form-group">
+                                            <label for="securityCode">CVV</label>
+                                            <div id="securityCode" class="mp-input-container"></div>
+                                            <div id="securityCode-error" class="field-error"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Parcelas -->
+                                    <div class="form-group">
+                                        <label for="installments">Parcelas</label>
+                                        <select id="installments" class="installments-select">
+                                            <option value="">Selecione o número de parcelas</option>
+                                        </select>
+                                        <div id="installments-error" class="field-error"></div>
+                                    </div>
+
+                                    <!-- Tipo de Documento (Obrigatório pelo MP) -->
+                                    <div class="form-row">
+                                        <div class="form-group" style="flex: 0.4;">
+                                            <label for="identificationType">Documento</label>
+                                            <select id="identificationType">
+                                                <option value="CPF" selected>CPF</option>
+                                                <option value="CNPJ">CNPJ</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group" style="flex: 0.6;">
+                                            <label for="identificationNumber">Número do Documento</label>
+                                            <input type="text" id="identificationNumber" placeholder="000.000.000-00" maxlength="18" inputmode="numeric">
+                                            <small class="field-hint">Será preenchido com o CPF informado acima</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="secure-payment-notice">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Seus dados são criptografados e processados com segurança pelo Mercado Pago</span>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="form-checkout__installments">Parcelas</label>
-                                <select id="form-checkout__installments" class="form-control"></select>
-                            </div>
-
-                            <div class="form-group" style="display: none;">
-                                <input type="email" id="form-checkout__cardholderEmail" />
+                            <!-- Observações -->
+                            <div class="form-group" style="margin-top: 20px;">
+                                <label for="observacoes">Observações (Opcional)</label>
+                                <textarea id="observacoes" rows="2" placeholder="Algum detalhe extra sobre a entrega?"></textarea>
                             </div>
                         </div>
                     </section>
                 </div>
 
+                <!-- SIDEBAR: RESUMO DO PEDIDO -->
                 <aside class="checkout-sidebar">
                     <div class="order-summary-card">
                         <h2>Resumo do Pedido</h2>
-                        <div id="cart-items-container" class="summary-items">
-                            </div>
-
+                        
+                        <div class="summary-items-list" id="cart-items-container"></div>
+                        
                         <div class="summary-totals">
                             <div class="total-row">
                                 <span>Subtotal</span>
                                 <span id="summary-subtotal">R$ 0,00</span>
                             </div>
-                            <div class="total-row hidden" id="row-taxa-caixa">
+                            <div class="total-row option-row hidden" id="row-taxa-caixa">
                                 <span>Caixa Original (+5%)</span>
                                 <span id="taxaCaixa">R$ 0,00</span>
                             </div>
-                            <div class="total-row hidden" id="row-taxa-prioridade">
-                                <span>Prioridade (+5%)</span>
+                            <div class="total-row option-row hidden" id="row-taxa-prioridade">
+                                <span>Entrega Prioritária (+5%)</span>
                                 <span id="taxaPrioritaria">R$ 0,00</span>
                             </div>
-                            <div class="total-row highlight">
-                                <span>Valor Final</span>
+                            <div class="total-row final-total">
+                                <span>Total</span>
                                 <span id="summary-total">R$ 0,00</span>
                             </div>
                         </div>
@@ -236,8 +320,6 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
-    
     <script src="/FRONT/assets/js/header.js"></script>
     <script src="/FRONT/assets/js/cart-utils.js"></script> 
     <script src="/FRONT/checkout/js/checkout.js"></script>
