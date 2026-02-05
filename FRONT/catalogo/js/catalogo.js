@@ -1,5 +1,6 @@
 /**
- * JAPA UNIVERSE - CATALOGO JS (ULTRA OPTIMIZED + FIXED SORTING)
+ * JAPA UNIVERSE - CATALOGO JS (ORDENAÇÃO POR CATEGORIA)
+ * Foco: Agrupar produtos por tipo (95, TN, Jordan, etc.)
  */
 
 (function() {
@@ -86,20 +87,17 @@
     };
 
     const Logic = {
-        // Função de ordenação corrigida: itens vazios vão para o fim
+        // Função de ordenação por Categoria (Nome)
         sortProducts: (list) => {
             return list.sort((a, b) => {
-                const modeloA = (a.codigoModelo || a.codigo_modelo || "").toString().trim().toUpperCase();
-                const modeloB = (b.codigoModelo || b.codigo_modelo || "").toString().trim().toUpperCase();
+                // Acede ao nome da categoria (ex: "Air Max 95")
+                const catA = (a.categoria?.nome || "").toString().toUpperCase();
+                const catB = (b.categoria?.nome || "").toString().toUpperCase();
                 
-                // Se um dos modelos estiver vazio, joga para o final da lista
-                if (modeloA === "" && modeloB !== "") return 1;
-                if (modeloA !== "" && modeloB === "") return -1;
+                if (catA < catB) return -1;
+                if (catA > catB) return 1;
                 
-                if (modeloA < modeloB) return -1;
-                if (modeloA > modeloB) return 1;
-                
-                // Se o modelo for igual, ordena pelo nome para manter o Triple White perto dos outros 95
+                // Se for a mesma categoria, ordena pelo nome do produto
                 return a.nome.localeCompare(b.nome);
             });
         },
