@@ -7,118 +7,208 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     
     <link rel="stylesheet" href="/FRONT/assets/CSS/base.css">
     <link rel="stylesheet" href="/FRONT/checkout/CSS/checkout.css">
 
-
     <script src="https://sdk.mercadopago.com/js/v2"></script>
-
+    <script src="https://unpkg.com/imask"></script>
 </head>
 <body>
+    <div class="page-overlay"></div>
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p>Processando seu pedido...</p>
+    </div>
 
     <header class="simple-header">
         <div class="container">
-            <a href="/index.html" class="logo">Japa<span> Universe</span></a>
-            <div class="secure-badge">
-                <i class="fas fa-lock"></i> Compra 100% Segura
+            <a href="/index.html" class="logo">
+                <i class="fas fa-robot"></i>
+                <span>Japa</span> Universe
+            </a>
+            <div class="header-actions">
+                <div class="secure-badge">
+                    <i class="fas fa-lock"></i> Compra 100% Segura
+                </div>
+                <a href="/carrinho.html" class="cart-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
             </div>
         </div>
     </header>
     
     <div class="page-wrapper">
         <main class="checkout-container">
-            <h1 class="page-title">Checkout Seguro</h1>
+            <div class="checkout-header">
+                <h1 class="page-title">Checkout Seguro</h1>
+                <div class="progress-steps">
+                    <div class="step active">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Dados</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Pagamento</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Confirmação</span>
+                    </div>
+                </div>
+            </div>
             
             <form id="checkoutForm" class="checkout-layout">
-                
                 <div class="checkout-main-content">
-                    
+                    <!-- Dados Pessoais -->
                     <section class="checkout-card">
                         <div class="card-header">
-                            <i class="fas fa-user-circle"></i>
-                            <h2>Dados Pessoais</h2>
+                            <div class="card-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div>
+                                <h2>Dados Pessoais</h2>
+                                <p class="card-subtitle">Preencha seus dados para continuar</p>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="nomeCompleto">Nome Completo</label>
+                                <label for="nomeCompleto">
+                                    Nome Completo
+                                    <span class="required">*</span>
+                                </label>
                                 <input type="text" id="nomeCompleto" placeholder="Ex: João da Silva" required>
+                                <div class="field-hint">Como aparece no seu documento</div>
                             </div>
                             
-                            <div class="form-group">
-                                <label for="cpfDestinatario">CPF (Para Nota Fiscal)</label>
-                                <input type="text" id="cpfDestinatario" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" required>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cpfDestinatario">
+                                        CPF
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input type="text" id="cpfDestinatario" placeholder="000.000.000-00" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dataNascimento">
+                                        Data de Nascimento
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input type="date" id="dataNascimento" required>
+                                </div>
                             </div>
 
-                            <div class="form-group" style="margin-top: 15px; margin-bottom: 5px;">
+                            <div class="age-confirmation">
                                 <label class="checkbox-container">
                                     <input type="checkbox" id="confirmaMaioridade" required>
                                     <span class="checkmark"></span>
-                                    <span class="checkbox-text">Declaro que sou <strong>maior de 18 anos</strong>.</span>
+                                    <span class="checkbox-text">Declaro que sou <strong>maior de 18 anos</strong></span>
                                 </label>
                             </div>
+
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="email">E-mail</label>
+                                    <label for="email">
+                                        E-mail
+                                        <span class="required">*</span>
+                                    </label>
                                     <input type="email" id="email" placeholder="seu@email.com" required>
+                                    <div class="field-hint">Enviaremos a confirmação aqui</div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="telefone">WhatsApp</label>
-                                    <input type="text" id="telefone" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" required>
+                                    <label for="telefone">
+                                        WhatsApp
+                                        <span class="required">*</span>
+                                    </label>
+                                    <input type="tel" id="telefone" placeholder="(11) 99999-9999" required>
                                 </div>
                             </div>
                             
                             <div class="form-group">
-                                <label for="confirmacaoTelefone">Confirmar WhatsApp</label>
-                                <input type="text" id="confirmacaoTelefone" placeholder="Repita o número" maxlength="15" inputmode="numeric" required>
+                                <label for="confirmacaoTelefone">
+                                    Confirmar WhatsApp
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="tel" id="confirmacaoTelefone" placeholder="Repita o número" required>
                                 <div id="phone-match-message" class="validation-message"></div>
                             </div>
                         </div>
                     </section>
 
+                    <!-- Endereço de Entrega -->
                     <section class="checkout-card">
                         <div class="card-header">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <h2>Endereço de Entrega</h2>
+                            <div class="card-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h2>Endereço de Entrega</h2>
+                                <p class="card-subtitle">Para onde enviaremos seu pedido</p>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div id="address-selection" class="address-list-container">
-                                <p class="loading-text">Carregando seus endereços...</p>
+                                <div class="loading-addresses">
+                                    <div class="loading-spinner small"></div>
+                                    <p>Carregando seus endereços...</p>
+                                </div>
                             </div>
 
-                            <div class="address-confirmation-box">
+                            <button type="button" class="btn-new-address" id="btnNewAddress">
+                                <i class="fas fa-plus"></i>
+                                Adicionar Novo Endereço
+                            </button>
+
+                            <div class="address-confirmation">
                                 <label class="checkbox-container">
                                     <input type="checkbox" id="confirmaEndereco" required>
                                     <span class="checkmark"></span>
-                                    <span class="checkbox-text">Confirmo que o endereço selecionado acima está correto e atualizado.</span>
+                                    <span class="checkbox-text">Confirmo que o endereço selecionado está correto</span>
                                 </label>
                             </div>
                         </div>
                     </section>
 
+                    <!-- Preferências de Envio -->
                     <section class="checkout-card preferences-section">
                         <div class="card-header">
-                            <i class="fas fa-box-open"></i>
-                            <h2>Preferências de Envio</h2>
+                            <div class="card-icon">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <div>
+                                <h2>Preferências de Envio</h2>
+                                <p class="card-subtitle">Personalize sua entrega</p>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="preference-group">
                                 <h3 class="pref-title">Embalagem</h3>
+                                <p class="pref-description">Escolha como seu produto será embalado</p>
                                 <div class="radio-grid">
                                     <label class="radio-card selected">
-                                        <input type="radio" name="opcaoCaixa" value="false" checked onchange="updatePreferenceUI(this)">
+                                        <input type="radio" name="opcaoCaixa" value="false" checked>
                                         <div class="radio-content">
                                             <span class="radio-title">Padrão</span>
                                             <span class="radio-desc">Saco de envio seguro (Grátis)</span>
+                                            <span class="radio-price">+ R$ 0,00</span>
+                                        </div>
+                                        <div class="radio-check">
+                                            <i class="fas fa-check-circle"></i>
                                         </div>
                                     </label>
                                     <label class="radio-card">
-                                        <input type="radio" name="opcaoCaixa" value="true" onchange="updatePreferenceUI(this)">
+                                        <input type="radio" name="opcaoCaixa" value="true">
                                         <div class="radio-content">
                                             <span class="radio-title">Caixa Original</span>
-                                            <span class="radio-desc">+5% do valor</span>
+                                            <span class="radio-desc">Proteção extra para colecionadores</span>
+                                            <span class="radio-price">+5%</span>
+                                        </div>
+                                        <div class="radio-check">
+                                            <i class="fas fa-check-circle"></i>
                                         </div>
                                     </label>
                                 </div>
@@ -127,20 +217,29 @@
                             <div class="divider"></div>
 
                             <div class="preference-group">
-                                <h3 class="pref-title">Velocidade</h3>
+                                <h3 class="pref-title">Velocidade de Entrega</h3>
+                                <p class="pref-description">Selecione a urgência da entrega</p>
                                 <div class="radio-grid">
                                     <label class="radio-card selected">
-                                        <input type="radio" name="opcaoPrioritaria" value="false" checked onchange="updatePreferenceUI(this)">
+                                        <input type="radio" name="opcaoPrioritaria" value="false" checked>
                                         <div class="radio-content">
                                             <span class="radio-title">Normal</span>
-                                            <span class="radio-desc">Prazo padrão</span>
+                                            <span class="radio-desc">Prazo padrão dos Correios</span>
+                                            <span class="radio-price">+ R$ 0,00</span>
+                                        </div>
+                                        <div class="radio-check">
+                                            <i class="fas fa-check-circle"></i>
                                         </div>
                                     </label>
                                     <label class="radio-card">
-                                        <input type="radio" name="opcaoPrioritaria" value="true" onchange="updatePreferenceUI(this)">
+                                        <input type="radio" name="opcaoPrioritaria" value="true">
                                         <div class="radio-content">
-                                            <span class="radio-title">Prioritária</span>
-                                            <span class="radio-desc">Envio Expresso (+5%)</span>
+                                            <span class="radio-title">Expressa</span>
+                                            <span class="radio-desc">Entrega mais rápida disponível</span>
+                                            <span class="radio-price">+5%</span>
+                                        </div>
+                                        <div class="radio-check">
+                                            <i class="fas fa-check-circle"></i>
                                         </div>
                                     </label>
                                 </div>
@@ -148,10 +247,16 @@
                         </div>
                     </section>
 
-                    <section class="checkout-card">
+                    <!-- Pagamento -->
+                    <section class="checkout-card payment-section">
                         <div class="card-header">
-                            <i class="fas fa-wallet"></i>
-                            <h2>Pagamento</h2>
+                            <div class="card-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div>
+                                <h2>Pagamento</h2>
+                                <p class="card-subtitle">Escolha como deseja pagar</p>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="payment-methods">
@@ -162,7 +267,7 @@
                                     </div>
                                     <div class="payment-info">
                                         <h3>PIX</h3>
-                                        <p>Aprovação instantânea</p>
+                                        <p>Aprovação instantânea • 5% de desconto</p>
                                     </div>
                                     <div class="payment-check">
                                         <i class="fas fa-check-circle"></i>
@@ -176,7 +281,7 @@
                                     </div>
                                     <div class="payment-info">
                                         <h3>Cartão de Crédito</h3>
-                                        <p>Parcele em até 12x</p>
+                                        <p>Parcele em até 12x • Todas as bandeiras</p>
                                     </div>
                                     <div class="payment-check">
                                         <i class="fas fa-check-circle"></i>
@@ -184,11 +289,17 @@
                                 </label>
                             </div>
 
+                            <!-- Formulário do Cartão -->
                             <div id="credit-card-form" class="credit-card-section hidden">
                                 <div class="card-form-header">
                                     <div class="card-brands">
-                                        <img src="https://imgmp.mlstatic.com/org-img/MLB/MP/LOGO/logo-mp-40.png" alt="Mercado Pago" class="mp-logo">
-                                        <span class="accepted-cards">Visa, Master, Elo, Amex, Hipercard</span>
+                                        <img src="https://imgmp.mlstatic.com/org-img/MP/LOGO/logo-mp-small.png" alt="Mercado Pago" class="mp-logo">
+                                        <span class="accepted-cards">
+                                            <i class="fab fa-cc-visa"></i>
+                                            <i class="fab fa-cc-mastercard"></i>
+                                            <i class="fab fa-cc-amex"></i>
+                                            <i class="fab fa-cc-elo"></i>
+                                        </span>
                                     </div>
                                 </div>
 
@@ -199,9 +310,14 @@
                                         <div id="cardNumber-error" class="field-error"></div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="cardholderName">Nome no Cartão</label>
-                                        <input type="text" id="cardholderName" placeholder="COMO ESTÁ IMPRESSO NO CARTÃO" autocomplete="cc-name" required>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="cardholderName">Nome no Cartão</label>
+                                            <input type="text" id="cardholderName" 
+                                                   placeholder="COMO ESTÁ ESCRITO NO CARTÃO" 
+                                                   autocomplete="cc-name" 
+                                                   required>
+                                        </div>
                                     </div>
 
                                     <div class="form-row">
@@ -225,118 +341,191 @@
                                         </select>
                                         <div id="installments-error" class="field-error"></div>
                                     </div>
-
-                                    <div class="form-row">
-                                        <div class="form-group" style="flex: 0.4;">
-                                            <label for="identificationType">Documento</label>
-                                            <select id="identificationType">
-                                                <option value="CPF" selected>CPF</option>
-                                                <option value="CNPJ">CNPJ</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group" style="flex: 0.6;">
-                                            <label for="identificationNumber">Número do Documento</label>
-                                            <input type="text" id="identificationNumber" placeholder="000.000.000-00" maxlength="18" inputmode="numeric">
-                                            <small class="field-hint">Preenchido automaticamente</small>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div class="secure-payment-notice">
                                     <i class="fas fa-shield-alt"></i>
-                                    <span>Seus dados são processados com segurança pelo Mercado Pago</span>
+                                    <div>
+                                        <strong>Pagamento 100% Seguro</strong>
+                                        <span>Seus dados são criptografados e processados pelo Mercado Pago</span>
+                                    </div>
                                 </div>
                             </div>
 
-
-                            <div class="payment-method-fixed">
-                                <div class="payment-icon">
-                                    <i class="fa-brands fa-pix"></i>
-                                </div>
-                                <div class="payment-info">
-                                    <h3>PIX </h3>
-                                    <p>Use o app do seu banco para escanear o QR Code na próxima tela.</p>
-                                </div>
-                                <div class="payment-check">
-                                    <i class="fas fa-check-circle"></i>
+                            <!-- Info PIX Fixa -->
+                            <div id="pix-info" class="pix-info-section">
+                                <div class="pix-benefits">
+                                    <div class="benefit">
+                                        <i class="fas fa-bolt"></i>
+                                        <span>Aprovação em segundos</span>
+                                    </div>
+                                    <div class="benefit">
+                                        <i class="fas fa-tag"></i>
+                                        <span>5% de desconto</span>
+                                    </div>
+                                    <div class="benefit">
+                                        <i class="fas fa-mobile-alt"></i>
+                                        <span>Use o app do seu banco</span>
+                                    </div>
                                 </div>
                             </div>
-                    
-                            <div class="form-group" style="margin-top: 20px;">
+
+                            <!-- Observações -->
+                            <div class="form-group">
                                 <label for="observacoes">Observações (Opcional)</label>
-                                <textarea id="observacoes" rows="2" placeholder="Algum detalhe extra sobre a entrega?"></textarea>
+                                <textarea id="observacoes" rows="3" 
+                                          placeholder="Alguma instrução especial para a entrega? 
+Ex: 'Deixar com portaria', 'Não tocar campainha após 20h', etc."></textarea>
+                                <div class="field-hint">Máximo 200 caracteres</div>
                             </div>
                         </div>
                     </section>
                 </div>
 
+                <!-- Sidebar - Resumo -->
                 <aside class="checkout-sidebar">
                     <div class="order-summary-card">
-                        <h2>Resumo do Pedido</h2>
+                        <h2 class="summary-title">
+                            <i class="fas fa-receipt"></i>
+                            Resumo do Pedido
+                        </h2>
                         
-                        <div class="summary-items-list" id="cart-items-container"></div>
+                        <div class="summary-items-list" id="cart-items-container">
+                            <div class="empty-cart-message">
+                                <i class="fas fa-shopping-cart"></i>
+                                <p>Seu carrinho está vazio</p>
+                            </div>
+                        </div>
                         
+                        <!-- Cupom -->
                         <div class="coupon-section">
+                            <div class="coupon-header">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>Cupom de Desconto</span>
+                            </div>
                             <div class="form-group">
-                                <label for="coupon-input">Cupom de Desconto</label>
                                 <div class="coupon-input-group">
-                                    <input type="text" id="coupon-input" placeholder="Código" style="text-transform: uppercase;">
-                                    <button type="button" id="apply-coupon-btn" class="btn-apply">Aplicar</button>
+                                    <input type="text" id="coupon-input" placeholder="Digite o código" style="text-transform: uppercase;">
+                                    <button type="button" id="apply-coupon-btn" class="btn-apply">
+                                        <span>Aplicar</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
                                 </div>
                                 <div id="coupon-message" class="validation-message"></div>
                             </div>
                         </div>
 
+                        <!-- Totais -->
                         <div class="summary-totals">
                             <div class="total-row">
                                 <span>Subtotal</span>
                                 <span id="summary-subtotal">R$ 0,00</span>
                             </div>
                             
-                            <div class="total-row coupon-discount-row hidden" id="row-desconto-cupom">
+                            <div class="total-row discount-row hidden" id="row-desconto-cupom">
                                 <span>Desconto Cupom</span>
                                 <span id="valorDescontoCupom" class="discount-value">- R$ 0,00</span>
                             </div>
 
+                            <div class="total-row discount-row hidden" id="row-desconto-pix">
+                                <span>Desconto PIX</span>
+                                <span id="valorDescontoPix" class="discount-value">- R$ 0,00</span>
+                            </div>
+
                             <div class="total-row option-row hidden" id="row-taxa-caixa">
-                                <span>Caixa Original (+5%)</span>
-                                <span id="taxaCaixa">R$ 0,00</span>
+                                <span>Caixa Original</span>
+                                <span id="taxaCaixa">+ R$ 0,00</span>
                             </div>
+                            
                             <div class="total-row option-row hidden" id="row-taxa-prioridade">
-                                <span>Entrega Prioritária (+5%)</span>
-                                <span id="taxaPrioritaria">R$ 0,00</span>
+                                <span>Entrega Expressa</span>
+                                <span id="taxaPrioritaria">+ R$ 0,00</span>
                             </div>
+
+                            <div class="total-row total-divider">
+                                <span></span>
+                                <span></span>
+                            </div>
+
                             <div class="total-row final-total">
                                 <span>Total</span>
                                 <span id="summary-total">R$ 0,00</span>
                             </div>
+
+                            <div class="payment-method-total">
+                                <span id="selected-payment-method">PIX</span>
+                                <span id="payment-total">R$ 0,00</span>
+                            </div>
                         </div>
 
+                        <!-- Entrega -->
                         <div class="delivery-estimates">
+                            <h3><i class="fas fa-shipping-fast"></i> Previsão de Entrega</h3>
                             <div class="estimate-item">
-                                <i class="fas fa-plane-arrival"></i>
-                                <span id="prazoCorreios">Brasil: 15-20 dias</span>
+                                <i class="fas fa-plane"></i>
+                                <div>
+                                    <strong>Chegada ao Brasil:</strong>
+                                    <span id="prazoCorreios">15-20 dias úteis</span>
+                                </div>
                             </div>
                             <div class="estimate-item">
                                 <i class="fas fa-home"></i>
-                                <span id="prazoResidencia">Sua Casa: 23-28 dias</span>
+                                <div>
+                                    <strong>Sua casa:</strong>
+                                    <span id="prazoResidencia">+ 3-8 dias úteis</span>
+                                </div>
+                            </div>
+                            <div class="estimate-note">
+                                <i class="fas fa-info-circle"></i>
+                                Prazos estimados após confirmação do pagamento
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-finish-checkout" id="checkout-button">
-                            Finalizar Compra <i class="fas fa-arrow-right"></i>
+                        <!-- Termos -->
+                        <div class="terms-section">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="aceitaTermos" required>
+                                <span class="checkmark"></span>
+                                <span class="checkbox-text">
+                                    Concordo com os 
+                                    <a href="/termos.html" target="_blank">Termos de Uso</a> 
+                                    e 
+                                    <a href="/privacidade.html" target="_blank">Política de Privacidade</a>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Botão Finalizar -->
+                        <button type="submit" class="btn-finish-checkout" id="checkout-button" disabled>
+                            <span class="btn-text">Finalizar Compra</span>
+                            <span class="btn-price">R$ 0,00</span>
+                            <i class="fas fa-lock"></i>
                         </button>
                         
-                        <p class="secure-badge"><i class="fas fa-shield-alt"></i> Compra 100% Segura</p>
+                        <div class="security-assurance">
+                            <div class="security-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Compra 100% Segura</span>
+                            </div>
+                            <div class="security-item">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Pagamento Criptografado</span>
+                            </div>
+                            <div class="security-item">
+                                <i class="fas fa-headset"></i>
+                                <span>Suporte 24/7</span>
+                            </div>
+                        </div>
                     </div>
                 </aside>
             </form>
         </main>
         
-        <footer class="main-footer" style="margin-top: 50px;"></footer>
+        <footer class="main-footer"></footer>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="/FRONT/assets/js/header.js"></script>
     <script src="/FRONT/assets/js/cart-utils.js"></script> 
     <script src="/FRONT/checkout/js/checkout.js"></script>
