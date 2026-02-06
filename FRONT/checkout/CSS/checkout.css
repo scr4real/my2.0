@@ -1016,3 +1016,50 @@ input:valid:not(:placeholder-shown) {
     margin-top: 5px;
     min-height: 18px;
 }
+
+/* Estilo para a seção de cupom */
+.coupon-section {
+    margin: 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.coupon-input-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.coupon-input-group input {
+    flex: 1;
+    padding: 10px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-apply {
+    padding: 0 20px;
+    background: var(--primary);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-apply:hover {
+    filter: brightness(1.2);
+}
+
+.discount-value {
+    color: #28a745; /* Verde para destacar o desconto */
+    font-weight: bold;
+}
+
+.coupon-discount-row {
+    margin-bottom: 10px;
+}

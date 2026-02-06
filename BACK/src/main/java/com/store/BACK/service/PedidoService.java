@@ -7,15 +7,18 @@ import com.store.BACK.model.Pedido;
 import com.store.BACK.model.Produto;
 import com.store.BACK.model.Usuario;
 import com.store.BACK.model.Endereco;
+import com.store.BACK.model.Cupom;
 import com.store.BACK.repository.PedidoRepository;
 import com.store.BACK.repository.ProdutoRepository;
 import com.store.BACK.repository.EnderecoRepository;
+import com.store.BACK.repository.CupomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,9 @@ public class PedidoService {
     @Autowired
     private PixPayloadService pixPayloadService;
 
+    @Autowired
+    private CupomRepository cupomRepository;
+
     @Transactional
     public Pedido criarPedido(CheckoutRequestDTO checkoutRequest, Usuario usuario) {
 
@@ -51,18 +57,14 @@ public class PedidoService {
                 .orElseThrow(() -> new RuntimeException("Endereço de entrega não encontrado: " + enderecoEntregaId));
         pedido.setEnderecoDeEntrega(endereco);
 
-        // CORREÇÃO: Usando os métodos getNomeDestinatario e getTelefoneDestinatario
         pedido.setNomeDestinatario(checkoutRequest.getNomeDestinatario());
         pedido.setTelefoneDestinatario(checkoutRequest.getTelefoneDestinatario());
-
         pedido.setCpfDestinatario(checkoutRequest.getCpfDestinatario());
         pedido.setObservacoes(checkoutRequest.getObservacoes());
 
         // --- NOVAS OPÇÕES SALVAS NO PEDIDO ---
         pedido.setComCaixa(checkoutRequest.isComCaixa());
         pedido.setEntregaPrioritaria(checkoutRequest.isEntregaPrioritaria());
-        // --- FIM NOVAS OPÇÕES ---
-
 
         List<ItemPedido> itensPedido = new ArrayList<>();
         BigDecimal subtotal = BigDecimal.ZERO;
@@ -85,26 +87,58 @@ public class PedidoService {
 
         pedido.setItens(itensPedido);
 
-        // --- CÁLCULO DAS TAXAS E VALOR FINAL ---
-        BigDecimal valorTotal = subtotal;
+        // --- INÍCIO DA LÓGICA DE CUPOM (ETAPA 2) ---
+        BigDecimal valorBaseParaCalculo = subtotal;
+        
+        if (checkoutRequest.getCodigoCupom() != null && !checkoutRequest.getCodigoCupom().isBlank()) {
+            Cupom cupom = cupomRepository.findByCodigo(checkoutRequest.getCodigoCupom())
+                    .orElseThrow(() -> new RuntimeException("Cupom inválido ou não encontrado."));
 
-        final BigDecimal TAXA = new BigDecimal("0.05");
+            // Validação de validade
+            if (cupom.getDataValidade().isBefore(LocalDate.now())) {
+                throw new RuntimeException("Este cupom de desconto expirou.");
+            }
+
+            BigDecimal valorDesconto;
+            if ("PERCENTUAL".equalsIgnoreCase(cupom.getTipoDesconto())) {
+                // Cálculo de porcentagem: (Subtotal * Desconto) / 100
+                valorDesconto = subtotal.multiply(cupom.getDesconto())
+                        .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
+            } else {
+                // Valor fixo
+                valorDesconto = cupom.getDesconto();
+            }
+
+            // Garante que o desconto não seja maior que o subtotal
+            valorBaseParaCalculo = subtotal.subtract(valorDesconto);
+            if (valorBaseParaCalculo.compareTo(BigDecimal.ZERO) < 0) {
+                valorBaseParaCalculo = BigDecimal.ZERO;
+            }
+            
+            pedido.setCupom(cupom); // Associa o cupom ao pedido para histórico
+        }
+        // --- FIM DA LÓGICA DE CUPOM ---
+
+        // --- CÁLCULO DAS TAXAS E VALOR FINAL ---
+        BigDecimal valorTotal = valorBaseParaCalculo;
+        final BigDecimal TAXA_ADICIONAL = new BigDecimal("0.05");
 
         if (pedido.isComCaixa()) {
-            BigDecimal taxaCaixa = subtotal.multiply(TAXA);
+            BigDecimal taxaCaixa = subtotal.multiply(TAXA_ADICIONAL);
             valorTotal = valorTotal.add(taxaCaixa);
         }
 
         if (pedido.isEntregaPrioritaria()) {
-            BigDecimal taxaPrioritaria = subtotal.multiply(TAXA);
+            BigDecimal taxaPrioritaria = subtotal.multiply(TAXA_ADICIONAL);
             valorTotal = valorTotal.add(taxaPrioritaria);
         }
 
         pedido.setValorTotal(valorTotal.setScale(2, RoundingMode.HALF_UP));
-        // --- FIM CÁLCULO DAS TAXAS ---
 
+        // Salva o pedido inicial
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
+        // Gera o PIX
         String pixCode = pixPayloadService.generatePayload(pedidoSalvo);
 
         if (pixCode != null) {
@@ -114,7 +148,6 @@ public class PedidoService {
             throw new RuntimeException("Falha crítica ao gerar o código PIX para o pedido. Pedido ID: " + pedidoSalvo.getId());
         }
 
-        // CORREÇÃO APLICADA AQUI: Chama o novo método para Pedido Recebido (Aguardando Pagamento)
         emailService.enviarPedidoRecebido(pedidoSalvo);
 
         return pedidoSalvo;
@@ -135,18 +168,14 @@ public class PedidoService {
                 .orElse(false);
     }
 
-    // --- NOVO MÉTODO: EXCLUIR PEDIDO ---
     public void excluirPedido(Long id, String emailUsuario) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
-        // Segurança: Verifica se o pedido pertence ao usuário logado
         if (!pedido.getUsuario().getEmail().equals(emailUsuario)) {
             throw new RuntimeException("Você não tem permissão para excluir este pedido.");
         }
 
-        // Regra de Negócio: Só pode excluir se estiver PENDENTE
-        // Compara ignorando maiúsculas/minúsculas para garantir
         if (!"PENDENTE".equalsIgnoreCase(pedido.getStatus())) {
             throw new RuntimeException("Apenas pedidos pendentes podem ser cancelados.");
         }

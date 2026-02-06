@@ -2,9 +2,11 @@ package com.store.BACK.service;
 
 import com.store.BACK.dto.PedidoAdminResponse;
 import com.store.BACK.model.Contato;
+import com.store.BACK.model.Cupom;
 import com.store.BACK.model.Pedido;
 import com.store.BACK.model.Produto;
 import com.store.BACK.repository.ContatoRepository;
+import com.store.BACK.repository.CupomRepository;
 import com.store.BACK.repository.PedidoRepository;
 import com.store.BACK.repository.ProdutoRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class AdminService {
     private final FileStorageService fileStorageService;
     private final ContatoRepository contatoRepository;
     private final EmailService emailService;
+    private final CupomRepository cupomRepository; // Adicionado para gerenciar cupons
 
     // LINK FIXO DOS CORREIOS
     private final String CORREIOS_LINK_BASE = "https://rastreamento.correios.com.br/app/index.php?e2s=SRO&a=";
@@ -41,6 +44,22 @@ public class AdminService {
     public List<Contato> listarTodasAsMensagens() {
         return contatoRepository.findAll();
     }
+
+    // --- MÉTODOS DE CUPOM (ETAPA 3) ---
+    public List<Cupom> listarTodosOsCupons() {
+        return cupomRepository.findAll();
+    }
+
+    @Transactional
+    public Cupom salvarCupom(Cupom cupom) {
+        return cupomRepository.save(cupom);
+    }
+
+    @Transactional
+    public void deletarCupom(Long id) {
+        cupomRepository.deleteById(id);
+    }
+    // --- FIM MÉTODOS DE CUPOM ---
 
     @Transactional
     public Pedido atualizarStatusPedido(Long pedidoId, String novoStatus, String codigoRastreio, String linkRastreio) {
@@ -63,8 +82,6 @@ public class AdminService {
             pedido.setCodigoRastreio(codigoRastreio);
             // Concatena o link fixo com o código
             pedido.setLinkRastreio(CORREIOS_LINK_BASE + codigoRastreio);
-        } else if (!STATUS_ENVIADO.equalsIgnoreCase(novoStatus)) {
-            // Se mudar para outro status, mantemos o rastreio no histórico, sem limpar
         }
 
         // 3. Atualiza o status
@@ -73,8 +90,6 @@ public class AdminService {
 
         // 4. ENVIOS DE E-MAIL
         try {
-            // --- CORREÇÃO CRÍTICA: INICIALIZAÇÃO DE DADOS PARA TODOS OS STATUS ---
-            // Acessamos explicitamente os dados LAZY para garantir o carregamento
             if (!novoStatus.equalsIgnoreCase(statusAntigo)) {
                 pedidoSalvo.getUsuario().getEmail();
                 pedidoSalvo.getUsuario().getNome();
@@ -82,27 +97,20 @@ public class AdminService {
                 pedidoSalvo.getEnderecoDeEntrega().getCep();
             }
 
-            // E-mail de Pagamento Confirmado
             if (STATUS_PAGO.equalsIgnoreCase(novoStatus) && !STATUS_PAGO.equalsIgnoreCase(statusAntigo)) {
                 System.out.println(">>> [ADMIN] Enviando e-mail de PAGAMENTO CONFIRMADO...");
                 emailService.enviarPagamentoConfirmado(pedidoSalvo);
             }
-
-            // E-mail de Pedido Enviado
             else if (STATUS_ENVIADO.equalsIgnoreCase(novoStatus) && !STATUS_ENVIADO.equalsIgnoreCase(statusAntigo)) {
                 System.out.println(">>> [ADMIN] Enviando e-mail de PEDIDO ENVIADO...");
                 if (pedidoSalvo.getCodigoRastreio() != null) {
                     emailService.enviarPedidoEnviado(pedidoSalvo);
                 }
             }
-
-            // E-mail de Pedido Entregue (NOVO)
             else if (STATUS_ENTREGUE.equalsIgnoreCase(novoStatus) && !STATUS_ENTREGUE.equalsIgnoreCase(statusAntigo)) {
                 System.out.println(">>> [ADMIN] Enviando e-mail de PEDIDO ENTREGUE...");
                 emailService.enviarPedidoEntregue(pedidoSalvo);
             }
-
-            // E-mail de Pedido Cancelado (NOVO)
             else if (STATUS_CANCELADO.equalsIgnoreCase(novoStatus) && !STATUS_CANCELADO.equalsIgnoreCase(statusAntigo)) {
                 System.out.println(">>> [ADMIN] Enviando e-mail de PEDIDO CANCELADO...");
                 emailService.enviarPedidoCancelado(pedidoSalvo);

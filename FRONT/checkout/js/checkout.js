@@ -44,6 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const prazoCorreiosEl = document.getElementById('prazoCorreios');
     const prazoResidenciaEl = document.getElementById('prazoResidencia');
 
+    // === NOVOS ELEMENTOS DO CUPOM (ADICIONADOS) ===
+    const couponInput = document.getElementById('coupon-input');
+    const applyCouponBtn = document.getElementById('apply-coupon-btn');
+    const couponMessage = document.getElementById('coupon-message');
+    const rowDescontoCupom = document.getElementById('row-desconto-cupom');
+    const valorDescontoCupomEl = document.getElementById('valorDescontoCupom');
+    let cupomAtivo = null;
+
     // Formulário
     const addressSelectionContainer = document.getElementById('address-selection');
     const nomeEl = document.getElementById('nomeCompleto');
@@ -87,6 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
         baseURL: BASE_URL,
         headers: { 'Authorization': `Bearer ${token}` }
     });
+
+    // Cliente público para validação de cupom
+    const publicApiClient = axios.create({ baseURL: BASE_URL });
 
     const getCart = () => JSON.parse(localStorage.getItem('japaUniverseCart')) || [];
     
@@ -350,11 +361,51 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     };
 
-    // === ATUALIZAÇÃO DE RESUMO DE VALORES ===
+    // === NOVA LÓGICA: APLICAÇÃO DE CUPOM (ADICIONADA) ===
+    const handleApplyCoupon = async () => {
+        const codigo = couponInput.value.trim().toUpperCase();
+        if (!codigo) return;
+
+        applyCouponBtn.disabled = true;
+        applyCouponBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        try {
+            const res = await publicApiClient.get(`/public/validar-cupom?codigo=${codigo}`);
+            cupomAtivo = res.data;
+            couponMessage.textContent = "Cupom aplicado!";
+            couponMessage.style.color = "var(--success)";
+            updateSummary();
+        } catch (err) {
+            cupomAtivo = null;
+            couponMessage.textContent = "Cupom inválido ou expirado.";
+            couponMessage.style.color = "var(--error)";
+            updateSummary();
+        } finally {
+            applyCouponBtn.disabled = false;
+            applyCouponBtn.textContent = "Aplicar";
+        }
+    };
+
+    // === ATUALIZAÇÃO DE RESUMO DE VALORES (MODIFICADA PARA CUPOM) ===
     const updateSummary = () => {
         const cart = getCart();
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         let total = subtotal;
+
+        // --- CÁLCULO DO DESCONTO (ADICIONADO) ---
+        let valorDesconto = 0;
+        if (cupomAtivo) {
+            if (cupomAtivo.tipoDesconto === 'PERCENTUAL') {
+                valorDesconto = subtotal * (cupomAtivo.desconto / 100);
+            } else {
+                valorDesconto = cupomAtivo.desconto;
+            }
+            total -= valorDesconto;
+            valorDescontoCupomEl.textContent = `- R$ ${valorDesconto.toFixed(2).replace('.', ',')}`;
+            rowDescontoCupom.classList.remove('hidden');
+        } else {
+            rowDescontoCupom.classList.add('hidden');
+        }
 
         const comCaixa = document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'true';
         if (comCaixa) {
@@ -377,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         summarySubtotal.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-        summaryTotal.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        summaryTotal.textContent = `R$ ${Math.max(0, total).toFixed(2).replace('.', ',')}`;
         
         const p = prioritaria ? PRAZO.PRIORITARIA : PRAZO.PADRAO;
         prazoCorreiosEl.textContent = `Brasil: ${p.BR}`;
@@ -578,7 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // === PROCESSAMENTO DO CHECKOUT ===
+    // === PROCESSAMENTO DO CHECKOUT (ATUALIZADO COM CUPOM) ===
     const handleCheckout = async (e) => {
         e.preventDefault();
         
@@ -657,7 +708,9 @@ document.addEventListener('DOMContentLoaded', () => {
             observacoes: obsEl.value,
             comCaixa: document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'true',
             entregaPrioritaria: document.querySelector('input[name="opcaoPrioritaria"]:checked')?.value === 'true',
-            metodoPagamento: selectedPaymentMethod
+            metodoPagamento: selectedPaymentMethod,
+            // --- CÓDIGO DO CUPOM (ADICIONADO) ---
+            codigoCupom: cupomAtivo ? cupomAtivo.codigo : null
         };
 
         // Adicionar dados do cartão se aplicável
@@ -698,6 +751,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('input[name="opcaoCaixa"], input[name="opcaoPrioritaria"]').forEach(el => {
         el.addEventListener('change', updateSummary);
     });
+
+    // --- LISTENER DO BOTÃO DE CUPOM (ADICIONADO) ---
+    applyCouponBtn.addEventListener('click', handleApplyCoupon);
 
     checkoutButton.addEventListener('click', handleCheckout);
     

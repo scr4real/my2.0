@@ -69,6 +69,11 @@ public class Pedido {
     @JsonManagedReference("pedido-itens")
     private List<ItemPedido> itens;
 
+    // Adicione este atributo e as anotações do JPA
+        @ManyToOne
+        @JoinColumn(name = "cupom_id")
+        private Cupom cupom;
+
     // Getters e Setters
 
     public Long getId() {

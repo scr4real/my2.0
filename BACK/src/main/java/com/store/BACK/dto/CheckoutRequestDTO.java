@@ -16,6 +16,7 @@ public class CheckoutRequestDTO {
     // Novos campos de opções
     private boolean comCaixa;
     private boolean entregaPrioritaria;
+    private String codigoCupom;
 
     public CheckoutRequestDTO() {}
 

@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="/FRONT/assets/CSS/base.css">
     <link rel="stylesheet" href="/FRONT/checkout/CSS/checkout.css">
 
-    <!-- SDK do Mercado Pago para Tokenização Segura -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 <body>
@@ -35,7 +34,6 @@
                 
                 <div class="checkout-main-content">
                     
-                    <!-- SEÇÃO 1: DADOS PESSOAIS -->
                     <section class="checkout-card">
                         <div class="card-header">
                             <i class="fas fa-user-circle"></i>
@@ -78,7 +76,6 @@
                         </div>
                     </section>
 
-                    <!-- SEÇÃO 2: ENDEREÇO -->
                     <section class="checkout-card">
                         <div class="card-header">
                             <i class="fas fa-map-marker-alt"></i>
@@ -99,7 +96,6 @@
                         </div>
                     </section>
 
-                    <!-- SEÇÃO 3: PREFERÊNCIAS DE ENVIO -->
                     <section class="checkout-card preferences-section">
                         <div class="card-header">
                             <i class="fas fa-box-open"></i>
@@ -150,15 +146,12 @@
                         </div>
                     </section>
 
-                    <!-- SEÇÃO 4: PAGAMENTO (ATUALIZADA COM CARTÃO) -->
                     <section class="checkout-card">
                         <div class="card-header">
                             <i class="fas fa-wallet"></i>
                             <h2>Método de Pagamento</h2>
                         </div>
                         <div class="card-body">
-                            
-                            <!-- Seleção do Método de Pagamento -->
                             <div class="payment-methods">
                                 <label class="payment-method-card selected" data-method="PIX">
                                     <input type="radio" name="metodoPagamento" value="PIX" checked>
@@ -189,7 +182,6 @@
                                 </label>
                             </div>
 
-                            <!-- Formulário de Cartão de Crédito (Mercado Pago) -->
                             <div id="credit-card-form" class="credit-card-section hidden">
                                 <div class="card-form-header">
                                     <div class="card-brands">
@@ -199,28 +191,24 @@
                                 </div>
 
                                 <div class="card-form-body">
-                                    <!-- Número do Cartão (Secure Field do MP) -->
                                     <div class="form-group">
                                         <label for="cardNumber">Número do Cartão</label>
                                         <div id="cardNumber" class="mp-input-container"></div>
                                         <div id="cardNumber-error" class="field-error"></div>
                                     </div>
 
-                                    <!-- Nome no Cartão -->
                                     <div class="form-group">
                                         <label for="cardholderName">Nome no Cartão</label>
                                         <input type="text" id="cardholderName" placeholder="COMO ESTÁ IMPRESSO NO CARTÃO" autocomplete="cc-name" required>
                                     </div>
 
                                     <div class="form-row">
-                                        <!-- Data de Validade (Secure Field do MP) -->
                                         <div class="form-group">
                                             <label for="expirationDate">Validade</label>
                                             <div id="expirationDate" class="mp-input-container"></div>
                                             <div id="expirationDate-error" class="field-error"></div>
                                         </div>
 
-                                        <!-- CVV (Secure Field do MP) -->
                                         <div class="form-group">
                                             <label for="securityCode">CVV</label>
                                             <div id="securityCode" class="mp-input-container"></div>
@@ -228,7 +216,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Parcelas -->
                                     <div class="form-group">
                                         <label for="installments">Parcelas</label>
                                         <select id="installments" class="installments-select">
@@ -237,7 +224,6 @@
                                         <div id="installments-error" class="field-error"></div>
                                     </div>
 
-                                    <!-- Tipo de Documento (Obrigatório pelo MP) -->
                                     <div class="form-row">
                                         <div class="form-group" style="flex: 0.4;">
                                             <label for="identificationType">Documento</label>
@@ -249,18 +235,17 @@
                                         <div class="form-group" style="flex: 0.6;">
                                             <label for="identificationNumber">Número do Documento</label>
                                             <input type="text" id="identificationNumber" placeholder="000.000.000-00" maxlength="18" inputmode="numeric">
-                                            <small class="field-hint">Será preenchido com o CPF informado acima</small>
+                                            <small class="field-hint">Preenchido automaticamente</small>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="secure-payment-notice">
                                     <i class="fas fa-shield-alt"></i>
-                                    <span>Seus dados são criptografados e processados com segurança pelo Mercado Pago</span>
+                                    <span>Seus dados são processados com segurança pelo Mercado Pago</span>
                                 </div>
                             </div>
 
-                            <!-- Observações -->
                             <div class="form-group" style="margin-top: 20px;">
                                 <label for="observacoes">Observações (Opcional)</label>
                                 <textarea id="observacoes" rows="2" placeholder="Algum detalhe extra sobre a entrega?"></textarea>
@@ -269,18 +254,34 @@
                     </section>
                 </div>
 
-                <!-- SIDEBAR: RESUMO DO PEDIDO -->
                 <aside class="checkout-sidebar">
                     <div class="order-summary-card">
                         <h2>Resumo do Pedido</h2>
                         
                         <div class="summary-items-list" id="cart-items-container"></div>
                         
+                        <div class="coupon-section">
+                            <div class="form-group">
+                                <label for="coupon-input">Cupom de Desconto</label>
+                                <div class="coupon-input-group">
+                                    <input type="text" id="coupon-input" placeholder="Código" style="text-transform: uppercase;">
+                                    <button type="button" id="apply-coupon-btn" class="btn-apply">Aplicar</button>
+                                </div>
+                                <div id="coupon-message" class="validation-message"></div>
+                            </div>
+                        </div>
+
                         <div class="summary-totals">
                             <div class="total-row">
                                 <span>Subtotal</span>
                                 <span id="summary-subtotal">R$ 0,00</span>
                             </div>
+                            
+                            <div class="total-row coupon-discount-row hidden" id="row-desconto-cupom">
+                                <span>Desconto Cupom</span>
+                                <span id="valorDescontoCupom" class="discount-value">- R$ 0,00</span>
+                            </div>
+
                             <div class="total-row option-row hidden" id="row-taxa-caixa">
                                 <span>Caixa Original (+5%)</span>
                                 <span id="taxaCaixa">R$ 0,00</span>
