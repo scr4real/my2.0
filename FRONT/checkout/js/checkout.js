@@ -1,13 +1,3 @@
-/**
- * JAPA UNIVERSE - CHECKOUT JS
- * Integração completa com Mercado Pago (PIX + Cartão de Crédito)
- * Fase 1: Frontend com Tokenização Segura
- */
-
-// Import axios and MercadoPago
-import axios from 'axios';
-import MercadoPago from 'mercadopago';
-
 // Atualiza visual dos cards de seleção (Frete/Caixa)
 window.updatePreferenceUI = function(input) {
     const name = input.name;
