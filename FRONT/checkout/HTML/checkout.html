@@ -12,8 +12,11 @@
     
     <link rel="stylesheet" href="/FRONT/assets/CSS/base.css">
     <link rel="stylesheet" href="/FRONT/checkout/CSS/checkout.css">
+<<<<<<< HEAD
 
     <script src="https://sdk.mercadopago.com/js/v2"></script>
+=======
+>>>>>>> 406e9ffd7cbab16cf4fd694d0ec5ede54454179a
 </head>
 <body>
 
@@ -46,7 +49,7 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="cpfDestinatario">CPF (Obrigatório para pagamentos)</label>
+                                <label for="cpfDestinatario">CPF (Para Nota Fiscal)</label>
                                 <input type="text" id="cpfDestinatario" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" required>
                             </div>
 
@@ -149,9 +152,10 @@
                     <section class="checkout-card">
                         <div class="card-header">
                             <i class="fas fa-wallet"></i>
-                            <h2>Método de Pagamento</h2>
+                            <h2>Pagamento</h2>
                         </div>
                         <div class="card-body">
+<<<<<<< HEAD
                             <div class="payment-methods">
                                 <label class="payment-method-card selected" data-method="PIX">
                                     <input type="radio" name="metodoPagamento" value="PIX" checked>
@@ -246,6 +250,21 @@
                                 </div>
                             </div>
 
+=======
+                            <div class="payment-method-fixed">
+                                <div class="payment-icon">
+                                    <i class="fa-brands fa-pix"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <h3>PIX </h3>
+                                    <p>Use o app do seu banco para escanear o QR Code na próxima tela.</p>
+                                </div>
+                                <div class="payment-check">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                            
+>>>>>>> 406e9ffd7cbab16cf4fd694d0ec5ede54454179a
                             <div class="form-group" style="margin-top: 20px;">
                                 <label for="observacoes">Observações (Opcional)</label>
                                 <textarea id="observacoes" rows="2" placeholder="Algum detalhe extra sobre a entrega?"></textarea>
