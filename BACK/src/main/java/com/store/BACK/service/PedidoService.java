@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional; // Importação necessária para o Cupom
 
 @Service
 public class PedidoService {
@@ -52,6 +53,7 @@ public class PedidoService {
         pedido.setDataPedido(LocalDateTime.now());
         pedido.setStatus("PENDENTE");
 
+        // 1. Configurar Endereço
         Long enderecoEntregaId = checkoutRequest.getEnderecoEntregaId();
         Endereco endereco = enderecoRepository.findById(enderecoEntregaId)
                 .orElseThrow(() -> new RuntimeException("Endereço de entrega não encontrado: " + enderecoEntregaId));
@@ -62,98 +64,87 @@ public class PedidoService {
         pedido.setCpfDestinatario(checkoutRequest.getCpfDestinatario());
         pedido.setObservacoes(checkoutRequest.getObservacoes());
 
-        // --- NOVAS OPÇÕES SALVAS NO PEDIDO ---
         pedido.setComCaixa(checkoutRequest.isComCaixa());
         pedido.setEntregaPrioritaria(checkoutRequest.isEntregaPrioritaria());
 
+        // 2. Processar Itens e Calcular Subtotal
         List<ItemPedido> itensPedido = new ArrayList<>();
         BigDecimal subtotal = BigDecimal.ZERO;
 
-        List<ItemPedidoDTO> itensDTO = checkoutRequest.getItens();
-        for (ItemPedidoDTO itemDTO : itensDTO) {
-            Produto produto = produtoRepository.findById(itemDTO.getProdutoId())
-                    .orElseThrow(() -> new RuntimeException("Produto não encontrado: " + itemDTO.getProdutoId()));
+        for (ItemPedidoDTO itemDto : checkoutRequest.getItens()) {
+            Produto produto = produtoRepository.findById(itemDto.getProdutoId())
+                    .orElseThrow(() -> new RuntimeException("Produto não encontrado: " + itemDto.getProdutoId()));
 
-            ItemPedido itemPedido = new ItemPedido();
-            itemPedido.setPedido(pedido);
-            itemPedido.setProduto(produto);
-            itemPedido.setQuantidade(itemDTO.getQuantidade());
-            itemPedido.setTamanho(itemDTO.getTamanho());
-            itemPedido.setPrecoUnitario(produto.getPreco());
+            ItemPedido item = new ItemPedido();
+            item.setPedido(pedido);
+            item.setProduto(produto);
+            item.setQuantidade(itemDto.getQuantidade());
+            item.setTamanho(itemDto.getTamanho());
+            item.setPrecoNoMomento(produto.getPreco());
 
-            itensPedido.add(itemPedido);
-            subtotal = subtotal.add(produto.getPreco().multiply(BigDecimal.valueOf(itemDTO.getQuantidade())));
+            BigDecimal itemTotal = produto.getPreco().multiply(new BigDecimal(itemDto.getQuantidade()));
+            subtotal = subtotal.add(itemTotal);
+            itensPedido.add(item);
         }
-
         pedido.setItens(itensPedido);
 
-        // --- INÍCIO DA LÓGICA DE CUPOM (ETAPA 2) ---
-        BigDecimal valorBaseParaCalculo = subtotal;
-        
+        // 3. Lógica de Cupom (O que você adicionou, agora organizado)
+        BigDecimal valorFinal = subtotal;
+
         if (checkoutRequest.getCodigoCupom() != null && !checkoutRequest.getCodigoCupom().isBlank()) {
-            Cupom cupom = cupomRepository.findByCodigo(checkoutRequest.getCodigoCupom())
-                    .orElseThrow(() -> new RuntimeException("Cupom inválido ou não encontrado."));
-
-            // Validação de validade
-            if (cupom.getDataValidade().isBefore(LocalDate.now())) {
-                throw new RuntimeException("Este cupom de desconto expirou.");
-            }
-
-            BigDecimal valorDesconto;
-            if ("PERCENTUAL".equalsIgnoreCase(cupom.getTipoDesconto())) {
-                // Cálculo de porcentagem: (Subtotal * Desconto) / 100
-                valorDesconto = subtotal.multiply(cupom.getDesconto())
-                        .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
-            } else {
-                // Valor fixo
-                valorDesconto = cupom.getDesconto();
-            }
-
-            // Garante que o desconto não seja maior que o subtotal
-            valorBaseParaCalculo = subtotal.subtract(valorDesconto);
-            if (valorBaseParaCalculo.compareTo(BigDecimal.ZERO) < 0) {
-                valorBaseParaCalculo = BigDecimal.ZERO;
-            }
+            Optional<Cupom> cupomOpt = cupomRepository.findByCodigo(checkoutRequest.getCodigoCupom().toUpperCase());
             
-            pedido.setCupom(cupom); // Associa o cupom ao pedido para histórico
+            if (cupomOpt.isPresent()) {
+                Cupom cupom = cupomOpt.get();
+                
+                if (cupom.getDataValidade().isBefore(LocalDate.now())) {
+                    throw new RuntimeException("O cupom inserido já expirou.");
+                }
+
+                BigDecimal desconto;
+                if ("PERCENTUAL".equals(cupom.getTipoDesconto())) {
+                    // Ex: 10% -> subtotal * 0.10
+                    desconto = subtotal.multiply(cupom.getDesconto().divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP));
+                } else {
+                    desconto = cupom.getDesconto();
+                }
+                
+                valorFinal = valorFinal.subtract(desconto);
+                pedido.setCupom(cupom); 
+            } else {
+                throw new RuntimeException("Cupom não encontrado.");
+            }
         }
-        // --- FIM DA LÓGICA DE CUPOM ---
 
-        // --- CÁLCULO DAS TAXAS E VALOR FINAL ---
-        BigDecimal valorTotal = valorBaseParaCalculo;
-        final BigDecimal TAXA_ADICIONAL = new BigDecimal("0.05");
-
-        if (pedido.isComCaixa()) {
-            BigDecimal taxaCaixa = subtotal.multiply(TAXA_ADICIONAL);
-            valorTotal = valorTotal.add(taxaCaixa);
+        // 4. Adicionar taxas extras (5% sobre o subtotal original)
+        if (checkoutRequest.isComCaixa()) {
+            valorFinal = valorFinal.add(subtotal.multiply(new BigDecimal("0.05")));
+        }
+        if (checkoutRequest.isEntregaPrioritaria()) {
+            valorFinal = valorFinal.add(subtotal.multiply(new BigDecimal("0.05")));
         }
 
-        if (pedido.isEntregaPrioritaria()) {
-            BigDecimal taxaPrioritaria = subtotal.multiply(TAXA_ADICIONAL);
-            valorTotal = valorTotal.add(taxaPrioritaria);
-        }
+        // Garante que o total nunca seja negativo
+        if (valorFinal.compareTo(BigDecimal.ZERO) < 0) valorFinal = BigDecimal.ZERO;
+        
+        pedido.setValorTotal(valorFinal.setScale(2, RoundingMode.HALF_UP));
 
-        pedido.setValorTotal(valorTotal.setScale(2, RoundingMode.HALF_UP));
-
-        // Salva o pedido inicial
+        // 5. Salvar e Gerar Pagamento
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
-        // Gera o PIX
         String pixCode = pixPayloadService.generatePayload(pedidoSalvo);
-
         if (pixCode != null) {
             pedidoSalvo.setPixCopiaECola(pixCode);
             pedidoSalvo = pedidoRepository.save(pedidoSalvo);
         } else {
-            throw new RuntimeException("Falha crítica ao gerar o código PIX para o pedido. Pedido ID: " + pedidoSalvo.getId());
+            throw new RuntimeException("Falha ao gerar o código PIX.");
         }
 
         emailService.enviarPedidoRecebido(pedidoSalvo);
-
         return pedidoSalvo;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Pedido> getPedidosByUsuarioId(Long usuarioId){
         return pedidoRepository.findByUsuarioId(usuarioId);
     }
@@ -173,7 +164,7 @@ public class PedidoService {
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
         if (!pedido.getUsuario().getEmail().equals(emailUsuario)) {
-            throw new RuntimeException("Você não tem permissão para excluir este pedido.");
+            throw new RuntimeException("Permissão negada.");
         }
 
         if (!"PENDENTE".equalsIgnoreCase(pedido.getStatus())) {

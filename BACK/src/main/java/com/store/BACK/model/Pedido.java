@@ -32,7 +32,6 @@ public class Pedido {
     @Column(columnDefinition = "TEXT")
     private String pixCopiaECola;
 
-    // NOVO CAMPO: ID do pagamento no Mercado Pago
     @Column(name = "pagamento_id_externo")
     private Long pagamentoIdExterno;
 
@@ -40,7 +39,6 @@ public class Pedido {
     @JoinColumn(name = "endereco_id", nullable = false)
     private Endereco enderecoDeEntrega;
 
-    // --- CAMPOS DE DESTINATÁRIO ---
     @Column(name = "nome_destinatario")
     private String nomeDestinatario;
 
@@ -53,28 +51,24 @@ public class Pedido {
     @Column(name = "observacoes", columnDefinition = "TEXT")
     private String observacoes;
 
-    // --- CAMPOS DE OPÇÕES ---
     private boolean comCaixa;
     private boolean entregaPrioritaria;
 
-    // --- NOVOS CAMPOS DE RASTREIO ---
     @Column(name = "codigo_rastreio")
     private String codigoRastreio;
 
     @Column(name = "link_rastreio")
     private String linkRastreio;
-    // --- FIM NOVOS CAMPOS ---
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference("pedido-itens")
     private List<ItemPedido> itens;
 
-    // Adicione este atributo e as anotações do JPA
-        @ManyToOne
-        @JoinColumn(name = "cupom_id")
-        private Cupom cupom;
+    @ManyToOne
+    @JoinColumn(name = "cupom_id")
+    private Cupom cupom;
 
-    // Getters e Setters
+    // --- GETTERS E SETTERS ---
 
     public Long getId() {
         return id;
@@ -210,5 +204,14 @@ public class Pedido {
 
     public void setLinkRastreio(String linkRastreio) {
         this.linkRastreio = linkRastreio;
+    }
+
+    // ADICIONADOS PARA RESOLVER O ERRO DE BUILD
+    public Cupom getCupom() {
+        return cupom;
+    }
+
+    public void setCupom(Cupom cupom) {
+        this.cupom = cupom;
     }
 }
