@@ -27,26 +27,23 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
-    @Bean
+        @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(a -> a
-                        // Adicionado "/api/webhook/**" para permitir notificações do Mercado Pago sem login
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+
                         .requestMatchers("/api/auth/**", "/api/public/**", "/api/produtos/**", "/uploads/**", "/FRONT/**", "/error", "/api/webhook/**").permitAll()
 
-                        // Rotas de Usuário (requerem ROLE_USER ou ROLE_ADMIN)
                         .requestMatchers("/api/usuario/meus-dados").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers("/api/pedidos/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 
-                        // Rota de Endereços (requer ROLE_USER ou ROLE_ADMIN)
                         .requestMatchers("/api/enderecos/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 
-                        // Rotas de Admin
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 
-                        // Qualquer outra requisição deve ser autenticada
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
