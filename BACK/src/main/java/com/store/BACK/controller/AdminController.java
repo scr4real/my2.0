@@ -3,7 +3,6 @@ package com.store.BACK.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.store.BACK.dto.PedidoAdminResponse;
 import com.store.BACK.model.Contato;
-import com.store.BACK.model.Cupom;
 import com.store.BACK.model.Pedido;
 import com.store.BACK.model.PedidoAviso;
 import com.store.BACK.model.Produto;
@@ -50,14 +49,17 @@ public class AdminController {
     }
 
     @PatchMapping("/pedidos/{pedidoId}/status")
+    // CORREÇÃO: O Controller só recebe 'status' e 'codigoRastreio'. O link é construído no Service.
     public ResponseEntity<?> updatePedidoStatus(@PathVariable Long pedidoId, @RequestBody Map<String, String> statusUpdate) {
         String status = statusUpdate.get("status");
         String codigoRastreio = statusUpdate.get("codigoRastreio");
 
         try {
+            // Passamos 'null' para linkRastreio, pois ele será construído no AdminService.
             Pedido pedido = adminService.atualizarStatusPedido(pedidoId, status, codigoRastreio, null);
             return ResponseEntity.ok(pedido);
         } catch (IllegalArgumentException e) {
+            // Retorna um erro 400 Bad Request se faltarem informações de rastreio
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
@@ -106,24 +108,5 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    // --- NOVO: Endpoints de Cupons (Etapa 3) ---
-    
-    @GetMapping("/cupons")
-    public ResponseEntity<List<Cupom>> getAllCupons() {
-        return ResponseEntity.ok(adminService.listarTodosOsCupons());
-    }
-
-    @PostMapping("/cupons")
-    public ResponseEntity<Cupom> createCupom(@RequestBody Cupom cupom) {
-        Cupom novoCupom = adminService.salvarCupom(cupom);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoCupom);
-    }
-
-    @DeleteMapping("/cupons/{id}")
-    public ResponseEntity<Void> deleteCupom(@PathVariable Long id) {
-        adminService.deletarCupom(id);
-        return ResponseEntity.noContent().build();
     }
 }

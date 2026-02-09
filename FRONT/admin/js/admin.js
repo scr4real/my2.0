@@ -104,15 +104,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const codigoRastreioInput = document.getElementById('codigo-rastreio');
     const trackingNewStatusInput = document.getElementById('tracking-new-status');
 
-    // --- NOVAS REFERÊNCIAS DO DOM PARA CUPONS ---
-    const cuponsSection = document.getElementById('cupons-section');
-    const navCupons = document.getElementById('nav-cupons');
-    const cuponsTableBody = document.getElementById('cupons-table-body');
-    const cupomModal = document.getElementById('cupom-modal');
-    const closeCupomModalBtn = document.getElementById('close-cupom-modal-btn');
-    const addCupomBtn = document.getElementById('add-cupom-btn');
-    const cupomForm = document.getElementById('cupom-form');
-
     // --- VARIÁVEIS PARA FILTRO DE PEDIDOS (NOVO) ---
     let allPedidos = []; // Armazena todos os pedidos
     let currentStatusFilter = 'ALL'; // Filtro inicial
@@ -148,10 +139,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const closeProductModal = () => productModal.classList.remove('active');
     const closeMessageModal = () => messageModal.classList.remove('active');
     const closeDetailsModal = () => detailsModal.classList.remove('active');
-    const closeCupomModal = () => {
-        cupomForm.reset();
-        cupomModal.classList.remove('active');
-    };
     
     const closeAvisoModal = () => {
         avisoForm.reset();
@@ -188,10 +175,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         trackingNewStatusInput.value = novoStatus;
         codigoRastreioInput.value = ''; 
         trackingModal.classList.add('active');
-    };
-
-    const openCupomModal = () => {
-        cupomModal.classList.add('active');
     };
     // --- FIM FUNÇÕES DE MODAL ---
 
@@ -315,40 +298,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
     }
-
-    // --- NOVA FUNÇÃO: BUSCAR CUPONS ---
-    async function fetchCupons() {
-        try {
-            const response = await apiClient.get('/cupons');
-            renderCupons(response.data);
-        } catch (error) {
-            console.error("Erro ao buscar cupons:", error);
-        }
-    }
-
-    // --- NOVA FUNÇÃO: RENDERIZAR CUPONS ---
-    function renderCupons(cupons) {
-        if (cupons.length === 0) {
-            cuponsTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">Nenhum cupom cadastrado.</td></tr>';
-            return;
-        }
-
-        cuponsTableBody.innerHTML = cupons.map(cupom => {
-            const valorExibicao = cupom.tipoDesconto === 'PERCENTUAL' ? `${cupom.desconto}%` : `R$ ${cupom.desconto.toFixed(2).replace('.', ',')}`;
-            const validade = new Date(cupom.dataValidade).toLocaleDateString('pt-BR');
-            return `
-            <tr>
-                <td><strong>${cupom.codigo}</strong></td>
-                <td>${valorExibicao}</td>
-                <td>${validade}</td>
-                <td>
-                    <button class="btn btn-danger btn-sm delete-cupom-btn" data-cupom-id="${cupom.id}">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>`;
-        }).join('');
-    }
     
     // FUNÇÃO PARA BUSCAR PEDIDOS (ATUALIZADA)
     async function fetchPedidos() {
@@ -369,8 +318,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // FUNÇÃO DE NAVEGAÇÃO DE VISÃO (CHAMADA PRINCIPAL)
     function switchView(view) {
-        [pedidosSection, produtosSection, mensagensSection, cuponsSection].forEach(s => s?.classList.remove('active'));
-        [navPedidos, navProdutos, navMensagens, navCupons].forEach(n => n?.classList.remove('active'));
+        [pedidosSection, produtosSection, mensagensSection].forEach(s => s.classList.remove('active'));
+        [navPedidos, navProdutos, navMensagens].forEach(n => n.classList.remove('active'));
 
         if (view === 'pedidos') {
             pedidosSection.classList.add('active');
@@ -384,10 +333,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             mensagensSection.classList.add('active');
             navMensagens.classList.add('active');
             fetchMensagens();
-        } else if (view === 'cupons') {
-            cuponsSection.classList.add('active');
-            navCupons.classList.add('active');
-            fetchCupons();
         }
          
          if (sidebar && overlay && sidebar.classList.contains('active')) {
@@ -808,51 +753,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // --- NOVA LÓGICA: SUBMISSÃO DE CUPOM ---
-    cupomForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const cupomData = {
-            codigo: document.getElementById('cupom-codigo').value.toUpperCase().trim(),
-            desconto: parseFloat(document.getElementById('cupom-valor').value),
-            tipoDesconto: document.getElementById('cupom-tipo').value,
-            dataValidade: document.getElementById('cupom-validade').value
-        };
-
-        try {
-            await apiClient.post('/cupons', cupomData);
-            alert("Cupom criado com sucesso!");
-            closeCupomModal();
-            fetchCupons();
-        } catch (error) {
-            alert("Erro ao criar cupom. Verifique se o código já existe.");
-        }
-    });
-
-    // --- NOVA LÓGICA: EXCLUSÃO DE CUPOM (DELEGATION) ---
-    cuponsTableBody.addEventListener('click', async (e) => {
-        const btn = e.target.closest('.delete-cupom-btn');
-        if (btn) {
-            const id = btn.dataset.cupomId;
-            if (confirm("Tem certeza que deseja excluir este cupom?")) {
-                try {
-                    await apiClient.delete(`/cupons/${id}`);
-                    alert("Cupom removido!");
-                    fetchCupons();
-                } catch (error) {
-                    alert("Erro ao remover cupom.");
-                }
-            }
-        }
-    });
 
     // --- Inicialização ---
     navPedidos.addEventListener('click', (e) => { e.preventDefault(); switchView('pedidos'); });
     navProdutos.addEventListener('click', (e) => { e.preventDefault(); switchView('produtos'); });
     navMensagens.addEventListener('click', (e) => { e.preventDefault(); switchView('mensagens'); });
-    navCupons.addEventListener('click', (e) => { e.preventDefault(); switchView('cupons'); }); // NOVO
-
-    addCupomBtn.addEventListener('click', openCupomModal); // NOVO
-    closeCupomModalBtn.addEventListener('click', closeCupomModal); // NOVO
 
     if (toggleBtn && sidebar && overlay) {
         toggleBtn.addEventListener('click', () => {

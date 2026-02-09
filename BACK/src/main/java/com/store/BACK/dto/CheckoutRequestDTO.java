@@ -16,21 +16,10 @@ public class CheckoutRequestDTO {
     // Novos campos de opções
     private boolean comCaixa;
     private boolean entregaPrioritaria;
-    private String codigoCupom; // O campo já existia, mas faltavam os métodos abaixo
 
     public CheckoutRequestDTO() {}
 
-    // --- MÉTODOS ADICIONADOS PARA CORRIGIR O ERRO DE BUILD ---
-
-    public String getCodigoCupom() {
-        return codigoCupom;
-    }
-
-    public void setCodigoCupom(String codigoCupom) {
-        this.codigoCupom = codigoCupom;
-    }
-
-    // --- FIM DOS MÉTODOS ADICIONADOS ---
+    // Getters e Setters para todos os campos (Manuais para evitar problemas com Lombok)
 
     public String getNomeDestinatario() {
         return nomeDestinatario;
