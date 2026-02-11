@@ -17,9 +17,12 @@ public class CheckoutRequestDTO {
     private boolean comCaixa;
     private boolean entregaPrioritaria;
 
+    // --- NOVO CAMPO: CUPOM ---
+    private String cupomCodigo;
+
     public CheckoutRequestDTO() {}
 
-    // Getters e Setters para todos os campos (Manuais para evitar problemas com Lombok)
+    // Getters e Setters
 
     public String getNomeDestinatario() {
         return nomeDestinatario;
@@ -83,5 +86,14 @@ public class CheckoutRequestDTO {
 
     public void setEntregaPrioritaria(boolean entregaPrioritaria) {
         this.entregaPrioritaria = entregaPrioritaria;
+    }
+
+    // --- GETTERS E SETTERS DO CUPOM ---
+    public String getCupomCodigo() {
+        return cupomCodigo;
+    }
+
+    public void setCupomCodigo(String cupomCodigo) {
+        this.cupomCodigo = cupomCodigo;
     }
 }
