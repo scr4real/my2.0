@@ -32,7 +32,6 @@ public class Pedido {
     @Column(columnDefinition = "TEXT")
     private String pixCopiaECola;
 
-    // NOVO CAMPO: ID do pagamento no Mercado Pago
     @Column(name = "pagamento_id_externo")
     private Long pagamentoIdExterno;
 
@@ -57,12 +56,19 @@ public class Pedido {
     private boolean comCaixa;
     private boolean entregaPrioritaria;
 
-    // --- NOVOS CAMPOS DE RASTREIO ---
+    // --- CAMPOS DE RASTREIO ---
     @Column(name = "codigo_rastreio")
     private String codigoRastreio;
 
     @Column(name = "link_rastreio")
     private String linkRastreio;
+
+    // --- NOVOS CAMPOS: CUPOM (Adicionado Agora) ---
+    @Column(name = "cupom_aplicado")
+    private String cupomAplicado;
+
+    @Column(name = "valor_desconto")
+    private BigDecimal valorDesconto;
     // --- FIM NOVOS CAMPOS ---
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -205,5 +211,22 @@ public class Pedido {
 
     public void setLinkRastreio(String linkRastreio) {
         this.linkRastreio = linkRastreio;
+    }
+
+    // --- GETTERS E SETTERS NOVOS (CUPOM) ---
+    public String getCupomAplicado() {
+        return cupomAplicado;
+    }
+
+    public void setCupomAplicado(String cupomAplicado) {
+        this.cupomAplicado = cupomAplicado;
+    }
+
+    public BigDecimal getValorDesconto() {
+        return valorDesconto;
+    }
+
+    public void setValorDesconto(BigDecimal valorDesconto) {
+        this.valorDesconto = valorDesconto;
     }
 }

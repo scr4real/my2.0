@@ -2,6 +2,7 @@ package com.store.BACK.service;
 
 import com.store.BACK.dto.CheckoutRequestDTO;
 import com.store.BACK.dto.ItemPedidoDTO;
+import com.store.BACK.model.Cupom; // NOVO IMPORT
 import com.store.BACK.model.ItemPedido;
 import com.store.BACK.model.Pedido;
 import com.store.BACK.model.Produto;
@@ -38,6 +39,9 @@ public class PedidoService {
     @Autowired
     private PixPayloadService pixPayloadService;
 
+    @Autowired
+    private CupomService cupomService; // NOVO: Serviço de Cupom Injetado
+
     @Transactional
     public Pedido criarPedido(CheckoutRequestDTO checkoutRequest, Usuario usuario) {
 
@@ -51,18 +55,13 @@ public class PedidoService {
                 .orElseThrow(() -> new RuntimeException("Endereço de entrega não encontrado: " + enderecoEntregaId));
         pedido.setEnderecoDeEntrega(endereco);
 
-        // CORREÇÃO: Usando os métodos getNomeDestinatario e getTelefoneDestinatario
         pedido.setNomeDestinatario(checkoutRequest.getNomeDestinatario());
         pedido.setTelefoneDestinatario(checkoutRequest.getTelefoneDestinatario());
-
         pedido.setCpfDestinatario(checkoutRequest.getCpfDestinatario());
         pedido.setObservacoes(checkoutRequest.getObservacoes());
 
-        // --- NOVAS OPÇÕES SALVAS NO PEDIDO ---
         pedido.setComCaixa(checkoutRequest.isComCaixa());
         pedido.setEntregaPrioritaria(checkoutRequest.isEntregaPrioritaria());
-        // --- FIM NOVAS OPÇÕES ---
-
 
         List<ItemPedido> itensPedido = new ArrayList<>();
         BigDecimal subtotal = BigDecimal.ZERO;
@@ -100,8 +99,47 @@ public class PedidoService {
             valorTotal = valorTotal.add(taxaPrioritaria);
         }
 
+        // ============================================================
+        // === IMPLEMENTAÇÃO DO CUPOM (INÍCIO) ===
+        // ============================================================
+        
+        BigDecimal valorDesconto = BigDecimal.ZERO;
+        
+        // Verifica se o usuário enviou algum código
+        if (checkoutRequest.getCupomCodigo() != null && !checkoutRequest.getCupomCodigo().trim().isEmpty()) {
+            try {
+                // Valida o cupom (se não existir ou estiver vencido, lança erro)
+                Cupom cupom = cupomService.validarCupom(checkoutRequest.getCupomCodigo());
+                
+                if (cupom != null) {
+                    // Calcula o valor a ser descontado
+                    valorDesconto = cupomService.calcularDesconto(cupom, valorTotal);
+                    
+                    // Salva no pedido para histórico
+                    pedido.setCupomAplicado(cupom.getCodigo());
+                    pedido.setValorDesconto(valorDesconto);
+                }
+            } catch (RuntimeException e) {
+                // Se o cupom for inválido, lançamos o erro para o frontend avisar o usuário
+                // Se preferir que o pedido continue mesmo com cupom inválido (sem desconto), apague a linha abaixo.
+                throw e; 
+            }
+        } else {
+            pedido.setValorDesconto(BigDecimal.ZERO);
+        }
+
+        // Aplica o desconto
+        valorTotal = valorTotal.subtract(valorDesconto);
+
+        // Segurança: O valor total nunca pode ser negativo
+        if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
+            valorTotal = BigDecimal.ZERO;
+        }
+
         pedido.setValorTotal(valorTotal.setScale(2, RoundingMode.HALF_UP));
-        // --- FIM CÁLCULO DAS TAXAS ---
+        // ============================================================
+        // === IMPLEMENTAÇÃO DO CUPOM (FIM) ===
+        // ============================================================
 
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
@@ -114,7 +152,6 @@ public class PedidoService {
             throw new RuntimeException("Falha crítica ao gerar o código PIX para o pedido. Pedido ID: " + pedidoSalvo.getId());
         }
 
-        // CORREÇÃO APLICADA AQUI: Chama o novo método para Pedido Recebido (Aguardando Pagamento)
         emailService.enviarPedidoRecebido(pedidoSalvo);
 
         return pedidoSalvo;
@@ -135,18 +172,14 @@ public class PedidoService {
                 .orElse(false);
     }
 
-    // --- NOVO MÉTODO: EXCLUIR PEDIDO ---
     public void excluirPedido(Long id, String emailUsuario) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
-        // Segurança: Verifica se o pedido pertence ao usuário logado
         if (!pedido.getUsuario().getEmail().equals(emailUsuario)) {
             throw new RuntimeException("Você não tem permissão para excluir este pedido.");
         }
 
-        // Regra de Negócio: Só pode excluir se estiver PENDENTE
-        // Compara ignorando maiúsculas/minúsculas para garantir
         if (!"PENDENTE".equalsIgnoreCase(pedido.getStatus())) {
             throw new RuntimeException("Apenas pedidos pendentes podem ser cancelados.");
         }
