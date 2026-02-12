@@ -26,6 +26,12 @@ INSERT INTO categorias (id, nome) VALUES
 INSERT INTO _usuario (nome, email, cpf, telefone, senha, role) VALUES 
 ('Vinicius Admin', 'vinicius.biancolini.tds24@gmail.com', '000.000.000-00', '11999999999', '$2a$10$C0iH.HkG8Nh73C57GC7oT.jxzLawZbas/miJPJVP2qhTcpbZI0soq', 'ROLE_ADMIN');
 
+
+-- NEW INJEÇÃO DE CUPONS DE DESCONTO
+INSERT INTO cupons (codigo, desconto, tipo_desconto, data_validade) 
+VALUES ('SANT26', 10.00, 'PERCENTUAL', '2030-12-31');
+
+
 -- ==================================================================================
 -- 5. INSERÇÃO DOS PRODUTOS (EXTENSÕES .WEBP)
 -- ==================================================================================
