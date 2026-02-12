@@ -3,15 +3,6 @@
 -- VERSÃO FINAL ATUALIZADA COM PREÇOS DA LISTA E IMAGENS .WEBP
 -- ==================================================================================
 
--- 1. LIMPEZA DE DADOS
-DELETE FROM itens_pedido;
-DELETE FROM pagamentos;
-DELETE FROM pedido_aviso;
-DELETE FROM pedidos;
-DELETE FROM produtos;
-DELETE FROM categorias;
-DELETE FROM marcas;
-
 -- 2. INSERÇÃO DE MARCAS
 INSERT INTO marcas (id, nome) VALUES 
 (1, 'Nike'), (2, 'Air Jordan'), (3, 'Adidas'), (4, 'Bape'), (5, 'Asics'),
