@@ -20,7 +20,7 @@ public class CupomController {
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Cupom> criarCupom(@RequestBody Cupom cupom) {
-        // Força código em maiúsculo para padronizar (ex: "japa10" vira "JAPA10")
+        // Força o código a ficar em MAIÚSCULO (ex: "japa10" vira "JAPA10")
         cupom.setCodigo(cupom.getCodigo().toUpperCase());
         return ResponseEntity.ok(cupomRepository.save(cupom));
     }
@@ -32,8 +32,7 @@ public class CupomController {
         return ResponseEntity.ok(cupomRepository.findAll());
     }
     
-    // Validar Cupom (Usuário Logado pode consultar)
-    // Esse endpoint será chamado pelo Frontend quando o usuário clicar em "Aplicar"
+    // Validar Cupom (Qualquer usuário logado pode consultar para ver se existe)
     @GetMapping("/validar/{codigo}")
     public ResponseEntity<Cupom> checarCupom(@PathVariable String codigo) {
         return cupomRepository.findByCodigo(codigo.toUpperCase())

@@ -2,7 +2,7 @@ package com.store.BACK.service;
 
 import com.store.BACK.dto.CheckoutRequestDTO;
 import com.store.BACK.dto.ItemPedidoDTO;
-import com.store.BACK.model.Cupom; // NOVO IMPORT
+import com.store.BACK.model.Cupom; // <--- IMPORT NOVO
 import com.store.BACK.model.ItemPedido;
 import com.store.BACK.model.Pedido;
 import com.store.BACK.model.Produto;
@@ -40,7 +40,7 @@ public class PedidoService {
     private PixPayloadService pixPayloadService;
 
     @Autowired
-    private CupomService cupomService; // NOVO: Serviço de Cupom Injetado
+    private CupomService cupomService; // <--- 1. INJEÇÃO DO NOVO SERVICE
 
     @Transactional
     public Pedido criarPedido(CheckoutRequestDTO checkoutRequest, Usuario usuario) {
@@ -84,62 +84,46 @@ public class PedidoService {
 
         pedido.setItens(itensPedido);
 
-        // --- CÁLCULO DAS TAXAS E VALOR FINAL ---
+        // --- CÁLCULO DAS TAXAS ---
         BigDecimal valorTotal = subtotal;
-
         final BigDecimal TAXA = new BigDecimal("0.05");
 
         if (pedido.isComCaixa()) {
-            BigDecimal taxaCaixa = subtotal.multiply(TAXA);
-            valorTotal = valorTotal.add(taxaCaixa);
+            valorTotal = valorTotal.add(subtotal.multiply(TAXA));
         }
 
         if (pedido.isEntregaPrioritaria()) {
-            BigDecimal taxaPrioritaria = subtotal.multiply(TAXA);
-            valorTotal = valorTotal.add(taxaPrioritaria);
+            valorTotal = valorTotal.add(subtotal.multiply(TAXA));
         }
 
-        // ============================================================
-        // === IMPLEMENTAÇÃO DO CUPOM (INÍCIO) ===
-        // ============================================================
-        
+        // --- 2. LÓGICA DE CUPOM (NOVO) ---
         BigDecimal valorDesconto = BigDecimal.ZERO;
-        
-        // Verifica se o usuário enviou algum código
-        if (checkoutRequest.getCupomCodigo() != null && !checkoutRequest.getCupomCodigo().trim().isEmpty()) {
-            try {
-                // Valida o cupom (se não existir ou estiver vencido, lança erro)
-                Cupom cupom = cupomService.validarCupom(checkoutRequest.getCupomCodigo());
+
+        if (checkoutRequest.getCupomCodigo() != null && !checkoutRequest.getCupomCodigo().isEmpty()) {
+            // Tenta validar e calcular
+            Cupom cupom = cupomService.validarCupom(checkoutRequest.getCupomCodigo());
+            
+            if (cupom != null) {
+                valorDesconto = cupomService.calcularDesconto(cupom, valorTotal);
                 
-                if (cupom != null) {
-                    // Calcula o valor a ser descontado
-                    valorDesconto = cupomService.calcularDesconto(cupom, valorTotal);
-                    
-                    // Salva no pedido para histórico
-                    pedido.setCupomAplicado(cupom.getCodigo());
-                    pedido.setValorDesconto(valorDesconto);
-                }
-            } catch (RuntimeException e) {
-                // Se o cupom for inválido, lançamos o erro para o frontend avisar o usuário
-                // Se preferir que o pedido continue mesmo com cupom inválido (sem desconto), apague a linha abaixo.
-                throw e; 
+                // Salva no histórico do pedido
+                pedido.setCupomAplicado(cupom.getCodigo());
+                pedido.setValorDesconto(valorDesconto);
             }
         } else {
             pedido.setValorDesconto(BigDecimal.ZERO);
         }
 
-        // Aplica o desconto
+        // Aplica o desconto no total
         valorTotal = valorTotal.subtract(valorDesconto);
 
-        // Segurança: O valor total nunca pode ser negativo
+        // Garante que não fique negativo
         if (valorTotal.compareTo(BigDecimal.ZERO) < 0) {
             valorTotal = BigDecimal.ZERO;
         }
 
         pedido.setValorTotal(valorTotal.setScale(2, RoundingMode.HALF_UP));
-        // ============================================================
-        // === IMPLEMENTAÇÃO DO CUPOM (FIM) ===
-        // ============================================================
+        // --- FIM LÓGICA DE CUPOM ---
 
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
@@ -149,7 +133,7 @@ public class PedidoService {
             pedidoSalvo.setPixCopiaECola(pixCode);
             pedidoSalvo = pedidoRepository.save(pedidoSalvo);
         } else {
-            throw new RuntimeException("Falha crítica ao gerar o código PIX para o pedido. Pedido ID: " + pedidoSalvo.getId());
+            throw new RuntimeException("Falha crítica ao gerar o código PIX.");
         }
 
         emailService.enviarPedidoRecebido(pedidoSalvo);

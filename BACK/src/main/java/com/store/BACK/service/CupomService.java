@@ -16,13 +16,13 @@ public class CupomService {
     private CupomRepository cupomRepository;
 
     public Cupom validarCupom(String codigo) {
-        // 1. Se não digitou nada, retorna nulo (sem erro, apenas não aplica cupom)
+        // 1. Verifica se o código veio vazio
         if (codigo == null || codigo.trim().isEmpty()) {
             return null;
         }
 
-        // 2. Busca no banco transformando em maiúsculo (ex: "japa10" vira "JAPA10")
-        Optional<Cupom> cupomOpt = cupomRepository.findByCodigo(codigo.toUpperCase());
+        // 2. Busca no banco
+        Optional<Cupom> cupomOpt = cupomRepository.findByCodigo(codigo.toUpperCase()); // Força maiúsculo
 
         if (cupomOpt.isEmpty()) {
             throw new RuntimeException("Cupom inválido: " + codigo);
@@ -30,7 +30,7 @@ public class CupomService {
 
         Cupom cupom = cupomOpt.get();
 
-        // 3. Verifica se já venceu
+        // 3. Verifica a validade (data)
         if (cupom.getDataValidade().isBefore(LocalDate.now())) {
             throw new RuntimeException("Este cupom expirou em: " + cupom.getDataValidade());
         }
@@ -38,13 +38,14 @@ public class CupomService {
         return cupom;
     }
 
+    // Método auxiliar para calcular o valor do desconto
     public BigDecimal calcularDesconto(Cupom cupom, BigDecimal valorTotalPedido) {
         if (cupom == null) return BigDecimal.ZERO;
 
-        BigDecimal desconto;
+        BigDecimal desconto = BigDecimal.ZERO;
 
         if ("PERCENTUAL".equalsIgnoreCase(cupom.getTipoDesconto())) {
-            // Ex: 10% de 200 = 20.00
+            // Ex: 10% de 200 = 20
             BigDecimal porcentagem = cupom.getDesconto().divide(new BigDecimal("100"));
             desconto = valorTotalPedido.multiply(porcentagem);
         } else {
