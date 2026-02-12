@@ -17,10 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Totais e Resumo
     const summarySubtotal = document.getElementById('summary-subtotal');
     const summaryTotal = document.getElementById('summary-total');
+    
+    // Elementos de Taxas
     const taxaCaixaEl = document.getElementById('taxaCaixa');
     const taxaPrioritariaEl = document.getElementById('taxaPrioritaria');
     const rowTaxaCaixa = document.getElementById('row-taxa-caixa');
     const rowTaxaPrioridade = document.getElementById('row-taxa-prioridade');
+    
+    // Elementos de Cupom (NOVOS)
+    const cupomInput = document.getElementById('cupomInput');
+    const btnAplicarCupom = document.getElementById('btnAplicarCupom');
+    const msgCupom = document.getElementById('msgCupom');
+    const rowDesconto = document.getElementById('row-desconto');
+    const valorDescontoEl = document.getElementById('valorDesconto');
+
+    // Prazos
     const prazoCorreiosEl = document.getElementById('prazoCorreios');
     const prazoResidenciaEl = document.getElementById('prazoResidencia');
 
@@ -38,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmaMaioridadeCheckbox = document.getElementById('confirmaMaioridade');
 
     let selectedAddressId = null;
-    let currentSubtotal = 0;
+    let cupomAplicado = null; // Armazena o objeto do cupom se válido
 
     // Definição da URL da API
     const BASE_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
@@ -63,31 +74,66 @@ document.addEventListener('DOMContentLoaded', () => {
         PADRAO: { BR: '15-20 dias', CASA: '23-28 dias' }
     };
 
-    // === FUNÇÃO DE VALIDAÇÃO FORTE DE CPF (MÓDULO 11) ===
+    // === LÓGICA DE CUPOM ===
+    const handleAplicarCupom = async () => {
+        const codigo = cupomInput.value.trim();
+        
+        if (!codigo) {
+            msgCupom.textContent = "Digite um código.";
+            msgCupom.className = "coupon-msg error";
+            return;
+        }
+
+        // Feedback visual de carregamento
+        btnAplicarCupom.disabled = true;
+        btnAplicarCupom.textContent = "...";
+
+        try {
+            // Chama a API para validar
+            const res = await apiClient.get(`/cupons/validar/${codigo}`);
+            const cupom = res.data;
+
+            // Sucesso
+            cupomAplicado = cupom;
+            msgCupom.textContent = `Cupom "${cupom.codigo}" aplicado!`;
+            msgCupom.className = "coupon-msg success";
+            
+            // Atualiza os valores
+            updateSummary();
+
+        } catch (error) {
+            console.error(error);
+            cupomAplicado = null;
+            msgCupom.textContent = "Cupom inválido ou expirado.";
+            msgCupom.className = "coupon-msg error";
+            updateSummary(); // Recalcula sem desconto
+        } finally {
+            btnAplicarCupom.disabled = false;
+            btnAplicarCupom.textContent = "Aplicar";
+        }
+    };
+
+    if(btnAplicarCupom) {
+        btnAplicarCupom.addEventListener('click', handleAplicarCupom);
+    }
+
+    // === VALIDAÇÃO DE CPF (MÓDULO 11) ===
     const validarCPF = (cpf) => {
-        cpf = cpf.replace(/[^\d]+/g, ''); // Limpa pontos e traços
-        
+        cpf = cpf.replace(/[^\d]+/g, ''); 
         if (cpf == '') return false;
+        if (cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) return false;
         
-        // Bloqueia CPFs com todos os números iguais (ex: 111.111.111-11)
-        if (cpf.length != 11 || 
-            /^(\d)\1{10}$/.test(cpf))
-                return false;
-        
-        // Valida 1º Dígito
         let add = 0;
         for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
         let rev = 11 - (add % 11);
         if (rev == 10 || rev == 11) rev = 0;
         if (rev != parseInt(cpf.charAt(9))) return false;
         
-        // Valida 2º Dígito
         add = 0;
         for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
         rev = 11 - (add % 11);
         if (rev == 10 || rev == 11) rev = 0;
         if (rev != parseInt(cpf.charAt(10))) return false;
-        
         return true;
     };
 
@@ -95,8 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateSummary = () => {
         const cart = getCart();
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
         let total = subtotal;
+        let valorDesconto = 0;
 
+        // 1. Aplica Taxas (Caixa / Prioridade)
         const comCaixa = document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'true';
         if (comCaixa) {
             const val = subtotal * 0.05;
@@ -117,14 +166,37 @@ document.addEventListener('DOMContentLoaded', () => {
             rowTaxaPrioridade.classList.add('hidden');
         }
 
+        // 2. Aplica Desconto do Cupom (Se houver)
+        if (cupomAplicado) {
+            // Recalcula o total parcial com as taxas antes de aplicar desconto?
+            // Geralmente cupom aplica sobre o valor total acumulado ou subtotal.
+            // Aqui vamos aplicar sobre o valor acumulado até agora (Subtotal + Taxas).
+            
+            if (cupomAplicado.tipoDesconto === 'PERCENTUAL') {
+                valorDesconto = total * (cupomAplicado.desconto / 100);
+            } else {
+                valorDesconto = cupomAplicado.desconto;
+            }
+
+            // Exibe o desconto
+            valorDescontoEl.textContent = `- R$ ${valorDesconto.toFixed(2).replace('.', ',')}`;
+            rowDesconto.classList.remove('hidden');
+            
+            // Subtrai do total
+            total -= valorDesconto;
+            if (total < 0) total = 0; // Proteção
+            
+        } else {
+            rowDesconto.classList.add('hidden');
+        }
+
+        // 3. Atualiza Totais na Tela
         summarySubtotal.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
         summaryTotal.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
         
         const p = prioritaria ? PRAZO.PRIORITARIA : PRAZO.PADRAO;
         prazoCorreiosEl.textContent = `Brasil: ${p.BR}`;
         prazoResidenciaEl.textContent = `Sua Casa: ${p.CASA}`;
-
-        currentSubtotal = subtotal;
     };
 
     const renderCart = () => {
@@ -151,65 +223,59 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // === MÁSCARAS DE INPUT ===
-    
     const mascaraCPF = (value) => {
-        return value
-            .replace(/\D/g, '') 
-            .replace(/(\d{3})(\d)/, '$1.$2') 
-            .replace(/(\d{3})(\d)/, '$1.$2') 
-            .replace(/(\d{3})(\d{1,2})/, '$1-$2') 
+        return value.replace(/\D/g, '')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d{1,2})/, '$1-$2')
             .replace(/(-\d{2})\d+?$/, '$1'); 
     };
 
     const mascaraTelefone = (value) => {
-        return value
-            .replace(/\D/g, '') 
-            .replace(/(\d{2})(\d)/, '($1) $2') 
-            .replace(/(\d{5})(\d)/, '$1-$2') 
+        return value.replace(/\D/g, '')
+            .replace(/(\d{2})(\d)/, '($1) $2')
+            .replace(/(\d{5})(\d)/, '$1-$2')
             .replace(/(-\d{4})\d+?$/, '$1'); 
     };
 
-    // Eventos de Input (Formatação enquanto digita)
     if (cpfEl) {
-        cpfEl.addEventListener('input', (e) => {
-            e.target.value = mascaraCPF(e.target.value);
-        });
-
-        // CORREÇÃO DO BUG "FUNDO BRANCO": 
-        // Agora usamos cores escuras transparentes para não sumir com o texto branco
+        cpfEl.addEventListener('input', (e) => { e.target.value = mascaraCPF(e.target.value); });
         cpfEl.addEventListener('blur', (e) => {
             const valorLimpo = e.target.value.replace(/\D/g, '');
             if (valorLimpo.length === 11) {
                 if (validarCPF(valorLimpo)) {
-                    // CPF Válido: Borda Verde, Fundo Verde Escuro Transparente
                     cpfEl.style.borderColor = '#28a745';
                     cpfEl.style.backgroundColor = 'rgba(40, 167, 69, 0.1)'; 
                 } else {
-                    // CPF Inválido: Borda Vermelha, Fundo Vermelho Escuro Transparente
                     cpfEl.style.borderColor = '#dc3545';
                     cpfEl.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
                 }
             } else {
-                // Reseta se estiver incompleto
                 cpfEl.style.borderColor = '';
                 cpfEl.style.backgroundColor = '';
             }
         });
     }
 
-    if (telefoneEl) {
-        telefoneEl.addEventListener('input', (e) => {
-            e.target.value = mascaraTelefone(e.target.value);
-            validatePhone(); 
-        });
-    }
+    if (telefoneEl) telefoneEl.addEventListener('input', (e) => { e.target.value = mascaraTelefone(e.target.value); validatePhone(); });
+    if (confirmTelEl) confirmTelEl.addEventListener('input', (e) => { e.target.value = mascaraTelefone(e.target.value); validatePhone(); });
 
-    if (confirmTelEl) {
-        confirmTelEl.addEventListener('input', (e) => {
-            e.target.value = mascaraTelefone(e.target.value);
-            validatePhone(); 
-        });
-    }
+    const validatePhone = () => {
+        const msg = document.getElementById('phone-match-message');
+        const t1 = telefoneEl.value.replace(/\D/g, '');
+        const t2 = confirmTelEl.value.replace(/\D/g, '');
+        if(t1 && t2) {
+            if(t1 === t2) {
+                msg.textContent = "Ok!";
+                msg.style.color = "var(--success)"; 
+            } else {
+                msg.textContent = "Números não conferem";
+                msg.style.color = "#ff4444"; 
+            }
+        } else {
+            msg.textContent = "";
+        }
+    };
 
     const loadAddresses = async () => {
         try {
@@ -238,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `).join('') + `<a href="../../perfil/HTML/perfil.html" style="color:var(--primary); font-size:0.9rem; margin-top:10px; display:block;">Gerenciar Endereços</a>`;
 
             const radios = addressSelectionContainer.querySelectorAll('input[name="selectedAddress"]');
-            selectedAddressId = radios[0].value;
+            selectedAddressId = radios[0]?.value;
             radios.forEach(r => r.addEventListener('change', e => selectedAddressId = e.target.value));
 
         } catch (err) {
@@ -257,24 +323,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const confTelLimpo = confirmTelEl.value.replace(/\D/g, '');
         const cpfLimpo = cpfEl.value.replace(/\D/g, '');
 
-        // 1. Validação de Telefones
         if (telLimpo !== confTelLimpo) return alert('Os telefones não conferem.');
         if (telLimpo.length < 10) return alert('Telefone inválido.');
 
-        // 2. Validação Rigorosa de CPF
         if (!validarCPF(cpfLimpo)) {
             cpfEl.style.borderColor = '#dc3545';
-            cpfEl.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
             cpfEl.focus();
             return alert('O CPF informado é inválido. Verifique os números.');
         }
 
-        // 3. Validação da Declaração de Maioridade
         if (confirmaMaioridadeCheckbox && !confirmaMaioridadeCheckbox.checked) {
             return alert('Você deve declarar que é maior de 18 anos para continuar.');
         }
         
-        // 4. Validação da Confirmação de Endereço
         if (!confirmaEnderecoCheckbox.checked) {
             return alert('Por favor, confirme se o endereço está correto.');
         }
@@ -289,7 +350,9 @@ document.addEventListener('DOMContentLoaded', () => {
             observacoes: obsEl.value,
             comCaixa: document.querySelector('input[name="opcaoCaixa"]:checked')?.value === 'true',
             entregaPrioritaria: document.querySelector('input[name="opcaoPrioritaria"]:checked')?.value === 'true',
-            metodoPagamento: "PIX"
+            metodoPagamento: "PIX",
+            // ENVIA O CUPOM SE TIVER SIDO APLICADO
+            cupomCodigo: cupomAplicado ? cupomAplicado.codigo : null 
         };
 
         try {
@@ -318,24 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkoutButton.addEventListener('click', handleCheckout);
     
-    const validatePhone = () => {
-        const msg = document.getElementById('phone-match-message');
-        const t1 = telefoneEl.value.replace(/\D/g, '');
-        const t2 = confirmTelEl.value.replace(/\D/g, '');
-
-        if(t1 && t2) {
-            if(t1 === t2) {
-                msg.textContent = "Ok!";
-                msg.style.color = "var(--success)"; 
-            } else {
-                msg.textContent = "Números não conferem";
-                msg.style.color = "#ff4444"; 
-            }
-        } else {
-            msg.textContent = "";
-        }
-    };
-
     loadAddresses();
     renderCart();
 });

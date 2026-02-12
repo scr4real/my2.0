@@ -177,11 +177,25 @@
                         
                         <div class="summary-items-list" id="cart-items-container"></div>
                         
+                        <div class="coupon-section">
+                            <div class="coupon-input-group">
+                                <input type="text" id="cupomInput" placeholder="Cupom de desconto">
+                                <button type="button" id="btnAplicarCupom">Aplicar</button>
+                            </div>
+                            <p id="msgCupom" class="coupon-msg"></p>
+                        </div>
+
                         <div class="summary-totals">
                             <div class="total-row">
                                 <span>Subtotal</span>
                                 <span id="summary-subtotal">R$ 0,00</span>
                             </div>
+
+                            <div class="total-row option-row hidden" id="row-desconto" style="color: #28a745;">
+                                <span>Desconto</span>
+                                <span id="valorDesconto">- R$ 0,00</span>
+                            </div>
+
                             <div class="total-row option-row hidden" id="row-taxa-caixa">
                                 <span>Caixa Original (+5%)</span>
                                 <span id="taxaCaixa">R$ 0,00</span>
@@ -190,6 +204,7 @@
                                 <span>Entrega Prioritária (+5%)</span>
                                 <span id="taxaPrioritaria">R$ 0,00</span>
                             </div>
+                            
                             <div class="total-row final-total">
                                 <span>Total</span>
                                 <span id="summary-total">R$ 0,00</span>

@@ -424,3 +424,65 @@ input:focus, textarea:focus {
     }
 }
 
+/* === ESTILOS DO CUPOM DE DESCONTO === */
+.coupon-section {
+    margin: 15px 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.coupon-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+#cupomInput {
+    flex: 1; /* Ocupa o espaço restante */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#cupomInput:focus {
+    border-color: var(--primary);
+}
+
+#btnAplicarCupom {
+    padding: 0 15px;
+    background-color: #333; /* Cor escura discreta */
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+
+#btnAplicarCupom:hover {
+    background-color: var(--primary); /* Fica roxo no hover */
+}
+
+/* Mensagens de Sucesso/Erro */
+.coupon-msg {
+    font-size: 0.85rem;
+    margin-top: 5px;
+    min-height: 20px; /* Evita pulo de layout */
+    font-weight: 500;
+}
+
+.coupon-msg.success {
+    color: #28a745; /* Verde */
+}
+
+.coupon-msg.error {
+    color: #dc3545; /* Vermelho */
+}
+
+/* Animação para aparecer a linha de desconto suavemente */
+.option-row {
+    transition: all 0.3s ease;
+}
