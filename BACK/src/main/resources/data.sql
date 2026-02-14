@@ -13,7 +13,7 @@ INSERT IGNORE INTO marcas (id, nome) VALUES
 INSERT IGNORE INTO categorias (id, nome) VALUES 
 (1, 'Air Max 95'), (2, 'Air Max DN'), (3, 'Air Max TN'), (4, 'Dunk'), (5, 'Jordan'), 
 (6, 'Outros'), (7, 'Acessórios'), (8, 'Casual'), (9, 'Corrida'), (10, 'Botas'), 
-(11, 'Chuteiras'), (12, 'Sandálias'), (13, 'Adidas Campus'), (14, 'Air Force'),      
+(11, 'Chuteiras'), (12, 'Sandálias'), (13, 'Adidas Campus'), (14, 'Air Force'),
 (15, 'Air Jordan 11'), (16, 'Air Max 97'), (17, 'Air Max 90'), (18, 'Asics Gel NYC'),
 (19, 'Asics Kayano 14'), (20, 'Bape Sta'), (21, 'Air Force CPFM'), (22, 'Crocs Bape'),
 (23, 'Crocs McQueen'), (24, 'Dior B30'), (26, 'Air Max DN8'), (27, 'Air Max Drift'),
