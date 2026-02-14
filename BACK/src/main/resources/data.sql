@@ -71,7 +71,7 @@ INSERT IGNORE INTO produtos (nome, descricao, imagem_url, preco, categoria_id, e
 ('Nike Air Max 95 Dark Grey Black', 'Nike Air Max 95 Dark Grey Black\n\nDegradê escuro. Discreto, não chama atenção, mas quem sabe, sabe. Perfeito pro dia a dia.', '/uploads/95/31.webp', 351.00, 1, 10, 1, 'AM95'),
 ('Nike Air Max 95 Grey Volt', 'Nike Air Max 95 Grey Volt\n\nUma variação moderna do Neon OG. Um pouco mais clara, mas com a mesma energia vibrante.', '/uploads/95/32.webp', 351.00, 1, 10, 1, 'AM95'),
 ('Nike Air Max 95 Navy Blue', 'Nike Air Max 95 Navy Blue\n\nAzul marinho total. Sóbrio e elegante. Fica incrível com jeans e calças escuras.', '/uploads/95/33.webp', 351.00, 1, 10, 1, 'AM95'),
-('Nike Air Max 95 Triple White', 'Nike Air Max 95 Triple White\n\nDetalhes full white. Um visual clean e moderno. Ideal para quem prefere o estilo minimalista.', '/uploads/95/34.webp', 351.00, 1, 10, 1, 'AM95');
+('Nike Air Max 95 Triple White', 'Nike Air Max 95 Triple White\n\nDetalhes full white. Um visual clean e moderno. Ideal para quem prefere o estilo minimalista.', '/uploads/95/34.webp', 351.00, 1, 10, 1, 'AM95'),
 ('Nike Air Max 95 Pink Foam', 'Nike Air Max 95 Pink Foam\n\nRosa suave com detalhes em branco. Um visual delicado e elegante. Ideal para quem prefere o estilo minimalista.', '/uploads/95/35.webp', 351.00, 1, 10, 1, 'AM95');
 
 
