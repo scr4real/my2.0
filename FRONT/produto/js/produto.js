@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatPrice = (price) => `R$ ${price.toFixed(2).replace('.', ',')}`;
 
     const getImageUrl = (path) => {
-        if (!path) return '/assets/images/placeholder-product.jpg';
+        if (!path) return '/FRONT/assets/images/placeholder.jpg';
         if (path.startsWith('http')) return path;
         const cleanPath = path.startsWith('/') ? path.substring(1) : path;
         return `${BASE_URL}/${cleanPath}`;
@@ -87,6 +87,20 @@ document.addEventListener('DOMContentLoaded', () => {
             variationsHTML = `<div class="variations-selector"><h3>Outras Cores:</h3><div class="variations-list">${variationsList}</div></div>`;
         }
 
+        // --- LÓGICA DE TAMANHOS (TÊNIS vs ROUPAS) ---
+        const catId = product.categoria ? product.categoria.id : 0;
+        let sizes = [];
+
+        // SE o ID for 45 ou maior, é ROUPA. Senão, é TÊNIS.
+        if (catId >= 45) {
+            sizes = ['P', 'M', 'G', 'GG', 'XG'];
+        } else {
+            sizes = ['38', '39', '40', '41', '42', '43'];
+        }
+
+        const sizeButtonsHTML = sizes.map(s => `<button class="size-btn">${s}</button>`).join('');
+        // ----------------------------------------------
+
         const productHTML = `
             <div class="product-detail-grid">
                 <div class="product-images">
@@ -103,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="product-info">
                     <div class="breadcrumbs">
-                        <a href="/">Início</a> / <span>${product.nome}</span>
+                        <a href="/">Início</a> / <a href="/FRONT/catalogo/HTML/catalogo.html">Catálogo</a> / <span>${product.nome}</span>
                     </div>
                     <h1>${product.nome}</h1>
 
@@ -125,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="size-selector">
                         <h3>Tamanho:</h3>
                         <div class="size-options">
-                            ${['38','39','40','41','42','43'].map(s => `<button class="size-btn">${s}</button>`).join('')}
+                            ${sizeButtonsHTML}
                         </div>
                     </div>
 
@@ -135,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             <div class="product-description">
                 <h2>Descrição</h2>
-                <p>${product.descricao || 'Produto original com garantia de qualidade.'}</p>
+                <p>${product.descricao || 'Produto original com garantia de qualidade Japa Universe.'}</p>
             </div>
         `;
         productDetailContainer.innerHTML = productHTML;
@@ -163,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- RENDERIZA CARD RELACIONADO (ESTILO PREMIUM IGUAL CATÁLOGO) ---
+    // --- RENDERIZA CARD RELACIONADO ---
     const renderRelatedProducts = (products) => {
         const grid = document.getElementById('related-products-grid');
         const section = document.querySelector('.related-products-section');
@@ -180,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const imageUrl = getImageUrl(product.imagemUrl);
             const productUrl = `/FRONT/produto/HTML/produto.html?id=${product.id}`;
 
-            // OTIMIZAÇÃO: As primeiras 4 imagens relacionadas carregam mais rápido
             const isPriority = index < 4;
             const loadingMode = isPriority ? 'eager' : 'lazy';
 
@@ -213,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if(window.relatedSwiper) window.relatedSwiper.destroy(true, true);
         window.relatedSwiper = new Swiper('.related-products-swiper', {
-            slidesPerView: "auto", // Importante para responsividade
+            slidesPerView: "auto",
             spaceBetween: 20,
             navigation: {
                 nextEl: '.swiper-button-next',
@@ -259,9 +272,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const originalText = buyButton.textContent;
                     buyButton.textContent = "Adicionado!";
                     buyButton.style.background = "#00e676";
+                    buyButton.style.color = "#fff";
+                    buyButton.style.border = "none";
+                    
                     setTimeout(() => {
                         buyButton.textContent = originalText;
                         buyButton.style.background = "";
+                        buyButton.style.color = "";
+                        buyButton.style.border = "";
                     }, 2000);
                 } else {
                     console.error("Função addToCart não encontrada.");
@@ -270,8 +288,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    
     fetchProductData();
 });
-
-

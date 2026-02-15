@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Catálogo exclusivo de sneakers Japa Universe. Tênis limited edition, lançamentos e clássicos. Frete Grátis para todo Brasil.">
-    <title>Catálogo de Tênis | Japa Universe</title>
-
-    <meta property="og:title" content="Catálogo de Tênis | Japa Universe">
-    <meta property="og:description" content="Explore sneakers exclusivos e limited edition. Encontre seu par dos sonhos na Japa Universe.">
+    <title>Catálogo | Japa Universe</title> <meta property="og:title" content="Catálogo | Japa Universe">
+    <meta property="og:description" content="Explore sneakers exclusivos e streetwear limited edition.">
     <meta property="og:type" content="website">
 
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" as="script" crossorigin>
@@ -27,16 +25,25 @@
         <section class="catalog-hero">
             <div class="container">
                 <h1 class="page-title">CATÁLOGO EXCLUSIVO</h1>
-                <p class="page-subtitle">Sneakers limited edition e lançamentos</p>
+                <p class="page-subtitle">Sneakers limited edition e Streetwear</p>
             </div>
         </section>
 
         <section class="catalog-section section-padding">
             <div class="container">
+                
+                <div class="catalog-type-tabs">
+                    <button class="type-tab active" data-type="sneakers">
+                        <i class="fas fa-shoe-prints"></i> TÊNIS
+                    </button>
+                    <button class="type-tab" data-type="clothing">
+                        <i class="fas fa-tshirt"></i> ROUPAS
+                    </button>
+                </div>
                 <div class="catalog-controls">
                     <div class="search-wrapper">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Buscar por modelo, marca...">
+                        <input type="text" id="searchInput" placeholder="Buscar modelo, marca...">
                         <button class="search-clear" id="searchClear" style="display: none;">
                             <i class="fas fa-times"></i>
                         </button>
@@ -51,14 +58,8 @@
                                 <option value="Adidas">Adidas</option>
                                 <option value="Bape">Bape</option>
                                 <option value="Asics">Asics</option>
-                            </select>
-
-                            <select id="categoryFilter" class="filter-select">
-                                <option value="all">Todas Categorias</option>
-                                <option value="lifestyle">Lifestyle</option>
-                                <option value="running">Running</option>
-                                <option value="basketball">Basquete</option>
-                                <option value="skateboarding">Skate</option>
+                                <option value="Corteiz">Corteiz</option>
+                                <option value="Trapstar">Trapstar</option>
                             </select>
 
                             <select id="priceFilter" class="filter-select">
@@ -93,21 +94,20 @@
 
                 <div class="loading-state" id="loadingState">
                     <div class="loading-spinner"></div>
-                    <p>Carregando produtos...</p>
+                    <p>Carregando catálogo...</p>
                 </div>
 
                 <div class="products-grid" id="products-grid" data-view="grid"></div>
 
                 <div class="empty-state" id="emptyState" style="display: none;">
                     <i class="fas fa-search"></i>
-                    <h3>Nenhum produto encontrado</h3>
-                    <p>Tente ajustar os filtros ou termos da busca</p>
+                    <h3>Nenhum item encontrado</h3>
+                    <p>Tente mudar a aba (Tênis/Roupas) ou ajustar os filtros.</p>
                     <button class="btn btn-outline" id="clearFiltersBtn">Limpar Filtros</button>
                 </div>
 
                 <div class="catalog-footer">
-                    <div id="pagination-controls" class="pagination-container">
-                        </div>
+                    <div id="pagination-controls" class="pagination-container"></div>
                 </div>
             </div>
         </section>
@@ -156,8 +156,7 @@
             <button class="close-button" id="closeQuickViewBtn" aria-label="Fechar visualização rápida">
                 <i class="fas fa-times"></i>
             </button>
-            <div class="quickview-content" id="quickViewContent">
-                </div>
+            <div class="quickview-content" id="quickViewContent"></div>
         </div>
     </div>
 
@@ -168,8 +167,7 @@
                 <h3>Seu Carrinho</h3>
                 <button class="close-modal" id="closeCartBtn" aria-label="Fechar carrinho">&times;</button>
             </div>
-            <div class="modal-body" id="cartItemsContainer">
-                </div>
+            <div class="modal-body" id="cartItemsContainer"></div>
             <div class="modal-footer">
                 <div class="cart-subtotal">
                     <span>Subtotal</span>

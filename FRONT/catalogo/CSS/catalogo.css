@@ -684,3 +684,49 @@
 
 .load-more-btn { min-width: 200px; margin-top: 2rem; background: transparent; border: 1px solid #444; color: #fff; padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
 .load-more-btn:hover { border-color: var(--brand-orange); color: var(--brand-orange); }
+
+
+.catalog-type-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0;
+}
+
+.type-tab {
+    background: none;
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: #aaa;
+    cursor: pointer;
+    padding: 10px 20px;
+    position: relative;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.type-tab:hover {
+    color: #ff7a00;
+}
+
+.type-tab.active {
+    color: #000;
+}
+
+.type-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; /* Alinha com a borda do container */
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #ff7a00;
+}
+
+.type-tab i {
+    margin-right: 8px;
+    font-size: 0.9em;
+}

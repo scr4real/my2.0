@@ -1,6 +1,5 @@
 /**
- * JAPA UNIVERSE - CATALOGO JS (ORDENAÇÃO POR CATEGORIA)
- * Foco: Agrupar produtos por tipo (95, TN, Jordan, etc.)
+ * JAPA UNIVERSE - CATALOGO JS (COM ABAS TÊNIS/ROUPAS)
  */
 
 (function() {
@@ -14,6 +13,9 @@
     let filteredProducts = [];
     let currentPage = 1;
     const itemsPerPage = 12;
+    
+    // ESTADO ATUAL: 'sneakers' (Tênis) ou 'clothing' (Roupas)
+    let currentTab = 'sneakers'; 
 
     const grid = document.getElementById('products-grid');
 
@@ -35,7 +37,13 @@
             const toShow = filteredProducts.slice(start, start + itemsPerPage);
 
             if (toShow.length === 0) {
-                grid.innerHTML = '<div class="empty-state">Nenhum tênis encontrado.</div>';
+                // Mensagem personalizada dependendo da aba
+                const itemType = currentTab === 'sneakers' ? 'tênis' : 'roupas';
+                grid.innerHTML = `<div class="empty-state">Nenhum item de ${itemType} encontrado.</div>`;
+                
+                // Limpa a paginação
+                const container = document.getElementById('pagination-controls');
+                if(container) container.innerHTML = '';
                 return;
             }
 
@@ -87,17 +95,12 @@
     };
 
     const Logic = {
-        // Função de ordenação por Categoria (Nome)
         sortProducts: (list) => {
             return list.sort((a, b) => {
-                // Acede ao nome da categoria (ex: "Air Max 95")
                 const catA = (a.categoria?.nome || "").toString().toUpperCase();
                 const catB = (b.categoria?.nome || "").toString().toUpperCase();
-                
                 if (catA < catB) return -1;
                 if (catA > catB) return 1;
-                
-                // Se for a mesma categoria, ordena pelo nome do produto
                 return a.nome.localeCompare(b.nome);
             });
         },
@@ -105,17 +108,48 @@
         filter: () => {
             const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase();
             const brand = document.getElementById('brandFilter')?.value || 'all';
+            const categoryFilter = document.getElementById('categoryFilter')?.value || 'all'; // Filtro dropdown
 
             filteredProducts = allProducts.filter(p => {
+                // 1. Filtro de Texto e Marca e Categoria (Dropdown)
                 const matchesSearch = p.nome.toLowerCase().includes(searchTerm);
                 const matchesBrand = brand === 'all' || (p.marca?.nome === brand);
-                return matchesSearch && matchesBrand;
+                
+                // 2. FILTRO DE TIPO (ABAS) - AQUI ESTÁ A LÓGICA DE ID
+                // Tênis: ID < 45
+                // Roupas: ID >= 45
+                const catId = p.categoria?.id || 0;
+                let matchesType = false;
+
+                if (currentTab === 'sneakers') {
+                    matchesType = catId < 45;
+                } else if (currentTab === 'clothing') {
+                    matchesType = catId >= 45;
+                }
+
+                return matchesSearch && matchesBrand && matchesType;
             });
 
             Logic.sortProducts(filteredProducts);
-
             currentPage = 1;
             Render.products();
+        },
+
+        // Função para mudar a aba (Chamada ao clicar nos botões)
+        switchTab: (type) => {
+            currentTab = type;
+            
+            // Atualiza visual dos botões
+            document.querySelectorAll('.type-tab').forEach(btn => {
+                if (btn.dataset.type === type) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Re-aplica filtros para mostrar os produtos certos
+            Logic.filter();
         }
     };
 
@@ -124,8 +158,8 @@
         if (cached) {
             allProducts = JSON.parse(cached);
             Logic.sortProducts(allProducts);
-            filteredProducts = [...allProducts];
-            Render.products();
+            // Aplica filtro inicial (Tênis por padrão)
+            Logic.filter();
         }
 
         const loader = document.getElementById('loadingState');
@@ -135,13 +169,11 @@
             const res = await axios.get(API_URL);
             const freshData = res.data;
             
-            Logic.sortProducts(freshData);
-
             if (JSON.stringify(freshData) !== cached) {
                 allProducts = freshData;
-                filteredProducts = [...allProducts];
+                Logic.sortProducts(allProducts);
                 localStorage.setItem(CACHE_KEY, JSON.stringify(freshData));
-                Render.products();
+                Logic.filter();
             }
         } catch (err) {
             console.error("Erro API:", err);
@@ -155,12 +187,22 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    // Event Listeners
     document.getElementById('searchInput')?.addEventListener('input', () => {
         clearTimeout(window.searchTimer);
         window.searchTimer = setTimeout(Logic.filter, 300);
     });
 
     document.getElementById('brandFilter')?.addEventListener('change', Logic.filter);
+    document.getElementById('categoryFilter')?.addEventListener('change', Logic.filter); // Adicionado listener de categoria
+
+    // EVENTOS DOS BOTÕES DE ABA (TÊNIS / ROUPAS)
+    document.querySelectorAll('.type-tab').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const type = e.currentTarget.dataset.type; // 'sneakers' ou 'clothing'
+            Logic.switchTab(type);
+        });
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', Init);
