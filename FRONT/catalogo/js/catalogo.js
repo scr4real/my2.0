@@ -1,5 +1,5 @@
 /**
- * JAPA UNIVERSE - CATALOGO JS (COM ABAS TÊNIS/ROUPAS)
+ * JAPA UNIVERSE - CATALOGO JS (COM FILTRO DINÂMICO DE MARCAS)
  */
 
 (function() {
@@ -37,11 +37,8 @@
             const toShow = filteredProducts.slice(start, start + itemsPerPage);
 
             if (toShow.length === 0) {
-                // Mensagem personalizada dependendo da aba
                 const itemType = currentTab === 'sneakers' ? 'tênis' : 'roupas';
                 grid.innerHTML = `<div class="empty-state">Nenhum item de ${itemType} encontrado.</div>`;
-                
-                // Limpa a paginação
                 const container = document.getElementById('pagination-controls');
                 if(container) container.innerHTML = '';
                 return;
@@ -91,6 +88,29 @@
             }
             html += `</div>`;
             container.innerHTML = html;
+        },
+
+        // --- NOVA FUNÇÃO: ATUALIZA O DROPDOWN DE MARCAS ---
+        updateBrandOptions: (type) => {
+            const select = document.getElementById('brandFilter');
+            if (!select) return;
+
+            // 1. Filtra os produtos que pertencem à aba atual (Tênis ou Roupas)
+            const relevantProducts = allProducts.filter(p => {
+                const catId = p.categoria?.id || 0;
+                return type === 'sneakers' ? catId < 45 : catId >= 45;
+            });
+
+            // 2. Extrai apenas as marcas desses produtos (sem repetição)
+            const uniqueBrands = [...new Set(relevantProducts.map(p => p.marca?.nome).filter(Boolean))].sort();
+
+            // 3. Reconstrói o HTML do Select
+            let html = `<option value="all">Todas as Marcas</option>`;
+            uniqueBrands.forEach(brand => {
+                html += `<option value="${brand}">${brand}</option>`;
+            });
+
+            select.innerHTML = html;
         }
     };
 
@@ -108,16 +128,13 @@
         filter: () => {
             const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase();
             const brand = document.getElementById('brandFilter')?.value || 'all';
-            const categoryFilter = document.getElementById('categoryFilter')?.value || 'all'; // Filtro dropdown
+            const categoryFilter = document.getElementById('categoryFilter')?.value || 'all';
 
             filteredProducts = allProducts.filter(p => {
-                // 1. Filtro de Texto e Marca e Categoria (Dropdown)
                 const matchesSearch = p.nome.toLowerCase().includes(searchTerm);
                 const matchesBrand = brand === 'all' || (p.marca?.nome === brand);
                 
-                // 2. FILTRO DE TIPO (ABAS) - AQUI ESTÁ A LÓGICA DE ID
-                // Tênis: ID < 45
-                // Roupas: ID >= 45
+                // FILTRO DE TIPO (ABAS)
                 const catId = p.categoria?.id || 0;
                 let matchesType = false;
 
@@ -135,11 +152,10 @@
             Render.products();
         },
 
-        // Função para mudar a aba (Chamada ao clicar nos botões)
         switchTab: (type) => {
             currentTab = type;
             
-            // Atualiza visual dos botões
+            // Atualiza botões
             document.querySelectorAll('.type-tab').forEach(btn => {
                 if (btn.dataset.type === type) {
                     btn.classList.add('active');
@@ -148,7 +164,14 @@
                 }
             });
 
-            // Re-aplica filtros para mostrar os produtos certos
+            // 1. Atualiza as opções de Marcas disponíveis para essa aba
+            Render.updateBrandOptions(type);
+            
+            // 2. Reseta o filtro de marca para 'all' para evitar bugar o filtro
+            const brandSelect = document.getElementById('brandFilter');
+            if(brandSelect) brandSelect.value = 'all';
+
+            // 3. Aplica os filtros
             Logic.filter();
         }
     };
@@ -158,7 +181,9 @@
         if (cached) {
             allProducts = JSON.parse(cached);
             Logic.sortProducts(allProducts);
-            // Aplica filtro inicial (Tênis por padrão)
+            
+            // Inicializa as marcas corretas da aba padrão (Sneakers)
+            Render.updateBrandOptions(currentTab);
             Logic.filter();
         }
 
@@ -173,6 +198,9 @@
                 allProducts = freshData;
                 Logic.sortProducts(allProducts);
                 localStorage.setItem(CACHE_KEY, JSON.stringify(freshData));
+                
+                // Atualiza marcas e lista com dados frescos
+                Render.updateBrandOptions(currentTab);
                 Logic.filter();
             }
         } catch (err) {
@@ -187,19 +215,17 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // Event Listeners
     document.getElementById('searchInput')?.addEventListener('input', () => {
         clearTimeout(window.searchTimer);
         window.searchTimer = setTimeout(Logic.filter, 300);
     });
 
     document.getElementById('brandFilter')?.addEventListener('change', Logic.filter);
-    document.getElementById('categoryFilter')?.addEventListener('change', Logic.filter); // Adicionado listener de categoria
+    document.getElementById('categoryFilter')?.addEventListener('change', Logic.filter);
 
-    // EVENTOS DOS BOTÕES DE ABA (TÊNIS / ROUPAS)
     document.querySelectorAll('.type-tab').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const type = e.currentTarget.dataset.type; // 'sneakers' ou 'clothing'
+            const type = e.currentTarget.dataset.type;
             Logic.switchTab(type);
         });
     });
