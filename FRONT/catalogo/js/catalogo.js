@@ -1,5 +1,5 @@
 /**
- * JAPA UNIVERSE - CATALOGO JS (COM FILTRO DINÂMICO DE MARCAS)
+ * JAPA UNIVERSE - CATALOGO JS (COM AVISO "EM BREVE" PARA ROUPAS)
  */
 
 (function() {
@@ -36,13 +36,34 @@
             const start = (currentPage - 1) * itemsPerPage;
             const toShow = filteredProducts.slice(start, start + itemsPerPage);
 
+            // --- LÓGICA DE ESTADO VAZIO / EM BREVE ---
             if (toShow.length === 0) {
-                const itemType = currentTab === 'sneakers' ? 'tênis' : 'roupas';
-                grid.innerHTML = `<div class="empty-state">Nenhum item de ${itemType} encontrado.</div>`;
+                // Limpa a paginação
                 const container = document.getElementById('pagination-controls');
                 if(container) container.innerHTML = '';
+
+                // Se for a aba ROUPAS, mostra "EM BREVE"
+                if (currentTab === 'clothing') {
+                    grid.innerHTML = `
+                        <div class="empty-state coming-soon-state">
+                            <i class="fas fa-tshirt"></i>
+                            <h3>EM BREVE</h3>
+                            <p>Estamos preparando uma coleção exclusiva de Streetwear.</p>
+                            <p style="color: #FF6600; font-weight: 600; margin-top: 10px;">Fique ligado nas novidades!</p>
+                        </div>`;
+                } else {
+                    // Se for TÊNIS (ou filtro sem resultado), mostra mensagem padrão
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <h3>Nenhum tênis encontrado</h3>
+                            <p>Tente ajustar os filtros da busca.</p>
+                            <button class="btn btn-outline" onclick="location.reload()">Limpar Filtros</button>
+                        </div>`;
+                }
                 return;
             }
+            // ------------------------------------------
 
             let html = '';
             toShow.forEach((p, idx) => {
@@ -90,21 +111,17 @@
             container.innerHTML = html;
         },
 
-        // --- NOVA FUNÇÃO: ATUALIZA O DROPDOWN DE MARCAS ---
         updateBrandOptions: (type) => {
             const select = document.getElementById('brandFilter');
             if (!select) return;
 
-            // 1. Filtra os produtos que pertencem à aba atual (Tênis ou Roupas)
             const relevantProducts = allProducts.filter(p => {
                 const catId = p.categoria?.id || 0;
                 return type === 'sneakers' ? catId < 45 : catId >= 45;
             });
 
-            // 2. Extrai apenas as marcas desses produtos (sem repetição)
             const uniqueBrands = [...new Set(relevantProducts.map(p => p.marca?.nome).filter(Boolean))].sort();
 
-            // 3. Reconstrói o HTML do Select
             let html = `<option value="all">Todas as Marcas</option>`;
             uniqueBrands.forEach(brand => {
                 html += `<option value="${brand}">${brand}</option>`;
@@ -134,7 +151,6 @@
                 const matchesSearch = p.nome.toLowerCase().includes(searchTerm);
                 const matchesBrand = brand === 'all' || (p.marca?.nome === brand);
                 
-                // FILTRO DE TIPO (ABAS)
                 const catId = p.categoria?.id || 0;
                 let matchesType = false;
 
@@ -155,7 +171,6 @@
         switchTab: (type) => {
             currentTab = type;
             
-            // Atualiza botões
             document.querySelectorAll('.type-tab').forEach(btn => {
                 if (btn.dataset.type === type) {
                     btn.classList.add('active');
@@ -164,14 +179,11 @@
                 }
             });
 
-            // 1. Atualiza as opções de Marcas disponíveis para essa aba
             Render.updateBrandOptions(type);
             
-            // 2. Reseta o filtro de marca para 'all' para evitar bugar o filtro
             const brandSelect = document.getElementById('brandFilter');
             if(brandSelect) brandSelect.value = 'all';
 
-            // 3. Aplica os filtros
             Logic.filter();
         }
     };
@@ -181,8 +193,6 @@
         if (cached) {
             allProducts = JSON.parse(cached);
             Logic.sortProducts(allProducts);
-            
-            // Inicializa as marcas corretas da aba padrão (Sneakers)
             Render.updateBrandOptions(currentTab);
             Logic.filter();
         }
@@ -198,8 +208,6 @@
                 allProducts = freshData;
                 Logic.sortProducts(allProducts);
                 localStorage.setItem(CACHE_KEY, JSON.stringify(freshData));
-                
-                // Atualiza marcas e lista com dados frescos
                 Render.updateBrandOptions(currentTab);
                 Logic.filter();
             }
