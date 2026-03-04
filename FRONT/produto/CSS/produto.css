@@ -1111,3 +1111,37 @@ main.container {
         font-size: 0.65rem !important;
     }
 }
+
+/* ESTILOS PARA OPÇÃO CONJUNTO / AVULSO */
+#tipo-compra-container {
+    margin-bottom: 20px;
+}
+
+.tipo-grid {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.tipo-btn {
+    flex: 1;
+    padding: 12px;
+    background-color: transparent;
+    border: 2px solid #333;
+    color: #fff; /* Altere para #333 se o fundo do seu site for claro */
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.tipo-btn:hover {
+    border-color: #777;
+}
+
+.tipo-btn.active {
+    background-color: #fff; /* Altere para #000 se o fundo do seu site for claro */
+    color: #000; /* Altere para #fff se o fundo do seu site for claro */
+    border-color: #fff;
+}
