@@ -99,11 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (catId >= 45) {
             sizes = ['P', 'M', 'G', 'GG', 'XG'];
             
-            const marcasComConjunto = [1, 13, 14, 15]; 
-            const isConjunto = catId === 47 || (catId === 46 && marcasComConjunto.includes(marcaId));
+            // APENAS: Corteiz (13), Trapstar (14), Syna World (15), Denim Tears (17)
+            const marcasComConjunto = [13, 14, 15, 17]; 
+            const isConjunto = marcasComConjunto.includes(marcaId);
 
             if(isConjunto) {
-                // Se for conjunto, o botão "Só a Parte de Cima" vem ATIVO e o preço cai para 65%
                 tipoCompraHTML = `
                     <div id="tipo-compra-container" class="detail-section">
                         <h3>Opção de Compra:</h3>
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 precoAtualCalculado = product.preco * 0.65;
             } else {
                 formatoSelecionado = 'Padrão'; 
-                precoAtualCalculado = product.preco;
+                precoAtualCalculado = product.preco; // Preço cheio para as outras
             }
         } else {
             sizes = ['38', '39', '40', '41', '42', '43'];
@@ -219,13 +219,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if(section) section.style.display = 'block';
 
         grid.innerHTML = products.map((product, index) => {
-            // VERIFICAÇÃO DE PREÇO NO RELACIONADO (Catálogo menor)
-            const catId = product.categoria ? product.categoria.id : 0;
-            const marcaId = product.marca ? product.marca.id : 0;
-            const marcasComConjunto = [1, 13, 14, 15]; 
-            const isConjunto = catId === 47 || (catId === 46 && marcasComConjunto.includes(marcaId));
+            const marcaId = product.marca?.id || 0;
+            const marcasComConjunto = [13, 14, 15, 17]; // Corteiz, Trapstar, Syna, Denim Tears
+            const isConjunto = marcasComConjunto.includes(marcaId);
             
-            // Se for conjunto, exibe o preço de 65% na vitrine
+            // Aplica 65% apenas nas 4 marcas especificadas
             const precoExibicao = isConjunto ? (product.preco * 0.65) : product.preco;
 
             const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;

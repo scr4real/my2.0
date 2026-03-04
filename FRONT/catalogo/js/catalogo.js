@@ -56,14 +56,13 @@
             toShow.forEach((p, idx) => {
                 const isCritical = idx < 4; 
                 
-                // --- LÓGICA DE PREÇO (SÓ A PARTE DE CIMA PARA CONJUNTOS) ---
-                const catId = p.categoria?.id || 0;
+                // --- LÓGICA DE PREÇO (SÓ A PARTE DE CIMA PARA MARCAS ESPECÍFICAS) ---
                 const marcaId = p.marca?.id || 0;
-                // Marcas que vendem conjunto: 1=Nike, 13=Corteiz, 14=Trapstar, 15=Syna
-                const marcasComConjunto = [1, 13, 14, 15]; 
-                const isConjunto = catId === 47 || (catId === 46 && marcasComConjunto.includes(marcaId));
+                // Apenas: Corteiz (13), Trapstar (14), Syna (15), Denim Tears (17)
+                const marcasComConjunto = [13, 14, 15, 17]; 
+                const isConjunto = marcasComConjunto.includes(marcaId);
                 
-                // Se for conjunto, o preço na vitrine é 65% (Só a parte de cima)
+                // Se for uma destas marcas, o preço base na vitrine é 65%
                 const precoExibicao = isConjunto ? (p.preco * 0.65) : p.preco;
                 // -----------------------------------------------------------
 
