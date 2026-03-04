@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const productId = params.get('id');
 
+    // Variáveis globais para controlar a opção de conjunto
+    let precoOriginalBase = 0;
+    let formatoSelecionado = 'Conjunto Completo';
+    let precoAtualCalculado = 0;
+
     if (!productId) {
         productDetailContainer.innerHTML = '<p class="loading-message">Produto inválido ou não encontrado.</p>';
         return;
@@ -56,6 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderProduct = (product, variations) => {
         document.title = `${product.nome} | Japa Universe`;
 
+        // Inicializa variáveis de preço
+        precoOriginalBase = product.preco;
+        precoAtualCalculado = product.preco;
+
         const originalPriceHTML = product.precoOriginal ? `<span class="price-original">${formatPrice(product.precoOriginal)}</span>` : '';
         const discount = product.precoOriginal ? Math.round(((product.precoOriginal - product.preco) / product.precoOriginal) * 100) : 0;
         const discountTagHTML = discount > 0 ? `<span class="discount-tag">-${discount}%</span>` : '';
@@ -87,15 +96,37 @@ document.addEventListener('DOMContentLoaded', () => {
             variationsHTML = `<div class="variations-selector"><h3>Outras Cores:</h3><div class="variations-list">${variationsList}</div></div>`;
         }
 
-        // --- LÓGICA DE TAMANHOS (TÊNIS vs ROUPAS) ---
+        // --- LÓGICA DE TAMANHOS E TIPO DE COMPRA ---
         const catId = product.categoria ? product.categoria.id : 0;
+        const marcaId = product.marca ? product.marca.id : 0;
         let sizes = [];
+        let tipoCompraHTML = '';
 
         // SE o ID for 45 ou maior, é ROUPA. Senão, é TÊNIS.
         if (catId >= 45) {
             sizes = ['P', 'M', 'G', 'GG', 'XG'];
+            
+            // Verifica se é uma marca que vende conjunto (Nike, Corteiz, Trapstar, Syna) ou a categoria 47 (Conjuntos)
+            const marcasComConjunto = [1, 13, 14, 15]; 
+            const isConjunto = catId === 47 || (catId === 46 && marcasComConjunto.includes(marcaId));
+
+            if(isConjunto) {
+                tipoCompraHTML = `
+                    <div id="tipo-compra-container" class="detail-section">
+                        <h3>Opção de Compra:</h3>
+                        <div class="tipo-grid">
+                            <button class="tipo-btn active" data-tipo="Conjunto Completo" data-fator="1">Conjunto (Calça + Blusa)</button>
+                            <button class="tipo-btn" data-tipo="Só a Parte de Cima" data-fator="0.65">Só a Parte de Cima</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                formatoSelecionado = 'Padrão'; // Para jaquetas normais ou camisetas
+            }
+
         } else {
             sizes = ['38', '39', '40', '41', '42', '43'];
+            formatoSelecionado = 'Par'; // Para tênis
         }
 
         const sizeButtonsHTML = sizes.map(s => `<button class="size-btn">${s}</button>`).join('');
@@ -124,10 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="price-box">
                         ${originalPriceHTML}
                         <div class="price-container">
-                            <span class="price-current">${formatPrice(product.preco)}</span>
+                            <span class="price-current" id="preco-principal-tela">${formatPrice(product.preco)}</span>
                             ${discountTagHTML}
                         </div>
-                        <span class="price-installments">10x de ${formatPrice(product.preco / 10)} sem juros</span>
+                        <span class="price-installments" id="preco-parcelado-tela">10x de ${formatPrice(product.preco / 10)} sem juros</span>
                     </div>
 
                     <div class="product-page-shipping">
@@ -136,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     ${variationsHTML}
 
-                    <div class="size-selector">
+                    ${tipoCompraHTML} <div class="size-selector">
                         <h3>Tamanho:</h3>
                         <div class="size-options">
                             ${sizeButtonsHTML}
@@ -240,7 +271,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // --- LÓGICA DE EVENTOS (TAMANHOS, FORMATO E COMPRAR) ---
     const addEventListeners = (productData) => {
+        // Eventos para Botões de Tamanho
         const sizeBtns = document.querySelectorAll('.size-btn');
         sizeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -249,6 +282,30 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        // Eventos para Botões de Formato (Conjunto vs Só Parte de Cima)
+        const tipoBtns = document.querySelectorAll('.tipo-btn');
+        const precoElemento = document.getElementById('preco-principal-tela');
+        const parcelaElemento = document.getElementById('preco-parcelado-tela');
+
+        tipoBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Atualiza classes ativas
+                tipoBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Captura escolha
+                formatoSelecionado = this.getAttribute('data-tipo');
+                const fatorPreco = parseFloat(this.getAttribute('data-fator'));
+
+                // Calcula novo preço e atualiza a tela
+                precoAtualCalculado = precoOriginalBase * fatorPreco;
+                
+                if (precoElemento) precoElemento.innerText = formatPrice(precoAtualCalculado);
+                if (parcelaElemento) parcelaElemento.innerText = `10x de ${formatPrice(precoAtualCalculado / 10)} sem juros`;
+            });
+        });
+
+        // Botão de Adicionar ao Carrinho
         const buyButton = document.querySelector('.buy-button');
         if(buyButton) {
             buyButton.addEventListener('click', () => {
@@ -258,12 +315,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
+                // Formata o nome para o carrinho (ex: "Nike Tech Fleece - Só a Parte de Cima")
+                let nomeNoCarrinho = productData.nome;
+                if (formatoSelecionado === 'Só a Parte de Cima') {
+                    nomeNoCarrinho += ' (Só a Parte de Cima)';
+                } else if (formatoSelecionado === 'Conjunto Completo') {
+                    nomeNoCarrinho += ' (Conjunto)';
+                }
+
                 const productToAdd = {
-                    id: productData.id.toString(),
-                    name: productData.nome,
-                    price: productData.preco,
+                    id: productData.id.toString(), // Usa string para manter consistência no front
+                    name: nomeNoCarrinho, 
+                    price: precoAtualCalculado, // Manda o preço alterado (100% ou 65%)
                     image: getImageUrl(productData.imagemUrl),
                     size: selectedSizeEl.textContent,
+                    formato: formatoSelecionado, // Manda a opção pro carrinho
                     quantity: 1
                 };
     
