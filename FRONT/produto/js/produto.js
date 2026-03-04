@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Variáveis globais para controlar a opção de conjunto
     let precoOriginalBase = 0;
-    let formatoSelecionado = 'Conjunto Completo';
+    let formatoSelecionado = '';
     let precoAtualCalculado = 0;
 
     if (!productId) {
@@ -61,14 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderProduct = (product, variations) => {
         document.title = `${product.nome} | Japa Universe`;
 
-        // Inicializa variáveis de preço
         precoOriginalBase = product.preco;
-        precoAtualCalculado = product.preco;
-
-        const originalPriceHTML = product.precoOriginal ? `<span class="price-original">${formatPrice(product.precoOriginal)}</span>` : '';
-        const discount = product.precoOriginal ? Math.round(((product.precoOriginal - product.preco) / product.precoOriginal) * 100) : 0;
-        const discountTagHTML = discount > 0 ? `<span class="discount-tag">-${discount}%</span>` : '';
-        const imageUrl = getImageUrl(product.imagemUrl);
 
         // Galeria de imagens
         const images = [product.imagemUrl, product.imagemUrl2, product.imagemUrl3, product.imagemUrl4].filter(img => img);
@@ -106,31 +99,38 @@ document.addEventListener('DOMContentLoaded', () => {
         if (catId >= 45) {
             sizes = ['P', 'M', 'G', 'GG', 'XG'];
             
-            // Verifica se é uma marca que vende conjunto (Nike, Corteiz, Trapstar, Syna) ou a categoria 47 (Conjuntos)
             const marcasComConjunto = [1, 13, 14, 15]; 
             const isConjunto = catId === 47 || (catId === 46 && marcasComConjunto.includes(marcaId));
 
             if(isConjunto) {
+                // Se for conjunto, o botão "Só a Parte de Cima" vem ATIVO e o preço cai para 65%
                 tipoCompraHTML = `
                     <div id="tipo-compra-container" class="detail-section">
                         <h3>Opção de Compra:</h3>
                         <div class="tipo-grid">
-                            <button class="tipo-btn active" data-tipo="Conjunto Completo" data-fator="1">Conjunto (Calça + Blusa)</button>
-                            <button class="tipo-btn" data-tipo="Só a Parte de Cima" data-fator="0.65">Só a Parte de Cima</button>
+                            <button class="tipo-btn" data-tipo="Conjunto Completo" data-fator="1">Conjunto (Calça + Blusa)</button>
+                            <button class="tipo-btn active" data-tipo="Só a Parte de Cima" data-fator="0.65">Só a Parte de Cima</button>
                         </div>
                     </div>
                 `;
+                formatoSelecionado = 'Só a Parte de Cima';
+                precoAtualCalculado = product.preco * 0.65;
             } else {
-                formatoSelecionado = 'Padrão'; // Para jaquetas normais ou camisetas
+                formatoSelecionado = 'Padrão'; 
+                precoAtualCalculado = product.preco;
             }
-
         } else {
             sizes = ['38', '39', '40', '41', '42', '43'];
-            formatoSelecionado = 'Par'; // Para tênis
+            formatoSelecionado = 'Par'; 
+            precoAtualCalculado = product.preco;
         }
 
         const sizeButtonsHTML = sizes.map(s => `<button class="size-btn">${s}</button>`).join('');
         // ----------------------------------------------
+
+        const discount = product.precoOriginal ? Math.round(((product.precoOriginal - product.preco) / product.precoOriginal) * 100) : 0;
+        const discountTagHTML = discount > 0 ? `<span class="discount-tag">-${discount}%</span>` : '';
+        const imageUrl = getImageUrl(product.imagemUrl);
 
         const productHTML = `
             <div class="product-detail-grid">
@@ -153,12 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h1>${product.nome}</h1>
 
                     <div class="price-box">
-                        ${originalPriceHTML}
                         <div class="price-container">
-                            <span class="price-current" id="preco-principal-tela">${formatPrice(product.preco)}</span>
+                            <span class="price-current" id="preco-principal-tela">${formatPrice(precoAtualCalculado)}</span>
                             ${discountTagHTML}
                         </div>
-                        <span class="price-installments" id="preco-parcelado-tela">10x de ${formatPrice(product.preco / 10)} sem juros</span>
+                        <span class="price-installments" id="preco-parcelado-tela">10x de ${formatPrice(precoAtualCalculado / 10)} sem juros</span>
                     </div>
 
                     <div class="product-page-shipping">
@@ -167,7 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     ${variationsHTML}
 
-                    ${tipoCompraHTML} <div class="size-selector">
+                    ${tipoCompraHTML}
+
+                    <div class="size-selector">
                         <h3>Tamanho:</h3>
                         <div class="size-options">
                             ${sizeButtonsHTML}
@@ -185,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         productDetailContainer.innerHTML = productHTML;
 
-        // Função global troca de imagem
         window.updateMainImage = (url, element) => {
             const mainImg = document.getElementById('main-product-image');
             if(mainImg) mainImg.src = url;
@@ -200,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchRelatedProducts = async (categoryId, currentProductId) => {
         try {
             const response = await axios.get(`${API_URL}?categoriaId=${categoryId}`);
-            // Filtra o próprio produto e limita a 8
             const relatedProducts = response.data.filter(p => p.id != currentProductId).slice(0, 8);
             renderRelatedProducts(relatedProducts);
         } catch (error) {
@@ -220,6 +219,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if(section) section.style.display = 'block';
 
         grid.innerHTML = products.map((product, index) => {
+            // VERIFICAÇÃO DE PREÇO NO RELACIONADO (Catálogo menor)
+            const catId = product.categoria ? product.categoria.id : 0;
+            const marcaId = product.marca ? product.marca.id : 0;
+            const marcasComConjunto = [1, 13, 14, 15]; 
+            const isConjunto = catId === 47 || (catId === 46 && marcasComConjunto.includes(marcaId));
+            
+            // Se for conjunto, exibe o preço de 65% na vitrine
+            const precoExibicao = isConjunto ? (product.preco * 0.65) : product.preco;
+
             const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
             const discountPercentage = hasDiscount ? Math.round(((product.precoOriginal - product.preco) / product.precoOriginal) * 100) : 0;
             const imageUrl = getImageUrl(product.imagemUrl);
@@ -247,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         
                         <div class="related-price-line">
-                            <span class="related-price-current">${formatPrice(product.preco)}</span>
+                            <span class="related-price-current">${formatPrice(precoExibicao)}</span>
                         </div>
                     </div>
                 </a>
@@ -271,9 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- LÓGICA DE EVENTOS (TAMANHOS, FORMATO E COMPRAR) ---
+    // --- LÓGICA DE EVENTOS ---
     const addEventListeners = (productData) => {
-        // Eventos para Botões de Tamanho
         const sizeBtns = document.querySelectorAll('.size-btn');
         sizeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -282,22 +289,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Eventos para Botões de Formato (Conjunto vs Só Parte de Cima)
+        // Eventos para Botões de Formato (Atualiza o preço dinamicamente)
         const tipoBtns = document.querySelectorAll('.tipo-btn');
         const precoElemento = document.getElementById('preco-principal-tela');
         const parcelaElemento = document.getElementById('preco-parcelado-tela');
 
         tipoBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Atualiza classes ativas
                 tipoBtns.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
 
-                // Captura escolha
                 formatoSelecionado = this.getAttribute('data-tipo');
                 const fatorPreco = parseFloat(this.getAttribute('data-fator'));
 
-                // Calcula novo preço e atualiza a tela
                 precoAtualCalculado = precoOriginalBase * fatorPreco;
                 
                 if (precoElemento) precoElemento.innerText = formatPrice(precoAtualCalculado);
@@ -305,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Botão de Adicionar ao Carrinho
+        // Botão Comprar
         const buyButton = document.querySelector('.buy-button');
         if(buyButton) {
             buyButton.addEventListener('click', () => {
@@ -315,21 +319,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // Formata o nome para o carrinho (ex: "Nike Tech Fleece - Só a Parte de Cima")
                 let nomeNoCarrinho = productData.nome;
                 if (formatoSelecionado === 'Só a Parte de Cima') {
                     nomeNoCarrinho += ' (Só a Parte de Cima)';
                 } else if (formatoSelecionado === 'Conjunto Completo') {
-                    nomeNoCarrinho += ' (Conjunto)';
+                    nomeNoCarrinho += ' (Conjunto Completo)';
                 }
 
                 const productToAdd = {
-                    id: productData.id.toString(), // Usa string para manter consistência no front
+                    id: productData.id.toString(),
                     name: nomeNoCarrinho, 
-                    price: precoAtualCalculado, // Manda o preço alterado (100% ou 65%)
+                    price: precoAtualCalculado, 
                     image: getImageUrl(productData.imagemUrl),
                     size: selectedSizeEl.textContent,
-                    formato: formatoSelecionado, // Manda a opção pro carrinho
+                    formato: formatoSelecionado,
                     quantity: 1
                 };
     

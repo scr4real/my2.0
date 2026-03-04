@@ -1,5 +1,5 @@
 /**
- * JAPA UNIVERSE - CATALOGO JS (COM AVISO "EM BREVE" PARA ROUPAS)
+ * JAPA UNIVERSE - CATALOGO JS (COM LÓGICA DE PREÇO PARA CONJUNTOS)
  */
 
 (function() {
@@ -36,31 +36,18 @@
             const start = (currentPage - 1) * itemsPerPage;
             const toShow = filteredProducts.slice(start, start + itemsPerPage);
 
-            // --- LÓGICA DE ESTADO VAZIO / EM BREVE ---
+            // --- LÓGICA DE ESTADO VAZIO ---
             if (toShow.length === 0) {
-                // Limpa a paginação
                 const container = document.getElementById('pagination-controls');
                 if(container) container.innerHTML = '';
 
-                // Se for a aba ROUPAS, mostra "EM BREVE"
-                if (currentTab === 'clothing') {
-                    grid.innerHTML = `
-                        <div class="empty-state coming-soon-state">
-                            <i class="fas fa-tshirt"></i>
-                            <h3>EM BREVE</h3>
-                            <p>Estamos preparando uma coleção exclusiva de Streetwear.</p>
-                            <p style="color: #FF6600; font-weight: 600; margin-top: 10px;">Fique ligado nas novidades!</p>
-                        </div>`;
-                } else {
-                    // Se for TÊNIS (ou filtro sem resultado), mostra mensagem padrão
-                    grid.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-search"></i>
-                            <h3>Nenhum tênis encontrado</h3>
-                            <p>Tente ajustar os filtros da busca.</p>
-                            <button class="btn btn-outline" onclick="location.reload()">Limpar Filtros</button>
-                        </div>`;
-                }
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>Nenhum produto encontrado</h3>
+                        <p>Tente ajustar os filtros da busca.</p>
+                        <button class="btn btn-outline" onclick="location.reload()">Limpar Filtros</button>
+                    </div>`;
                 return;
             }
             // ------------------------------------------
@@ -68,6 +55,18 @@
             let html = '';
             toShow.forEach((p, idx) => {
                 const isCritical = idx < 4; 
+                
+                // --- LÓGICA DE PREÇO (SÓ A PARTE DE CIMA PARA CONJUNTOS) ---
+                const catId = p.categoria?.id || 0;
+                const marcaId = p.marca?.id || 0;
+                // Marcas que vendem conjunto: 1=Nike, 13=Corteiz, 14=Trapstar, 15=Syna
+                const marcasComConjunto = [1, 13, 14, 15]; 
+                const isConjunto = catId === 47 || (catId === 46 && marcasComConjunto.includes(marcaId));
+                
+                // Se for conjunto, o preço na vitrine é 65% (Só a parte de cima)
+                const precoExibicao = isConjunto ? (p.preco * 0.65) : p.preco;
+                // -----------------------------------------------------------
+
                 html += `
                     <div class="product-card" data-id="${p.id}">
                         <a href="/FRONT/produto/HTML/produto.html?id=${p.id}" class="product-card-link">
@@ -84,7 +83,7 @@
                             <h3 class="product-name">${p.nome}</h3>
                             <div class="product-shipping-tag"><i class="fas fa-truck"></i><span>Frete Grátis</span></div>
                             <div class="product-price">
-                                <span class="current-price">${Utils.formatPrice(p.preco)}</span>
+                                <span class="current-price">${Utils.formatPrice(precoExibicao)}</span>
                             </div>
                         </div>
                         <div class="product-footer">
