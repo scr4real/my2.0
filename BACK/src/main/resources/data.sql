@@ -1,5 +1,5 @@
 -- ==================================================================================
--- JAPA UNIVERSE - DATABASE COMPLETO (TÊNIS + ROUPAS + NOVAS MARCAS)
+-- JAPA UNIVERSE - DATABASE COMPLETO (TÊNIS + ROUPAS COM -35% APLICADO NO PREÇO)
 -- ==================================================================================
 
 -- 1. MARCAS
@@ -32,7 +32,9 @@ INSERT IGNORE INTO _usuario (id, nome, email, cpf, telefone, senha, role) VALUES
 INSERT IGNORE INTO cupons (id, codigo, desconto, tipo_desconto, data_validade) 
 VALUES (1, 'SANT26', 10.00, 'PERCENTUAL', '2030-12-31');
 
--- 5. PRODUTOS - LOTE CALÇADOS
+-- ==================================================================================
+-- 5. PRODUTOS - LOTE CALÇADOS (PREÇOS MANTIDOS)
+-- ==================================================================================
 
 -- AIR MAX 95
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
@@ -389,110 +391,110 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 ('Air Max TN3 Red', 'Preto e vermelho poderoso.', '/uploads/tn3/4.webp', 341.00, 43, 6, 1, 'TN3');
 
 -- ==================================================================================
--- PRODUTOS - LOTE ROUPAS (ARC'TERYX, CORTEIZ, TRAPSTAR, RALPH LAUREN, SYNA, ETC)
+-- 6. PRODUTOS - LOTE ROUPAS (TODAS COM -35%)
 -- ==================================================================================
 
--- ARC'TERYX (Categoria 46)
+-- ARC'TERYX (Categoria 46) | Preço original 549.90 -> 357.43 | 499.00 -> 324.35 | 450.00 -> 292.50 | 699.00 -> 454.35
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Arc''teryx Beta AR Jacket Graphite', 'Cor: Graphite. O "All Rounder" da marca. Casaco técnico ultra resistente com GORE-TEX Pro.', '/uploads/arcteryx/1.webp', 549.90, 46, 10, 16, 'ARC-BETA-AR'),
-('Arc''teryx Beta LT Jacket Black', 'Cor: Black. Proteção GORE-TEX leve (Lightweight) e durável em um design minimalista.', '/uploads/arcteryx/2.webp', 499.00, 46, 8, 16, 'ARC-BETA-LT'),
-('Arc''teryx Beta Jacket Ether', 'Cor: Ether (Azul Bebê). Casaco versátil e silencioso com tecnologia GORE-TEX C-KNIT™.', '/uploads/arcteryx/3.webp', 450.00, 46, 12, 16, 'ARC-BETA-ETH'),
-('Arc''teryx Alpha SV Jacket White', 'Cor: White. O modelo topo de linha para condições extremas (Severe). Construído com GORE-TEX Pro 100D.', '/uploads/arcteryx/4.webp', 699.00, 46, 5, 16, 'ARC-ALPHA-SV');
+('Arc''teryx Beta AR Jacket Graphite', 'Cor: Graphite. O "All Rounder" da marca. Casaco técnico ultra resistente com GORE-TEX Pro.', '/uploads/arcteryx/1.webp', 357.43, 46, 10, 16, 'ARC-BETA-AR'),
+('Arc''teryx Beta LT Jacket Black', 'Cor: Black. Proteção GORE-TEX leve (Lightweight) e durável em um design minimalista.', '/uploads/arcteryx/2.webp', 324.35, 46, 8, 16, 'ARC-BETA-LT'),
+('Arc''teryx Beta Jacket Ether', 'Cor: Ether (Azul Bebê). Casaco versátil e silencioso com tecnologia GORE-TEX C-KNIT™.', '/uploads/arcteryx/3.webp', 292.50, 46, 12, 16, 'ARC-BETA-ETH'),
+('Arc''teryx Alpha SV Jacket White', 'Cor: White. O modelo topo de linha para condições extremas (Severe). Construído com GORE-TEX Pro 100D.', '/uploads/arcteryx/4.webp', 454.35, 46, 5, 16, 'ARC-ALPHA-SV');
 
--- CORTEIZ (Categoria 46)
+-- CORTEIZ (Categoria 46) | Preço original 389.90 -> 253.43 | 349.90 -> 227.43
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Corteiz x CBF Brasil Track Jacket White', 'Jaqueta tática exclusiva da colaboração Corteiz e Seleção Brasileira.', '/uploads/corteiz/1.webp', 389.90, 46, 10, 13, 'CRTZ-CBF-WHT'),
-('Corteiz x CBF Brasil Track Jacket Black', 'Versão Black da colaboração com a CBF. Tecido de alta resistência e acabamento premium.', '/uploads/corteiz/2.webp', 389.90, 46, 8, 13, 'CRTZ-CBF-BLK'),
-('Corteiz Alcatraz Hoodie Grey', 'O clássico moletom Alcatraz na cor cinza mescla. Estampa frontal do logotipo da ilha em alta definição.', '/uploads/corteiz/3.webp', 349.90, 46, 15, 13, 'CRTZ-ALC-GRY'),
-('Corteiz Alcatraz Hoodie Black', 'Moletom Corteiz Alcatraz preto. A peça mais icônica do streetwear londrino. Interior flanelado.', '/uploads/corteiz/4.webp', 349.90, 46, 12, 13, 'CRTZ-ALC-BLK');
+('Corteiz x CBF Brasil Track Jacket White', 'Jaqueta tática exclusiva da colaboração Corteiz e Seleção Brasileira.', '/uploads/corteiz/1.webp', 253.43, 46, 10, 13, 'CRTZ-CBF-WHT'),
+('Corteiz x CBF Brasil Track Jacket Black', 'Versão Black da colaboração com a CBF. Tecido de alta resistência e acabamento premium.', '/uploads/corteiz/2.webp', 253.43, 46, 8, 13, 'CRTZ-CBF-BLK'),
+('Corteiz Alcatraz Hoodie Grey', 'O clássico moletom Alcatraz na cor cinza mescla. Estampa frontal do logotipo da ilha em alta definição.', '/uploads/corteiz/3.webp', 227.43, 46, 15, 13, 'CRTZ-ALC-GRY'),
+('Corteiz Alcatraz Hoodie Black', 'Moletom Corteiz Alcatraz preto. A peça mais icônica do streetwear londrino. Interior flanelado.', '/uploads/corteiz/4.webp', 227.43, 46, 12, 13, 'CRTZ-ALC-BLK');
 
--- DENIM TEARS (Categoria 46)
+-- DENIM TEARS (Categoria 46) | Preço original 449.90 -> 292.43
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Denim Tears Cotton Wreath Hoodie Grey', 'Moletom cinza mescla com o icônico padrão Cotton Wreath em chenille branco.', '/uploads/denim_tears/1.webp', 449.90, 46, 10, 17, 'DT-CW-GRY'),
-('Denim Tears Cotton Wreath Hoodie Black', 'Versão Black do moletom Cotton Wreath. O contraste das flores brancas sobre o fundo preto garante luxo.', '/uploads/denim_tears/2.webp', 449.90, 46, 12, 17, 'DT-CW-BLK');
+('Denim Tears Cotton Wreath Hoodie Grey', 'Moletom cinza mescla com o icônico padrão Cotton Wreath em chenille branco.', '/uploads/denim_tears/1.webp', 292.43, 46, 10, 17, 'DT-CW-GRY'),
+('Denim Tears Cotton Wreath Hoodie Black', 'Versão Black do moletom Cotton Wreath. O contraste das flores brancas sobre o fundo preto garante luxo.', '/uploads/denim_tears/2.webp', 292.43, 46, 12, 17, 'DT-CW-BLK');
 
--- PUFFERS (Categoria 46)
+-- PUFFERS (Categoria 46) | Preço original 899.90 -> 584.93 | 549.90 -> 357.43
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('The North Face 1996 Retro Nuptse Black', 'Cor: Black. A jaqueta puffer mais icônica do mundo. Enchimento em penugem de ganso 700 fill.', '/uploads/puffer/1.webp', 899.90, 46, 10, 18, 'TNF-96-BLK'),
-('The North Face 1996 Retro Nuptse Navy', 'Cor: Navy Blue. Design em dois tons com peitoral reforçado. Estética retrô.', '/uploads/puffer/2.webp', 899.90, 46, 8, 18, 'TNF-96-NVY'),
-('Nike Sportswear Windrunner Puffer Grey', 'Cor: Grey. Jaqueta puffer com design chevron clássico. Isolamento sintético leve.', '/uploads/puffer/3.webp', 549.90, 46, 12, 1, 'NIKE-PF-GRY'),
-('Nike Sportswear Windrunner Puffer Sand', 'Cor: Sand (Bege). Visual moderno em tons terrosos. Proteção térmica com tecnologia Storm-FIT.', '/uploads/puffer/4.webp', 549.90, 46, 7, 1, 'NIKE-PF-SND'),
-('Nike Sportswear Windrunner Puffer Olive', 'Cor: Olive Green. Pegada tática urbana com acabamento elástico nos punhos.', '/uploads/puffer/5.webp', 549.90, 46, 10, 1, 'NIKE-PF-OLV'),
-('Nike Sportswear Windrunner Puffer Black', 'Cor: Black. Versão "All Black" minimalista com o Swoosh no peito.', '/uploads/puffer/6.webp', 549.90, 46, 15, 1, 'NIKE-PF-BLK');
+('The North Face 1996 Retro Nuptse Black', 'Cor: Black. A jaqueta puffer mais icônica do mundo. Enchimento em penugem de ganso 700 fill.', '/uploads/puffer/1.webp', 584.93, 46, 10, 18, 'TNF-96-BLK'),
+('The North Face 1996 Retro Nuptse Navy', 'Cor: Navy Blue. Design em dois tons com peitoral reforçado. Estética retrô.', '/uploads/puffer/2.webp', 584.93, 46, 8, 18, 'TNF-96-NVY'),
+('Nike Sportswear Windrunner Puffer Grey', 'Cor: Grey. Jaqueta puffer com design chevron clássico. Isolamento sintético leve.', '/uploads/puffer/3.webp', 357.43, 46, 12, 1, 'NIKE-PF-GRY'),
+('Nike Sportswear Windrunner Puffer Sand', 'Cor: Sand (Bege). Visual moderno em tons terrosos. Proteção térmica com tecnologia Storm-FIT.', '/uploads/puffer/4.webp', 357.43, 46, 7, 1, 'NIKE-PF-SND'),
+('Nike Sportswear Windrunner Puffer Olive', 'Cor: Olive Green. Pegada tática urbana com acabamento elástico nos punhos.', '/uploads/puffer/5.webp', 357.43, 46, 10, 1, 'NIKE-PF-OLV'),
+('Nike Sportswear Windrunner Puffer Black', 'Cor: Black. Versão "All Black" minimalista com o Swoosh no peito.', '/uploads/puffer/6.webp', 357.43, 46, 15, 1, 'NIKE-PF-BLK');
 
--- RALPH LAUREN (Categoria 46)
+-- RALPH LAUREN (Categoria 46) | Preço original 329.90 -> 214.43 | 399.90 -> 259.93
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Polo Ralph Lauren Crewneck Black', 'Moletom gola careca clássico preto. Logotipo Pony bordado no peito.', '/uploads/ralph_lauren/1.webp', 329.90, 46, 10, 19, 'RL-CW-BLK'),
-('Polo Ralph Lauren Crewneck Grey', 'Moletom gola careca cinza mescla. Peça versátil de alta qualidade com acabamento canelado.', '/uploads/ralph_lauren/2.webp', 329.90, 46, 12, 19, 'RL-CW-GRY'),
-('Polo Ralph Lauren Crewneck White', 'Versão branca do moletom Polo Ralph Lauren. Estilo casual refinado.', '/uploads/ralph_lauren/3.webp', 329.90, 46, 8, 19, 'RL-CW-WHT'),
-('Polo Ralph Lauren Zip Hoodie Black/Red', 'Moletom com fecho e capuz preto. Logotipo Pony bordado em vermelho.', '/uploads/ralph_lauren/4.webp', 399.90, 46, 10, 19, 'RL-ZIP-BLKRED'),
-('Polo Ralph Lauren Zip Hoodie White', 'Hoodie com fecho branco e logotipo azul marinho. Interior levemente flanelado.', '/uploads/ralph_lauren/5.webp', 399.90, 46, 7, 19, 'RL-ZIP-WHTBLU'),
-('Polo Ralph Lauren Zip Hoodie Black/White', 'Moletom com fecho preto e logotipo branco. O básico essencial e sofisticado.', '/uploads/ralph_lauren/6.webp', 399.90, 46, 15, 19, 'RL-ZIP-BLKWHT'),
-('Polo Ralph Lauren Zip Hoodie Navy', 'Moletom com fecho azul marinho e logotipo vermelho. Clássico da marca.', '/uploads/ralph_lauren/7.webp', 399.90, 46, 9, 19, 'RL-ZIP-NVYRED');
+('Polo Ralph Lauren Crewneck Black', 'Moletom gola careca clássico preto. Logotipo Pony bordado no peito.', '/uploads/ralph_lauren/1.webp', 214.43, 46, 10, 19, 'RL-CW-BLK'),
+('Polo Ralph Lauren Crewneck Grey', 'Moletom gola careca cinza mescla. Peça versátil de alta qualidade com acabamento canelado.', '/uploads/ralph_lauren/2.webp', 214.43, 46, 12, 19, 'RL-CW-GRY'),
+('Polo Ralph Lauren Crewneck White', 'Versão branca do moletom Polo Ralph Lauren. Estilo casual refinado.', '/uploads/ralph_lauren/3.webp', 214.43, 46, 8, 19, 'RL-CW-WHT'),
+('Polo Ralph Lauren Zip Hoodie Black/Red', 'Moletom com fecho e capuz preto. Logotipo Pony bordado em vermelho.', '/uploads/ralph_lauren/4.webp', 259.93, 46, 10, 19, 'RL-ZIP-BLKRED'),
+('Polo Ralph Lauren Zip Hoodie White', 'Hoodie com fecho branco e logotipo azul marinho. Interior levemente flanelado.', '/uploads/ralph_lauren/5.webp', 259.93, 46, 7, 19, 'RL-ZIP-WHTBLU'),
+('Polo Ralph Lauren Zip Hoodie Black/White', 'Moletom com fecho preto e logotipo branco. O básico essencial e sofisticado.', '/uploads/ralph_lauren/6.webp', 259.93, 46, 15, 19, 'RL-ZIP-BLKWHT'),
+('Polo Ralph Lauren Zip Hoodie Navy', 'Moletom com fecho azul marinho e logotipo vermelho. Clássico da marca.', '/uploads/ralph_lauren/7.webp', 259.93, 46, 9, 19, 'RL-ZIP-NVYRED');
 
--- SYNA WORLD (Categoria 46)
+-- SYNA WORLD (Categoria 46) | Preço original 399.90 -> 259.93
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Syna World Logo Hoodie Black', 'Moletom preto com logotipo grafite. Cordões brancos espessos e corte oversized.', '/uploads/syna/1.webp', 399.90, 46, 10, 15, 'SYNA-HOD-BLK'),
-('Syna World Logo Hoodie Sage', 'Cor: Sage Green. Moletom com toque macio e logotipo bordado tom sobre tom.', '/uploads/syna/2.webp', 399.90, 46, 8, 15, 'SYNA-HOD-SGE'),
-('Syna World Logo Hoodie Blue', 'Cor: Blue. Azul vibrante com o icônico logotipo Syna em branco.', '/uploads/syna/3.webp', 399.90, 46, 12, 15, 'SYNA-HOD-BLU'),
-('Syna World Logo Hoodie Red', 'Cor: Red. Vermelho intenso com logotipo branco. Peça de destaque.', '/uploads/syna/4.webp', 399.90, 46, 7, 15, 'SYNA-HOD-RED');
+('Syna World Logo Hoodie Black', 'Moletom preto com logotipo grafite. Cordões brancos espessos e corte oversized.', '/uploads/syna/1.webp', 259.93, 46, 10, 15, 'SYNA-HOD-BLK'),
+('Syna World Logo Hoodie Sage', 'Cor: Sage Green. Moletom com toque macio e logotipo bordado tom sobre tom.', '/uploads/syna/2.webp', 259.93, 46, 8, 15, 'SYNA-HOD-SGE'),
+('Syna World Logo Hoodie Blue', 'Cor: Blue. Azul vibrante com o icônico logotipo Syna em branco.', '/uploads/syna/3.webp', 259.93, 46, 12, 15, 'SYNA-HOD-BLU'),
+('Syna World Logo Hoodie Red', 'Cor: Red. Vermelho intenso com logotipo branco. Peça de destaque.', '/uploads/syna/4.webp', 259.93, 46, 7, 15, 'SYNA-HOD-RED');
 
--- TECH FLEECE (Categoria 46)
+-- TECH FLEECE (Categoria 46) | Preço original 499.90 -> 324.93 | 599.90 -> 389.93
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Nike Tech Fleece G2 Brown', 'Cor: Baroque Brown. Nova geração (G2) com design ergonômico e bolso tático.', '/uploads/tech_fleece/1.webp', 499.90, 46, 10, 1, 'NIKE-TF-BRW'),
-('Nike Tech Fleece G2 Burgundy', 'Cor: Burgundy. Estilo moderno com fecho duplo. Isolamento térmico premium.', '/uploads/tech_fleece/2.webp', 499.90, 46, 8, 1, 'NIKE-TF-BUR'),
-('Nike Tech Fleece G2 Navy', 'Cor: Midnight Navy. Versão azul marinho G2 com caimento slim fit valorizado.', '/uploads/tech_fleece/3.webp', 499.90, 46, 12, 1, 'NIKE-TF-NVY'),
-('Nike Tech Fleece G2 Black', 'Cor: Black. O modelo clássico mais vendido na versão atualizada G2.', '/uploads/tech_fleece/4.webp', 499.90, 46, 20, 1, 'NIKE-TF-BLK'),
-('Nike Tech Fleece G2 Heather Grey', 'Cor: Dark Grey Heather. Cinza mescla escuro com detalhes pretos. Conforto térmico.', '/uploads/tech_fleece/5.webp', 499.90, 46, 15, 1, 'NIKE-TF-DGRY'),
-('Nike Tech Fleece G2 Panda', 'Cor: Grey/Black. Design "Panda" com blocos de cores contrastantes.', '/uploads/tech_fleece/6.webp', 499.90, 46, 10, 1, 'NIKE-TF-PAN'),
-('Nike x Nocta Tech Fleece White', 'Colaboração Nocta (Drake). Cor: White. Design minimalista com Swoosh refletivo.', '/uploads/tech_fleece/7.webp', 599.90, 46, 5, 1, 'NOCTA-TF-WHT'),
-('Nike x Nocta Tech Fleece Baby Blue', 'Colaboração Nocta. Cor: Baby Blue. Peça premium com tecido de dupla face.', '/uploads/tech_fleece/8.webp', 599.90, 46, 6, 1, 'NOCTA-TF-BBLU'),
-('Nike x Nocta Tech Fleece Black', 'Colaboração Nocta. Cor: Black. Apresenta o clássico logotipo Nocta em amarelo.', '/uploads/tech_fleece/9.webp', 599.90, 46, 10, 1, 'NOCTA-TF-BLK'),
-('Nike x Nocta Tech Fleece Green', 'Colaboração Nocta. Cor: Green (Verde). Design tático com a cor vibrante exclusiva.', '/uploads/tech_fleece/10.webp', 599.90, 46, 5, 1, 'NOCTA-TF-GRN'),
-('Nike Tech Fleece x Syna Black/Pink', 'Colaboração exclusiva Nike e Syna World. Base preta com logotipos bordados em rosa magenta.', '/uploads/tech_fleece/11.webp', 599.90, 46, 5, 15, 'NIKE-SYNA-TF');
+('Nike Tech Fleece G2 Brown', 'Cor: Baroque Brown. Nova geração (G2) com design ergonômico e bolso tático.', '/uploads/tech_fleece/1.webp', 324.93, 46, 10, 1, 'NIKE-TF-BRW'),
+('Nike Tech Fleece G2 Burgundy', 'Cor: Burgundy. Estilo moderno com fecho duplo. Isolamento térmico premium.', '/uploads/tech_fleece/2.webp', 324.93, 46, 8, 1, 'NIKE-TF-BUR'),
+('Nike Tech Fleece G2 Navy', 'Cor: Midnight Navy. Versão azul marinho G2 com caimento slim fit valorizado.', '/uploads/tech_fleece/3.webp', 324.93, 46, 12, 1, 'NIKE-TF-NVY'),
+('Nike Tech Fleece G2 Black', 'Cor: Black. O modelo clássico mais vendido na versão atualizada G2.', '/uploads/tech_fleece/4.webp', 324.93, 46, 20, 1, 'NIKE-TF-BLK'),
+('Nike Tech Fleece G2 Heather Grey', 'Cor: Dark Grey Heather. Cinza mescla escuro com detalhes pretos. Conforto térmico.', '/uploads/tech_fleece/5.webp', 324.93, 46, 15, 1, 'NIKE-TF-DGRY'),
+('Nike Tech Fleece G2 Panda', 'Cor: Grey/Black. Design "Panda" com blocos de cores contrastantes.', '/uploads/tech_fleece/6.webp', 324.93, 46, 10, 1, 'NIKE-TF-PAN'),
+('Nike x Nocta Tech Fleece White', 'Colaboração Nocta (Drake). Cor: White. Design minimalista com Swoosh refletivo.', '/uploads/tech_fleece/7.webp', 389.93, 46, 5, 1, 'NOCTA-TF-WHT'),
+('Nike x Nocta Tech Fleece Baby Blue', 'Colaboração Nocta. Cor: Baby Blue. Peça premium com tecido de dupla face.', '/uploads/tech_fleece/8.webp', 389.93, 46, 6, 1, 'NOCTA-TF-BBLU'),
+('Nike x Nocta Tech Fleece Black', 'Colaboração Nocta. Cor: Black. Apresenta o clássico logotipo Nocta em amarelo.', '/uploads/tech_fleece/9.webp', 389.93, 46, 10, 1, 'NOCTA-TF-BLK'),
+('Nike x Nocta Tech Fleece Green', 'Colaboração Nocta. Cor: Green (Verde). Design tático com a cor vibrante exclusiva.', '/uploads/tech_fleece/10.webp', 389.93, 46, 5, 1, 'NOCTA-TF-GRN'),
+('Nike Tech Fleece x Syna Black/Pink', 'Colaboração exclusiva Nike e Syna World. Base preta com logotipos bordados em rosa magenta.', '/uploads/tech_fleece/11.webp', 389.93, 46, 5, 15, 'NIKE-SYNA-TF');
 
--- TRAPSTAR (Categoria 46)
+-- TRAPSTAR (Categoria 46) | Preço original 349.90 -> 227.43
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Trapstar Shooters Hoodie Grey', 'Moletom Trapstar London cinza. Logotipo "Shooters" frontal com gradiente azul/preto.', '/uploads/trapstar/1.webp', 349.90, 46, 10, 14, 'TRP-SHO-GRY'),
-('Trapstar Shooters Hoodie Black', 'Versão Black do moletom Shooters. Acabamento premium com capuz ajustável.', '/uploads/trapstar/2.webp', 349.90, 46, 12, 14, 'TRP-SHO-BLK');
+('Trapstar Shooters Hoodie Grey', 'Moletom Trapstar London cinza. Logotipo "Shooters" frontal com gradiente azul/preto.', '/uploads/trapstar/1.webp', 227.43, 46, 10, 14, 'TRP-SHO-GRY'),
+('Trapstar Shooters Hoodie Black', 'Versão Black do moletom Shooters. Acabamento premium com capuz ajustável.', '/uploads/trapstar/2.webp', 227.43, 46, 12, 14, 'TRP-SHO-BLK');
 
 -- ==================================================================================
--- PRODUTOS - LOTE TRACKSUITS (CONJUNTOS) - Categoria 47
+-- 7. PRODUTOS - LOTE TRACKSUITS (CONJUNTOS) - Categoria 47 | Preço 449.90 -> 292.43
 -- ==================================================================================
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Conjunto Treino PSG Jordan White', 'Conjunto oficial Paris Saint-Germain x Jordan. Blusa branca com calça azul marinho. Tecnologia Dri-FIT.', '/uploads/tracksuit/1.webp', 449.90, 47, 10, 1, 'TRK-PSG-WHT'),
-('Conjunto Treino PSG Navy/Royal', 'Kit de treino PSG em azul marinho com detalhes em azul royal. Design tático com escudo bordado e caimento slim.', '/uploads/tracksuit/2.webp', 449.90, 47, 8, 1, 'TRK-PSG-NVY'),
-('Conjunto Treino Alemanha White/Black', 'Conjunto oficial da Seleção Alemã. Blusa branca com detalhes pretos e calça técnica ajustada para performance.', '/uploads/tracksuit/3.webp', 449.90, 47, 7, 3, 'TRK-GER-WHT'),
-('Conjunto Treino Atlético de Madrid Pink', 'Edição especial de treino do Atlético de Madrid na cor rosa. Estilo moderno com tecido respirável de alta intensidade.', '/uploads/tracksuit/4.webp', 449.90, 47, 5, 1, 'TRK-ATM-PNK'),
-('Conjunto Treino Inter de Milão White/Blue', 'Conjunto Inter de Milão com blusa branca e calça marinho. Design elegante com o novo escudo e detalhes em azul.', '/uploads/tracksuit/5.webp', 449.90, 47, 10, 1, 'TRK-INT-WHT'),
-('Conjunto Treino Liverpool Black/Red', 'Conjunto oficial do Liverpool FC. Blusa preta com detalhes em vermelho vivo e patrocínio AXA. Corte atlético.', '/uploads/tracksuit/6.webp', 449.90, 47, 9, 1, 'TRK-LFC-BLK'),
-('Conjunto Treino Inter de Milão Teal', 'Versão de treino Inter de Milão em verde turquesa (Teal). Visual inovador com tecnologia antitranspirante premium.', '/uploads/tracksuit/7.webp', 449.90, 47, 6, 1, 'TRK-INT-TEA'),
-('Conjunto Treino Argentina Black/Blue', 'Conjunto oficial da Seleção Argentina (AFA). Design preto com detalhes em azul celeste e as três estrelas mundiais.', '/uploads/tracksuit/8.webp', 449.90, 47, 12, 3, 'TRK-ARG-BLK'),
-('Conjunto Treino Brasil Green/Yellow', 'Conjunto oficial da Seleção Brasileira. Blusa verde limão vibrante com calça azul clássica. Tecnologia de elite.', '/uploads/tracksuit/9.webp', 449.90, 47, 15, 1, 'TRK-BRA-GRN'),
-('Conjunto Treino França White/Blue', 'Conjunto da Seleção Francesa (FFF). Blusa branca com calça marinho e detalhes em dourado do galo bordado.', '/uploads/tracksuit/10.webp', 449.90, 47, 8, 1, 'TRK-FRA-WHT'),
-('Conjunto Treino Brasil Navy/Neon', 'Versão tática de treino do Brasil. Azul marinho com detalhes em amarelo neon. Visual drill pesado para o kit.', '/uploads/tracksuit/11.webp', 449.90, 47, 10, 1, 'TRK-BRA-NVY'),
-('Conjunto Treino Alemanha Purple/Black', 'Conjunto Alemanha na cor roxa (modelo pré-jogo). Design gráfico moderno nas mangas e calça preta técnica.', '/uploads/tracksuit/12.webp', 449.90, 47, 7, 3, 'TRK-GER-PUR'),
-('Conjunto Treino Arsenal Red/Grey', 'Conjunto oficial do Arsenal FC. Blusa vermelha com mangas cinzas e calça marinho. Estilo clássico dos Gunners.', '/uploads/tracksuit/13.webp', 449.90, 47, 10, 3, 'TRK-ARS-RED'),
-('Conjunto Treino Arsenal White/Navy', 'Versão branca de treino do Arsenal com calça azul marinho. Logotipo bordado e tecido de alta performance.', '/uploads/tracksuit/14.webp', 449.90, 47, 8, 3, 'TRK-ARS-WHT'),
-('Conjunto Treino Brasil Green Pattern', 'Conjunto Brasil com estampa gráfica em tons de verde. Design exclusivo para a linha de aquecimento da Seleção.', '/uploads/tracksuit/15.webp', 449.90, 47, 6, 1, 'TRK-BRA-PAT'),
-('Conjunto Treino França Black/Blue', 'Conjunto de treino da França na cor preta com detalhes em azul royal. Escudo da FFF bordado em destaque.', '/uploads/tracksuit/16.webp', 449.90, 47, 10, 1, 'TRK-FRA-BLK'),
-('Conjunto Treino França Navy/Blue', 'Versão oficial em azul marinho e azul claro da Seleção Francesa. Conforto térmico e ajuste preciso.', '/uploads/tracksuit/17.webp', 449.90, 47, 9, 1, 'TRK-FRA-NVY'),
-('Conjunto Treino Itália Navy/Green', 'Conjunto oficial da Seleção Italiana (Azzurra). Azul marinho com as cores da bandeira nacional nos detalhes.', '/uploads/tracksuit/18.webp', 449.90, 47, 12, 3, 'TRK-ITA-NVY'),
-('Conjunto Treino Tottenham Dark Grey', 'Conjunto oficial do Tottenham Hotspur. Blusa cinza chumbo com detalhes em azul turquesa. Design techwear.', '/uploads/tracksuit/19.webp', 449.90, 47, 7, 1, 'TRK-TOT-GRY'),
-('Conjunto Treino Inter de Milão Black/Teal', 'Conjunto Inter de Milão preto com detalhes em turquesa. Visual agressivo e moderno para treinos intensos.', '/uploads/tracksuit/20.webp', 449.90, 47, 10, 1, 'TRK-INT-BLK'),
-('Conjunto Treino Tottenham White/Blue', 'Versão branca de treino do Tottenham com detalhes em azul claro. Leveza e respirabilidade superior.', '/uploads/tracksuit/21.webp', 449.90, 47, 8, 1, 'TRK-TOT-WHT'),
-('Conjunto Treino Brasil Black/Neon', 'Conjunto tático Brasil todo preto com detalhes em amarelo neon. O favorito para compor kits streetwear.', '/uploads/tracksuit/22.webp', 449.90, 47, 15, 1, 'TRK-BRA-BLK'),
-('Conjunto Treino Manchester City Black/Red', 'Conjunto de treino do City na cor preta com detalhes em vermelho. Alta durabilidade e estilo urbano.', '/uploads/tracksuit/23.webp', 449.90, 47, 11, 7, 'TRK-MCI-BLK'),
-('Conjunto Treino PSG Black/Gold', 'Edição luxo de treino do PSG em preto com detalhes dourados. Represente Paris com o kit mais chave do lote.', '/uploads/tracksuit/24.webp', 449.90, 47, 10, 1, 'TRK-PSG-GLD'),
-('Conjunto Treino Franca Blue Pattern', 'Conjunto oficial de treino da Selecao Francesa com estampa grafica exclusiva em tons de azul. Tecnologia Dri-FIT de alta performance.', '/uploads/tracksuit/25.webp', 449.90, 47, 8, 1, 'TRK-FRA-PAT'),
-('Conjunto Treino Chelsea Black/White', 'Kit de treino oficial do Chelsea FC. Blusa preta com ombros brancos e calca de treino ajustada. Escudo do clube bordado em destaque.', '/uploads/tracksuit/26.webp', 449.90, 47, 10, 1, 'TRK-CHE-BLK'),
-('Conjunto Treino Liverpool Red/AXA', 'Conjunto Liverpool na cor vermelha vibrante com patrocinio AXA. Design focado em mobilidade e conforto termico para atletas.', '/uploads/tracksuit/27.webp', 449.90, 47, 7, 1, 'TRK-LFC-RED'),
-('Conjunto Treino Brasil Mint Green', 'Edicao especial Brasil na cor verde menta. Visual moderno e leve, ideal para sessoes de treino sob o sol ou uso casual tatico.', '/uploads/tracksuit/28.webp', 449.90, 47, 6, 1, 'TRK-BRA-MNT'),
-('Conjunto Treino Arsenal Navy/Blue', 'Conjunto Arsenal FC em azul marinho com detalhes em azul claro. Tecido tecnico respiravel com o escudo dos Gunners no peito.', '/uploads/tracksuit/29.webp', 449.90, 47, 9, 3, 'TRK-ARS-NVY'),
-('Conjunto Treino Ajax Teal/Blue', 'Conjunto de treino oficial do Ajax. Combinacao de azul turquesa e azul royal com as iconicas listras da marca nas laterais.', '/uploads/tracksuit/30.webp', 449.90, 47, 5, 3, 'TRK-AJX-TEA'),
-('Conjunto Treino Italia White/Blue', 'Kit de treino Selecao Italiana. Blusa branca com detalhes em azul e verde, representando a bandeira nacional. Alta gramatura tecnica.', '/uploads/tracksuit/31.webp', 449.90, 47, 8, 3, 'TRK-ITA-WHT'),
-('Conjunto Treino Franca Navy/Cyan', 'Versao de treino da Franca em azul marinho com detalhes em ciano nas mangas. Design ergonomico para maximo rendimento.', '/uploads/tracksuit/32.webp', 449.90, 47, 10, 1, 'TRK-FRA-CYA'),
-('Conjunto Treino PSG White/Black Pattern', 'Conjunto Paris Saint-Germain com blusa branca e detalhes graficos pretos nas mangas. Calca preta com logotipos em contraste.', '/uploads/tracksuit/33.webp', 449.90, 47, 12, 1, 'TRK-PSG-PAT'),
-('Conjunto Treino PSG White/Red', 'Conjunto de treino PSG oficial. Blusa branca com detalhes em vermelho e patrocinio ALL. O kit classico de treinamento parisiense.', '/uploads/tracksuit/34.webp', 449.90, 47, 15, 1, 'TRK-PSG-RED'),
-('Conjunto Treino Brasil Yellow/Blue', 'O iconico conjunto de treino do Brasil nas cores da bandeira. Blusa amarela vibrante e calca azul marinho. Orgulho nacional.', '/uploads/tracksuit/35.webp', 449.90, 47, 20, 1, 'TRK-BRA-YEL'),
-('Conjunto Treino Arsenal Navy/Red Detail', 'Versao tatica do Arsenal em azul marinho com detalhes em vermelho nos ombros. Fechamento em ziper 1/4 e caimento profissional.', '/uploads/tracksuit/36.webp', 449.90, 47, 10, 3, 'TRK-ARS-DET');
+('Conjunto Treino PSG Jordan White', 'Conjunto oficial Paris Saint-Germain x Jordan. Blusa branca com calça azul marinho. Tecnologia Dri-FIT.', '/uploads/tracksuit/1.webp', 199,90, 47, 10, 1, 'TRK-PSG-WHT'),
+('Conjunto Treino PSG Navy/Royal', 'Kit de treino PSG em azul marinho com detalhes em azul royal. Design tático com escudo bordado e caimento slim.', '/uploads/tracksuit/2.webp', 199,90, 47, 8, 1, 'TRK-PSG-NVY'),
+('Conjunto Treino Alemanha White/Black', 'Conjunto oficial da Seleção Alemã. Blusa branca com detalhes pretos e calça técnica ajustada para performance.', '/uploads/tracksuit/3.webp', 199,90, 47, 7, 3, 'TRK-GER-WHT'),
+('Conjunto Treino Atlético de Madrid Pink', 'Edição especial de treino do Atlético de Madrid na cor rosa. Estilo moderno com tecido respirável de alta intensidade.', '/uploads/tracksuit/4.webp', 199,90, 47, 5, 1, 'TRK-ATM-PNK'),
+('Conjunto Treino Inter de Milão White/Blue', 'Conjunto Inter de Milão com blusa branca e calça marinho. Design elegante com o novo escudo e detalhes em azul.', '/uploads/tracksuit/5.webp', 199,90, 47, 10, 1, 'TRK-INT-WHT'),
+('Conjunto Treino Liverpool Black/Red', 'Conjunto oficial do Liverpool FC. Blusa preta com detalhes em vermelho vivo e patrocínio AXA. Corte atlético.', '/uploads/tracksuit/6.webp', 199,90, 47, 9, 1, 'TRK-LFC-BLK'),
+('Conjunto Treino Inter de Milão Teal', 'Versão de treino Inter de Milão em verde turquesa (Teal). Visual inovador com tecnologia antitranspirante premium.', '/uploads/tracksuit/7.webp', 199,90, 47, 6, 1, 'TRK-INT-TEA'),
+('Conjunto Treino Argentina Black/Blue', 'Conjunto oficial da Seleção Argentina (AFA). Design preto com detalhes em azul celeste e as três estrelas mundiais.', '/uploads/tracksuit/8.webp', 199,90, 47, 12, 3, 'TRK-ARG-BLK'),
+('Conjunto Treino Brasil Green/Yellow', 'Conjunto oficial da Seleção Brasileira. Blusa verde limão vibrante com calça azul clássica. Tecnologia de elite.', '/uploads/tracksuit/9.webp', 199,90, 47, 15, 1, 'TRK-BRA-GRN'),
+('Conjunto Treino França White/Blue', 'Conjunto da Seleção Francesa (FFF). Blusa branca com calça marinho e detalhes em dourado do galo bordado.', '/uploads/tracksuit/10.webp', 199,90, 47, 8, 1, 'TRK-FRA-WHT'),
+('Conjunto Treino Brasil Navy/Neon', 'Versão tática de treino do Brasil. Azul marinho com detalhes em amarelo neon. Visual drill pesado para o kit.', '/uploads/tracksuit/11.webp', 199,90, 47, 10, 1, 'TRK-BRA-NVY'),
+('Conjunto Treino Alemanha Purple/Black', 'Conjunto Alemanha na cor roxa (modelo pré-jogo). Design gráfico moderno nas mangas e calça preta técnica.', '/uploads/tracksuit/12.webp', 199,90, 47, 7, 3, 'TRK-GER-PUR'),
+('Conjunto Treino Arsenal Red/Grey', 'Conjunto oficial do Arsenal FC. Blusa vermelha com mangas cinzas e calça marinho. Estilo clássico dos Gunners.', '/uploads/tracksuit/13.webp', 199,90, 47, 10, 3, 'TRK-ARS-RED'),
+('Conjunto Treino Arsenal White/Navy', 'Versão branca de treino do Arsenal com calça azul marinho. Logotipo bordado e tecido de alta performance.', '/uploads/tracksuit/14.webp', 199,90, 47, 8, 3, 'TRK-ARS-WHT'),
+('Conjunto Treino Brasil Green Pattern', 'Conjunto Brasil com estampa gráfica em tons de verde. Design exclusivo para a linha de aquecimento da Seleção.', '/uploads/tracksuit/15.webp', 199,90, 47, 6, 1, 'TRK-BRA-PAT'),
+('Conjunto Treino França Black/Blue', 'Conjunto de treino da França na cor preta com detalhes em azul royal. Escudo da FFF bordado em destaque.', '/uploads/tracksuit/16.webp', 199,90, 47, 10, 1, 'TRK-FRA-BLK'),
+('Conjunto Treino França Navy/Blue', 'Versão oficial em azul marinho e azul claro da Seleção Francesa. Conforto térmico e ajuste preciso.', '/uploads/tracksuit/17.webp', 199,90, 47, 9, 1, 'TRK-FRA-NVY'),
+('Conjunto Treino Itália Navy/Green', 'Conjunto oficial da Seleção Italiana (Azzurra). Azul marinho com as cores da bandeira nacional nos detalhes.', '/uploads/tracksuit/18.webp', 199,90, 47, 12, 3, 'TRK-ITA-NVY'),
+('Conjunto Treino Tottenham Dark Grey', 'Conjunto oficial do Tottenham Hotspur. Blusa cinza chumbo com detalhes em azul turquesa. Design techwear.', '/uploads/tracksuit/19.webp', 199,90, 47, 7, 1, 'TRK-TOT-GRY'),
+('Conjunto Treino Inter de Milão Black/Teal', 'Conjunto Inter de Milão preto com detalhes em turquesa. Visual agressivo e moderno para treinos intensos.', '/uploads/tracksuit/20.webp', 199,90, 47, 10, 1, 'TRK-INT-BLK'),
+('Conjunto Treino Tottenham White/Blue', 'Versão branca de treino do Tottenham com detalhes em azul claro. Leveza e respirabilidade superior.', '/uploads/tracksuit/21.webp', 199,90, 47, 8, 1, 'TRK-TOT-WHT'),
+('Conjunto Treino Brasil Black/Neon', 'Conjunto tático Brasil todo preto com detalhes em amarelo neon. O favorito para compor kits streetwear.', '/uploads/tracksuit/22.webp', 199,90, 47, 15, 1, 'TRK-BRA-BLK'),
+('Conjunto Treino Manchester City Black/Red', 'Conjunto de treino do City na cor preta com detalhes em vermelho. Alta durabilidade e estilo urbano.', '/uploads/tracksuit/23.webp', 199,90, 47, 11, 7, 'TRK-MCI-BLK'),
+('Conjunto Treino PSG Black/Gold', 'Edição luxo de treino do PSG em preto com detalhes dourados. Represente Paris com o kit mais chave do lote.', '/uploads/tracksuit/24.webp', 199,90, 47, 10, 1, 'TRK-PSG-GLD'),
+('Conjunto Treino Franca Blue Pattern', 'Conjunto oficial de treino da Selecao Francesa com estampa grafica exclusiva em tons de azul. Tecnologia Dri-FIT de alta performance.', '/uploads/tracksuit/25.webp', 199,90, 47, 8, 1, 'TRK-FRA-PAT'),
+('Conjunto Treino Chelsea Black/White', 'Kit de treino oficial do Chelsea FC. Blusa preta com ombros brancos e calca de treino ajustada. Escudo do clube bordado em destaque.', '/uploads/tracksuit/26.webp', 199,90, 47, 10, 1, 'TRK-CHE-BLK'),
+('Conjunto Treino Liverpool Red/AXA', 'Conjunto Liverpool na cor vermelha vibrante com patrocinio AXA. Design focado em mobilidade e conforto termico para atletas.', '/uploads/tracksuit/27.webp', 199,90, 47, 7, 1, 'TRK-LFC-RED'),
+('Conjunto Treino Brasil Mint Green', 'Edicao especial Brasil na cor verde menta. Visual moderno e leve, ideal para sessoes de treino sob o sol ou uso casual tatico.', '/uploads/tracksuit/28.webp', 199,90, 47, 6, 1, 'TRK-BRA-MNT'),
+('Conjunto Treino Arsenal Navy/Blue', 'Conjunto Arsenal FC em azul marinho com detalhes em azul claro. Tecido tecnico respiravel com o escudo dos Gunners no peito.', '/uploads/tracksuit/29.webp', 199,90, 47, 9, 3, 'TRK-ARS-NVY'),
+('Conjunto Treino Ajax Teal/Blue', 'Conjunto de treino oficial do Ajax. Combinacao de azul turquesa e azul royal com as iconicas listras da marca nas laterais.', '/uploads/tracksuit/30.webp', 199,90, 47, 5, 3, 'TRK-AJX-TEA'),
+('Conjunto Treino Italia White/Blue', 'Kit de treino Selecao Italiana. Blusa branca com detalhes em azul e verde, representando a bandeira nacional. Alta gramatura tecnica.', '/uploads/tracksuit/31.webp', 199,90, 47, 8, 3, 'TRK-ITA-WHT'),
+('Conjunto Treino Franca Navy/Cyan', 'Versao de treino da Franca em azul marinho com detalhes em ciano nas mangas. Design ergonomico para maximo rendimento.', '/uploads/tracksuit/32.webp', 199,90, 47, 10, 1, 'TRK-FRA-CYA'),
+('Conjunto Treino PSG White/Black Pattern', 'Conjunto Paris Saint-Germain com blusa branca e detalhes graficos pretos nas mangas. Calca preta com logotipos em contraste.', '/uploads/tracksuit/33.webp', 199,90, 47, 12, 1, 'TRK-PSG-PAT'),
+('Conjunto Treino PSG White/Red', 'Conjunto de treino PSG oficial. Blusa branca com detalhes em vermelho e patrocinio ALL. O kit classico de treinamento parisiense.', '/uploads/tracksuit/34.webp', 199,90, 47, 15, 1, 'TRK-PSG-RED'),
+('Conjunto Treino Brasil Yellow/Blue', 'O iconico conjunto de treino do Brasil nas cores da bandeira. Blusa amarela vibrante e calca azul marinho. Orgulho nacional.', '/uploads/tracksuit/35.webp', 199,90, 47, 20, 1, 'TRK-BRA-YEL'),
+('Conjunto Treino Arsenal Navy/Red Detail', 'Versao tatica do Arsenal em azul marinho com detalhes em vermelho nos ombros. Fechamento em ziper 1/4 e caimento profissional.', '/uploads/tracksuit/36.webp', 199,90, 47, 10, 3, 'TRK-ARS-DET');
