@@ -1,5 +1,5 @@
 /**
- * JAPA UNIVERSE - CATALOGO JS (COM LÓGICA DE PREÇO PARA CONJUNTOS)
+ * JAPA UNIVERSE - CATALOGO JS (COM LÓGICA DE PREÇO PARA CONJUNTOS E NOCTA)
  */
 
 (function() {
@@ -56,13 +56,14 @@
             toShow.forEach((p, idx) => {
                 const isCritical = idx < 4; 
                 
-                // --- LÓGICA DE PREÇO (SÓ A PARTE DE CIMA PARA MARCAS ESPECÍFICAS) ---
+                // --- LÓGICA DE PREÇO (SÓ A PARTE DE CIMA) ---
                 const marcaId = p.marca?.id || 0;
-                // Apenas: Corteiz (13), Trapstar (14), Syna (15), Denim Tears (17)
-                const marcasComConjunto = [13, 14, 15, 17]; 
-                const isConjunto = marcasComConjunto.includes(marcaId);
+                const marcasComConjunto = [13, 14, 15, 17]; // Corteiz, Trapstar, Syna, Denim Tears
+                const hasNoctaInName = p.nome && p.nome.toLowerCase().includes('nocta');
                 
-                // Se for uma destas marcas, o preço base na vitrine é 65%
+                const isConjunto = marcasComConjunto.includes(marcaId) || hasNoctaInName;
+                
+                // Se for conjunto ou Nocta, o preço na vitrine é 65%
                 const precoExibicao = isConjunto ? (p.preco * 0.65) : p.preco;
                 // -----------------------------------------------------------
 

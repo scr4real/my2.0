@@ -99,9 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (catId >= 45) {
             sizes = ['P', 'M', 'G', 'GG', 'XG'];
             
-            // APENAS: Corteiz (13), Trapstar (14), Syna World (15), Denim Tears (17)
-            const marcasComConjunto = [13, 14, 15, 17]; 
-            const isConjunto = marcasComConjunto.includes(marcaId);
+            // Marcas permitidas OU se o nome contiver "Nocta"
+            const marcasComConjunto = [13, 14, 15, 17]; // Corteiz, Trapstar, Syna, Denim Tears
+            const hasNoctaInName = product.nome && product.nome.toLowerCase().includes('nocta');
+            
+            const isConjunto = marcasComConjunto.includes(marcaId) || hasNoctaInName;
 
             if(isConjunto) {
                 tipoCompraHTML = `
@@ -221,9 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = products.map((product, index) => {
             const marcaId = product.marca?.id || 0;
             const marcasComConjunto = [13, 14, 15, 17]; // Corteiz, Trapstar, Syna, Denim Tears
-            const isConjunto = marcasComConjunto.includes(marcaId);
+            const hasNoctaInName = product.nome && product.nome.toLowerCase().includes('nocta');
             
-            // Aplica 65% apenas nas 4 marcas especificadas
+            const isConjunto = marcasComConjunto.includes(marcaId) || hasNoctaInName;
+            
+            // Aplica 65% se for conjunto/nocta
             const precoExibicao = isConjunto ? (product.preco * 0.65) : product.preco;
 
             const hasDiscount = product.precoOriginal && product.precoOriginal > product.preco;
