@@ -404,7 +404,7 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 -- CORTEIZ (Categoria 46) | Preço original 389.90 -> 253.43 | 349.90 -> 227.43
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
 ('Corteiz x CBF Brasil Track Jacket White', 'Jaqueta tática exclusiva da colaboração Corteiz e Seleção Brasileira.', '/uploads/corteiz/1.webp', 290.90, 46, 10, 13, 'CRTZ-CBF-WHT'),
-('Corteiz x CBF Brasil Track Jacket Black', 'Versão Black da colaboração com a CBF. Tecido de alta resistência e acabamento premium.', '/uploads/corteiz/2.webp', 290.90, 46, 8, 13, 'CRTZ-CBF-BLK'),
+('Corteiz x CBF Brasil Track Jacket Black', 'Versão Black da colaboração com a CBF. Tecido de alta resistência e acabamento premium.', '/uploads/corteiz/2.webp', 290.90, 46, 8, 13, 'CRTZ-CBF-BLK');
 
 -- DENIM TEARS (Categoria 46) | Preço original 449.90 -> 292.43
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
