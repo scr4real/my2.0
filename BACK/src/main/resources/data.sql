@@ -29,8 +29,10 @@ INSERT IGNORE INTO _usuario (id, nome, email, cpf, telefone, senha, role) VALUES
 (1, 'Vinicius Admin', 'vinicius.biancolini.tds24@gmail.com', '000.000.000-00', '11999999999', '$2a$10$C0iH.HkG8Nh73C57GC7oT.jxzLawZbas/miJPJVP2qhTcpbZI0soq', 'ROLE_ADMIN');
 
 -- 4. CUPONS
-INSERT IGNORE INTO cupons (id, codigo, desconto, tipo_desconto, data_validade) 
-VALUES (1, 'SANT26', 10.00, 'PERCENTUAL', '2030-12-31');
+INSERT IGNORE INTO cupons (id, codigo, desconto, tipo_desconto, data_validade) VALUES 
+(1, 'SANT26', 10.00, 'PERCENTUAL', '2030-12-31'),
+(1, 'GDALPRA', 10.00, 'PERCENTUAL', '2030-12-31'),
+(1, 'JRAFA', 10.00, 'PERCENTUAL', '2030-12-31');
 
 -- ==================================================================================
 -- 5. PRODUTOS - LOTE CALÇADOS (PREÇOS MANTIDOS)
@@ -421,13 +423,6 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 ('Polo Ralph Lauren Zip Hoodie Black/White', 'Moletom com fecho preto e logotipo branco. O básico essencial e sofisticado.', '/uploads/ralph_lauren/6.webp', 390.90, 46, 15, 19, 'RL-ZIP-BLKWHT'),
 ('Polo Ralph Lauren Zip Hoodie Navy', 'Moletom com fecho azul marinho e logotipo vermelho. Clássico da marca.', '/uploads/ralph_lauren/7.webp', 390.90, 46, 9, 19, 'RL-ZIP-NVYRED');
 
--- SYNA WORLD (Categoria 46) | Preço original 399.90 -> 259.93
-INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
-('Syna World Logo Hoodie Black', 'Moletom preto com logotipo grafite. Cordões brancos espessos e corte oversized.', '/uploads/syna/1.webp', 370.90, 46, 10, 15, 'SYNA-HOD-BLK'),
-('Syna World Logo Hoodie Sage', 'Cor: Sage Green. Moletom com toque macio e logotipo bordado tom sobre tom.', '/uploads/syna/2.webp', 370.90, 46, 8, 15, 'SYNA-HOD-SGE'),
-('Syna World Logo Hoodie Blue', 'Cor: Blue. Azul vibrante com o icônico logotipo Syna em branco.', '/uploads/syna/3.webp', 370.90, 46, 12, 15, 'SYNA-HOD-BLU'),
-('Syna World Logo Hoodie Red', 'Cor: Red. Vermelho intenso com logotipo branco. Peça de destaque.', '/uploads/syna/4.webp', 370.90, 46, 7, 15, 'SYNA-HOD-RED');
-
 -- TECH FLEECE (Categoria 46) | Preço original 499.90 -> 324.93 | 599.90 -> 389.93
 INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque, marca_id, codigo_modelo) VALUES 
 ('Nike Tech Fleece G2 Brown', 'Cor: Baroque Brown. Nova geração (G2) com design ergonômico e bolso tático.', '/uploads/tech_fleece/1.webp', 290.90, 46, 10, 1, 'NIKE-TF-BRW'),
@@ -436,10 +431,6 @@ INSERT INTO produtos (nome, descricao, imagem_url, preco, categoria_id, estoque,
 ('Nike Tech Fleece G2 Black', 'Cor: Black. O modelo clássico mais vendido na versão atualizada G2.', '/uploads/tech_fleece/4.webp', 290.90, 46, 20, 1, 'NIKE-TF-BLK'),
 ('Nike Tech Fleece G2 Heather Grey', 'Cor: Dark Grey Heather. Cinza mescla escuro com detalhes pretos. Conforto térmico.', '/uploads/tech_fleece/5.webp', 290.90, 46, 15, 1, 'NIKE-TF-DGRY'),
 ('Nike Tech Fleece G2 Panda', 'Cor: Grey/Black. Design "Panda" com blocos de cores contrastantes.', '/uploads/tech_fleece/6.webp', 290.90, 46, 10, 1, 'NIKE-TF-PAN'),
-('Nike x Nocta Tech Fleece White', 'Colaboração Nocta (Drake). Cor: White. Design minimalista com Swoosh refletivo.', '/uploads/tech_fleece/7.webp', 320.90, 46, 5, 1, 'NOCTA-TF-WHT'),
-('Nike x Nocta Tech Fleece Baby Blue', 'Colaboração Nocta. Cor: Baby Blue. Peça premium com tecido de dupla face.', '/uploads/tech_fleece/8.webp', 320.90, 46, 6, 1, 'NOCTA-TF-BBLU'),
-('Nike x Nocta Tech Fleece Black', 'Colaboração Nocta. Cor: Black. Apresenta o clássico logotipo Nocta em amarelo.', '/uploads/tech_fleece/9.webp', 320.90, 46, 10, 1, 'NOCTA-TF-BLK'),
-('Nike x Nocta Tech Fleece Green', 'Colaboração Nocta. Cor: Green (Verde). Design tático com a cor vibrante exclusiva.', '/uploads/tech_fleece/10.webp', 320.90, 46, 5, 1, 'NOCTA-TF-GRN'),
 ('Nike Tech Fleece x Syna Black/Pink', 'Colaboração exclusiva Nike e Syna World. Base preta com logotipos bordados em rosa magenta.', '/uploads/tech_fleece/11.webp', 340.90, 46, 5, 15, 'NIKE-SYNA-TF');
 
 -- ==================================================================================
