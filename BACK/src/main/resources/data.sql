@@ -31,8 +31,8 @@ INSERT IGNORE INTO _usuario (id, nome, email, cpf, telefone, senha, role) VALUES
 -- 4. CUPONS
 INSERT IGNORE INTO cupons (id, codigo, desconto, tipo_desconto, data_validade) VALUES 
 (1, 'SANT26', 10.00, 'PERCENTUAL', '2030-12-31'),
-(1, 'GDALPRA', 10.00, 'PERCENTUAL', '2030-12-31'),
-(1, 'JRAFA', 10.00, 'PERCENTUAL', '2030-12-31');
+(2, 'GDALPRA', 10.00, 'PERCENTUAL', '2030-12-31'),
+(3, 'JRAFA', 10.00, 'PERCENTUAL', '2030-12-31');
 
 -- ==================================================================================
 -- 5. PRODUTOS - LOTE CALÇADOS (PREÇOS MANTIDOS)
