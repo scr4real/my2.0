@@ -17,6 +17,10 @@ public class PedidoAdminResponse {
     private LocalDateTime dataPedido;
     private BigDecimal valorTotal;
     private String status;
+    
+    // --- NOVOS CAMPOS ADICIONADOS ---
+    private String cupomAplicado;
+    private BigDecimal valorDesconto;
 
     public static PedidoAdminResponse fromPedido(Pedido pedido) {
         String nome = (pedido.getUsuario() != null) ? pedido.getUsuario().getNome() : "Usuário Desconhecido";
@@ -25,7 +29,9 @@ public class PedidoAdminResponse {
                 nome,
                 pedido.getDataPedido(),
                 pedido.getValorTotal(),
-                pedido.getStatus()
+                pedido.getStatus(),
+                pedido.getCupomAplicado(), // <-- PEGANDO O CUPOM DO BANCO
+                pedido.getValorDesconto()  // <-- PEGANDO O DESCONTO DO BANCO
         );
     }
 }
