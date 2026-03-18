@@ -1,8 +1,7 @@
--- 1. Volta o preço ao que era antes (divide pelo aumento de 40%)
-UPDATE produtos SET preco = preco / 1.40;
+-- 1. Remove produtos duplicados baseando-se no nome
+DELETE p1 FROM produtos p1
+INNER JOIN produtos p2 
+WHERE p1.id > p2.id AND p1.nome = p2.nome;
 
--- 2. Aplica o aumento correto de 10%
-UPDATE produtos SET preco = preco * 1.10;
-
--- 3. Deixa o visual profissional com .90
-UPDATE produtos SET preco = ROUND(preco) - 0.10;
+-- 2. Garante que o modo de inicialização não cause loops (opcional, mas seguro)
+SET FOREIGN_KEY_CHECKS = 1;
