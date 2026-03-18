@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        pedidosTableBody.innerHTML = pedidos.map(pedido => {
+                pedidosTableBody.innerHTML = pedidos.map(pedido => {
             const nomeCliente = pedido.nomeCliente || 'Usuário Desconhecido';
             const valorFormatado = pedido.valorTotal ? `R$ ${pedido.valorTotal.toFixed(2).replace('.', ',')}` : 'R$ --,--';
             const dataFormatada = pedido.dataPedido ? new Date(pedido.dataPedido).toLocaleDateString('pt-BR') : '--/--/----';
@@ -264,6 +264,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td>${nomeCliente}</td>
                 <td>${dataFormatada}</td>
                 <td>${valorFormatado}</td>
+                <td>
+                    <span style="background: rgba(255, 122, 0, 0.1); color: #ff7a00; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85em;">
+                        ${pedido.cupomAplicado || '---'}
+                    </span>
+                </td>
                 <td>
                     <select class="status-select" data-pedido-id="${pedido.id}">
                         <option value="PENDENTE" ${pedido.status === 'PENDENTE' ? 'selected' : ''}>Pendente</option>
