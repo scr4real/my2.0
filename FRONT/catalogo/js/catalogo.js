@@ -59,11 +59,11 @@
                 // --- LÓGICA DE PREÇO (SÓ A PARTE DE CIMA) ---
                 const marcaId = p.marca?.id || 0;
                 const marcasComConjunto = [13, 14, 15, 17]; // Corteiz, Trapstar, Syna, Denim Tears
-                const hasNoctaInName = p.nome && p.nome.toLowerCase().includes('nocta');
-                
-                const isConjunto = marcasComConjunto.includes(marcaId) || hasNoctaInName;
-                
-                // Se for conjunto ou Nocta, o preço na vitrine é 65%
+
+                // Removemos a verificação do nome 'nocta'
+                const isConjunto = marcasComConjunto.includes(marcaId);
+
+                // Se for conjunto das marcas acima, o preço na vitrine é 65%
                 const precoExibicao = isConjunto ? (p.preco * 0.65) : p.preco;
                 // -----------------------------------------------------------
 
