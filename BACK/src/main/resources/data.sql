@@ -1,2 +1,2 @@
-INSERT IGNORE INTO cupons (id, codigo, desconto, tipo_desconto, data_validade) 
-VALUES (5, 'WS10', 10.00, 'PERCENTUAL', '2030-12-31');
+INSERT INTO cupons (codigo, desconto, tipo_desconto, data_validade) 
+VALUES ('SEM50', 50.00, 'FIXO', '2026-12-31');
