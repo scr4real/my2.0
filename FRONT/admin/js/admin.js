@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     const publicApiClient = axios.create({ baseURL: `${apiUrl}/api` });
 
-    // --- REFERÊNCIAS DO DOM (Mantidas no topo) ---
+    // --- REFERÊNCIAS DO DOM ---
     const produtosTableBody = document.getElementById('produtos-table-body');
     const pedidosTableBody = document.getElementById('pedidos-table-body');
     const addProdutoForm = document.getElementById('product-form'); 
@@ -104,38 +104,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     const codigoRastreioInput = document.getElementById('codigo-rastreio');
     const trackingNewStatusInput = document.getElementById('tracking-new-status');
 
-    // --- VARIÁVEIS PARA FILTRO DE PEDIDOS (NOVO) ---
-    let allPedidos = []; // Armazena todos os pedidos
-    let currentStatusFilter = 'ALL'; // Filtro inicial
+    // --- VARIÁVEIS PARA FILTRO DE PEDIDOS ---
+    let allPedidos = []; 
+    let currentStatusFilter = 'ALL'; 
     const tabButtons = document.querySelectorAll('.tab-btn');
-    // --- FIM REFERÊNCIAS DO DOM ---
     
-    // --- LÓGICA DAS ABAS DE STATUS (NOVO) ---
+    // --- REFERÊNCIAS VENDAS MANUAIS (NOVO) ---
+    const vendasManuaisSection = document.getElementById('vendas-manuais-section');
+    const navVendasManuais = document.getElementById('nav-vendas-manuais');
+    const vendasManuaisTableBody = document.getElementById('vendas-manuais-table-body');
+    const addVendaBtn = document.getElementById('add-venda-btn');
+    const vendaManualModal = document.getElementById('venda-manual-modal');
+    const closeVendaModalBtn = document.getElementById('close-venda-modal-btn');
+    const vendaManualForm = document.getElementById('venda-manual-form');
+    const totalLucroLivreEl = document.getElementById('total-lucro-livre');
+    const totalCustosPendentesEl = document.getElementById('total-custos-pendentes');
+
+    // --- LÓGICA DAS ABAS DE STATUS ---
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Remove active de todos
             tabButtons.forEach(b => b.classList.remove('active'));
-            // Adiciona no clicado
             btn.classList.add('active');
-            // Atualiza filtro e renderiza
             currentStatusFilter = btn.dataset.status;
             filterAndRenderPedidos();
         });
     });
 
-    // Função que filtra e chama o render (NOVO)
     function filterAndRenderPedidos() {
         let filteredPedidos = allPedidos;
-
         if (currentStatusFilter !== 'ALL') {
             filteredPedidos = allPedidos.filter(pedido => pedido.status === currentStatusFilter);
         }
-
         renderPedidos(filteredPedidos);
     }
     
     // --- FUNÇÕES DE FECHAMENTO/ABERTURA DE MODAL ---
-    
     const closeProductModal = () => productModal.classList.remove('active');
     const closeMessageModal = () => messageModal.classList.remove('active');
     const closeDetailsModal = () => detailsModal.classList.remove('active');
@@ -148,11 +151,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         avisoModal.classList.remove('active');
     };
     
-    // Chamada por closeTrackingModalBtn e trackingForm.submit
     function closeTrackingModal() {
         trackingForm.reset();
         trackingModal.classList.remove('active');
         fetchPedidos(); 
+    };
+
+    // FECHAR MODAL DE VENDAS (NOVO)
+    const closeVendaModal = () => {
+        vendaManualForm.reset();
+        vendaManualModal.classList.remove('active');
     };
 
     const openMessageModal = (message) => {
@@ -176,19 +184,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         codigoRastreioInput.value = ''; 
         trackingModal.classList.add('active');
     };
-    // --- FIM FUNÇÕES DE MODAL ---
 
-    // --- FUNÇÕES AUXILIARES DE LÓGICA (Definidas com const ou function) ---
+    // --- FUNÇÕES AUXILIARES DE LÓGICA ---
     const getImageUrl = (path) => {
         if (!path) return 'placeholder.png'; 
         if (path.startsWith('http')) {
             return path;
         }
-        
         if (path.startsWith('/')) {
             path = path.substring(1);
         }
-
         return `${apiUrl}/${path}`;
     };
     
@@ -224,7 +229,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
     
-    // --- FUNÇÕES CORE (USANDO DECLARAÇÃO 'function' PARA GARANTIR HOISTING) ---
+    // --- FUNÇÕES CORE ---
 
     // LÓGICA DE ATUALIZAÇÃO DE STATUS
     async function updateStatus(pedidoId, novoStatus, codigoRastreio = null, linkRastreio = null) {
@@ -245,7 +250,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // RENDERIZAÇÃO DE PEDIDOS
     function renderPedidos(pedidos) {
-        // Ordena por data (mais recente primeiro) dentro da aba selecionada
         pedidos.sort((a, b) => new Date(b.dataPedido) - new Date(a.dataPedido));
         
         if (pedidos.length === 0) {
@@ -253,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-                pedidosTableBody.innerHTML = pedidos.map(pedido => {
+        pedidosTableBody.innerHTML = pedidos.map(pedido => {
             const nomeCliente = pedido.nomeCliente || 'Usuário Desconhecido';
             const valorFormatado = pedido.valorTotal ? `R$ ${pedido.valorTotal.toFixed(2).replace('.', ',')}` : 'R$ --,--';
             const dataFormatada = pedido.dataPedido ? new Date(pedido.dataPedido).toLocaleDateString('pt-BR') : '--/--/----';
@@ -285,7 +289,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             </tr>
         `}).join('');
         
-        // Adiciona listener de mudança de status
         pedidosTableBody.querySelectorAll('.status-select').forEach(select => {
             select.addEventListener('change', (e) => {
                 const novoStatus = e.target.value;
@@ -297,19 +300,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (confirm(`Tem certeza que deseja atualizar o status do pedido #${pedidoId} para ${novoStatus}?`)) {
                         updateStatus(pedidoId, novoStatus);
                     } else {
-                        fetchPedidos(); // Recarrega para desfazer a seleção visual se cancelar
+                        fetchPedidos(); 
                     }
                 }
             });
         });
     }
     
-    // FUNÇÃO PARA BUSCAR PEDIDOS (ATUALIZADA)
+    // FUNÇÃO PARA BUSCAR PEDIDOS
     async function fetchPedidos() {
         try {
             const response = await apiClient.get('/pedidos'); 
-            allPedidos = response.data; // Salva na variável global
-            filterAndRenderPedidos(); // Aplica o filtro atual
+            allPedidos = response.data; 
+            filterAndRenderPedidos(); 
         } catch (error) {
             console.error("Erro ao buscar pedidos:", error);
             pedidosTableBody.innerHTML = '<tr><td colspan="6">Não foi possível carregar os pedidos. Verifique a API ou sua conexão.</td></tr>';
@@ -323,13 +326,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // FUNÇÃO DE NAVEGAÇÃO DE VISÃO (CHAMADA PRINCIPAL)
     function switchView(view) {
-        [pedidosSection, produtosSection, mensagensSection].forEach(s => s.classList.remove('active'));
-        [navPedidos, navProdutos, navMensagens].forEach(n => n.classList.remove('active'));
+        // Agora incluímos vendas-manuais
+        [pedidosSection, produtosSection, mensagensSection, vendasManuaisSection].forEach(s => s?.classList.remove('active'));
+        [navPedidos, navProdutos, navMensagens, navVendasManuais].forEach(n => n?.classList.remove('active'));
 
         if (view === 'pedidos') {
             pedidosSection.classList.add('active');
             navPedidos.classList.add('active');
-            fetchPedidos(); // Chama a função que agora está definida
+            fetchPedidos(); 
         } else if (view === 'produtos') {
             produtosSection.classList.add('active');
             navProdutos.classList.add('active');
@@ -338,6 +342,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             mensagensSection.classList.add('active');
             navMensagens.classList.add('active');
             fetchMensagens();
+        } else if (view === 'vendas-manuais') { // NOVO
+            vendasManuaisSection.classList.add('active');
+            navVendasManuais.classList.add('active');
+            fetchVendasManuais();
         }
          
          if (sidebar && overlay && sidebar.classList.contains('active')) {
@@ -345,8 +353,67 @@ document.addEventListener('DOMContentLoaded', async () => {
              overlay.classList.remove('active');
          }
     }
+
+    // --- FUNÇÕES DE VENDAS MANUAIS (NOVO) ---
+    async function fetchVendasManuais() {
+        try {
+            const res = await apiClient.get('/vendas-manuais');
+            renderVendasManuais(res.data);
+        } catch (error) {
+            console.error("Erro ao carregar vendas manuais:", error);
+            vendasManuaisTableBody.innerHTML = '<tr><td colspan="8">Erro ao carregar os dados.</td></tr>';
+        }
+    }
+
+    function renderVendasManuais(vendas) {
+        let totalLucro = 0;
+        let totalPendentes = 0;
+
+        vendasManuaisTableBody.innerHTML = vendas.map(v => {
+            // Matemática dos Cards no topo
+            totalLucro += v.lucroLivre;
+            if (!v.fornecedorPago) totalPendentes += v.custoFornecedor;
+            if (!v.fretePago) totalPendentes += v.custoFrete;
+
+            const formatMoney = (val) => `R$ ${val.toFixed(2).replace('.', ',')}`;
+
+            return `
+            <tr>
+                <td>${new Date(v.dataVenda).toLocaleDateString('pt-BR')}</td>
+                <td><strong>${v.nomeProduto}</strong></td>
+                <td style="color: #28a745; font-weight: bold;">${formatMoney(v.valorVenda)}</td>
+                <td style="color: #dc3545;">${formatMoney(v.custoFornecedor)}</td>
+                <td style="color: #dc3545;">${formatMoney(v.custoFrete)}</td>
+                <td style="font-weight: bold; color: #007bff; background: rgba(0, 123, 255, 0.1);">
+                    ${formatMoney(v.lucroLivre)}
+                </td>
+                <td>
+                    <div style="display: flex; gap: 5px; flex-direction: column;">
+                        <button class="btn btn-sm ${v.fornecedorPago ? 'btn-success' : 'btn-secondary'} toggle-fornecedor-btn" data-id="${v.id}" data-pago="${v.fornecedorPago}">
+                            <i class="fas ${v.fornecedorPago ? 'fa-check' : 'fa-times'}"></i> Fornec.
+                        </button>
+                        <button class="btn btn-sm ${v.fretePago ? 'btn-success' : 'btn-secondary'} toggle-frete-btn" data-id="${v.id}" data-pago="${v.fretePago}">
+                            <i class="fas ${v.fretePago ? 'fa-check' : 'fa-times'}"></i> Frete
+                        </button>
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn-danger btn-sm delete-venda-btn" data-id="${v.id}" title="Excluir Lançamento"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            `;
+        }).join('');
+
+        if(vendas.length === 0) {
+            vendasManuaisTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Nenhuma venda lançada ainda.</td></tr>';
+        }
+
+        // Atualiza os cartões de resumo
+        totalLucroLivreEl.textContent = `R$ ${totalLucro.toFixed(2).replace('.', ',')}`;
+        totalCustosPendentesEl.textContent = `R$ ${totalPendentes.toFixed(2).replace('.', ',')}`;
+    }
     
-    // FUNÇÕES RESTANTES (MANTIDAS COMO ESTAVAM)
+    // --- FUNÇÕES RESTANTES PRODUTOS/MENSAGENS ---
     const fetchProdutos = async () => {
         try {
             const response = await apiClient.get('/produtos');
@@ -438,11 +505,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         productModal.classList.add('active');
     };
     
-    // --- RENDERIZAÇÃO DE DETALHES DO PEDIDO (USADA POR openDetailsModal) ---
     const openDetailsModal = (pedido) => {
         detailsModalTitle.textContent = `Detalhes do Pedido #${String(pedido.id).padStart(6, '0')}`;
 
-        // Badges de Preferência (Logística)
         const caixaBadge = pedido.comCaixa 
             ? `<span style="background:#28a745; color:white; padding:6px 10px; border-radius:4px; font-weight:bold; display:inline-block; margin-right:5px;">COM CAIXA ORIGINAL</span>` 
             : `<span style="background:#6c757d; color:white; padding:6px 10px; border-radius:4px; font-size:0.9em; opacity:0.8;">Sem Caixa (Padrão)</span>`;
@@ -516,12 +581,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
         detailsModal.classList.add('active');
     };
-    // --- FIM DEFINIÇÕES DE FUNÇÕES CORE LOGIC ---
-    
     
     // --- MANIPULAÇÃO DE EVENTOS DE MODAIS/NAVEGAÇÃO ---
 
-    // Event Listeners para Modais
+    // Event Listeners para Modais Originais
     addProductBtn.addEventListener('click', () => openProductModal());
     closeModalBtn.addEventListener('click', closeProductModal);
     productModal.addEventListener('click', (e) => { if (e.target === productModal) closeProductModal(); });
@@ -531,7 +594,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     avisoModal.addEventListener('click', (e) => { if (e.target === avisoModal) closeAvisoModal(); });
     closeDetailsModalBtn.addEventListener('click', closeDetailsModal); 
     
-    // Adiciona listener para fechar o novo modal
     closeTrackingModalBtn.addEventListener('click', (e) => {
         e.preventDefault();
         closeTrackingModal();
@@ -540,6 +602,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target === trackingModal) closeTrackingModal(); 
     });
 
+    // EVENT LISTENERS VENDAS MANUAIS (NOVO)
+    addVendaBtn.addEventListener('click', () => vendaManualModal.classList.add('active'));
+    closeVendaModalBtn.addEventListener('click', closeVendaModal);
+    vendaManualModal.addEventListener('click', (e) => { if (e.target === vendaManualModal) closeVendaModal(); });
+
+    vendaManualForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const novaVenda = {
+            nomeProduto: document.getElementById('venda-produto').value,
+            valorVenda: parseFloat(document.getElementById('venda-valor').value),
+            custoFornecedor: parseFloat(document.getElementById('venda-fornecedor').value),
+            custoFrete: parseFloat(document.getElementById('venda-frete').value)
+        };
+
+        try {
+            await apiClient.post('/vendas-manuais', novaVenda);
+            closeVendaModal();
+            fetchVendasManuais(); // Atualiza a tabela e as calculadoras
+        } catch (error) {
+            console.error(error);
+            alert('Erro ao registrar a venda.');
+        }
+    });
+
+    vendasManuaisTableBody.addEventListener('click', async (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+
+        const id = target.dataset.id;
+
+        if (target.classList.contains('delete-venda-btn')) {
+            if (confirm('Tem certeza que deseja apagar esse lançamento? Essa ação não pode ser desfeita.')) {
+                await apiClient.delete(`/vendas-manuais/${id}`);
+                fetchVendasManuais();
+            }
+        } else if (target.classList.contains('toggle-fornecedor-btn')) {
+            const isPago = target.dataset.pago === 'true';
+            await apiClient.patch(`/vendas-manuais/${id}/fornecedor`, { pago: !isPago });
+            fetchVendasManuais();
+        } else if (target.classList.contains('toggle-frete-btn')) {
+            const isPago = target.dataset.pago === 'true';
+            await apiClient.patch(`/vendas-manuais/${id}/frete`, { pago: !isPago });
+            fetchVendasManuais();
+        }
+    });
 
     avisoImagemInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -559,7 +666,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     detailsModal.addEventListener('click', (e) => { if (e.target === detailsModal) closeDetailsModal(); });
 
-
     // Preview da Imagem
     imagemInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -571,7 +677,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 imagePreviewText.textContent = `Nova imagem: ${file.name}`;
             };
             reader.readAsDataURL(file);
-        } else if (!produtoIdInput.value) { // Só limpa se estiver adicionando
+        } else if (!produtoIdInput.value) { 
             imagePreview.classList.add('hidden');
             imagePreview.src = '#';
             imagePreviewText.textContent = 'Nenhuma imagem selecionada.';
@@ -585,12 +691,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const pedidoId = target.dataset.pedidoId;
 
-        // Adicionar Aviso
         if (target.classList.contains('add-aviso-btn')) {
             openAvisoModal(pedidoId);
         }
 
-        // Ver Detalhes
         if (target.classList.contains('view-details-btn')) {
             try {
                 const response = await apiClient.get(`/pedidos/${pedidoId}`);
@@ -609,7 +713,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const productId = target.dataset.productId;
 
-        // Editar Produto
         if (target.classList.contains('edit-produto-btn')) {
             try {
                 const response = await publicApiClient.get(`/produtos/${productId}`);
@@ -620,7 +723,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // Excluir Produto
         if (target.classList.contains('delete-produto-btn')) {
             if (confirm(`Tem certeza que deseja excluir o produto ID ${productId}?`)) {
                 try {
@@ -653,7 +755,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const url = isEditing ? `/produtos/${id}` : '/produtos';
         const method = isEditing ? 'put' : 'post'; 
 
-        // Validar se marca e categoria foram selecionados
         const brandId = marcaSelect.value;
         const categoryId = categoriaSelect.value;
         if (!brandId || !categoryId) {
@@ -662,8 +763,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const formData = new FormData();
-
-        // Monta o objeto JSON do produto
         const produtoData = {
             nome: nomeInput.value,
             marca: { id: parseInt(brandId) }, 
@@ -673,10 +772,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             estoque: parseInt(estoqueInput.value),
             descricao: descricaoInput.value,
         };
-        // Adiciona o JSON como uma parte 'produto'
         formData.append('produto', JSON.stringify(produtoData));
 
-        // Adiciona a imagem se foi selecionada
         if (imagemInput.files.length > 0) {
             formData.append('imagem', imagemInput.files[0]);
         } else if (!isEditing && imagemInput.required) {
@@ -700,7 +797,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error(`Erro ao salvar produto:`, error.response?.data || error.message);
         }
     });
-
 
     // --- Submissão do Formulário de Aviso ---
     avisoForm.addEventListener('submit', async (e) => {
@@ -727,7 +823,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     
-    // --- Submissão do Formulário de Rastreio (NOVO) ---
+    // --- Submissão do Formulário de Rastreio ---
     trackingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -746,7 +842,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Link fixo do Correios, como solicitado
         const linkRastreio = `https://rastreamento.correios.com.br/app/index.php?e2s=SRO&a=${codigoRastreio}`;
         
         try {
@@ -758,11 +853,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-
     // --- Inicialização ---
     navPedidos.addEventListener('click', (e) => { e.preventDefault(); switchView('pedidos'); });
     navProdutos.addEventListener('click', (e) => { e.preventDefault(); switchView('produtos'); });
     navMensagens.addEventListener('click', (e) => { e.preventDefault(); switchView('mensagens'); });
+    // NOVO: Evento da aba de vendas manuais
+    navVendasManuais.addEventListener('click', (e) => { e.preventDefault(); switchView('vendas-manuais'); });
 
     if (toggleBtn && sidebar && overlay) {
         toggleBtn.addEventListener('click', () => {
@@ -776,6 +872,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     await fetchBrandsAndCategories(); 
-    // A chamada está aqui no final, mas a função switchView está definida acima, resolvendo o erro.
     switchView('pedidos'); 
 });
