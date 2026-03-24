@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentStatusFilter = 'ALL'; 
     const tabButtons = document.querySelectorAll('.tab-btn');
     
-    // --- REFERÊNCIAS VENDAS MANUAIS (NOVO) ---
+    // --- REFERÊNCIAS VENDAS MANUAIS ---
     const vendasManuaisSection = document.getElementById('vendas-manuais-section');
     const navVendasManuais = document.getElementById('nav-vendas-manuais');
     const vendasManuaisTableBody = document.getElementById('vendas-manuais-table-body');
@@ -119,6 +119,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const vendaManualForm = document.getElementById('venda-manual-form');
     const totalLucroLivreEl = document.getElementById('total-lucro-livre');
     const totalCustosPendentesEl = document.getElementById('total-custos-pendentes');
+    
+    // Novas referências para os múltiplos itens do pacote
+    const btnAddItemVenda = document.getElementById('btn-add-item-venda');
+    const itemsContainer = document.getElementById('venda-items-container');
 
     // --- LÓGICA DAS ABAS DE STATUS ---
     tabButtons.forEach(btn => {
@@ -157,9 +161,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         fetchPedidos(); 
     };
 
-    // FECHAR MODAL DE VENDAS (NOVO)
+    // FECHAR MODAL DE VENDAS E RESETAR OS CAMPOS DE ITENS
     const closeVendaModal = () => {
         vendaManualForm.reset();
+        if (itemsContainer) {
+            itemsContainer.innerHTML = `
+                <div class="venda-item-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="text" class="venda-produto-input" required placeholder="Ex: Nocta Glide Preto Tam 41" style="flex: 1;">
+                </div>
+            `;
+        }
         vendaManualModal.classList.remove('active');
     };
 
@@ -188,12 +199,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- FUNÇÕES AUXILIARES DE LÓGICA ---
     const getImageUrl = (path) => {
         if (!path) return 'placeholder.png'; 
-        if (path.startsWith('http')) {
-            return path;
-        }
-        if (path.startsWith('/')) {
-            path = path.substring(1);
-        }
+        if (path.startsWith('http')) return path;
+        if (path.startsWith('/')) path = path.substring(1);
         return `${apiUrl}/${path}`;
     };
     
@@ -326,7 +333,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // FUNÇÃO DE NAVEGAÇÃO DE VISÃO (CHAMADA PRINCIPAL)
     function switchView(view) {
-        // Agora incluímos vendas-manuais
         [pedidosSection, produtosSection, mensagensSection, vendasManuaisSection].forEach(s => s?.classList.remove('active'));
         [navPedidos, navProdutos, navMensagens, navVendasManuais].forEach(n => n?.classList.remove('active'));
 
@@ -342,7 +348,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             mensagensSection.classList.add('active');
             navMensagens.classList.add('active');
             fetchMensagens();
-        } else if (view === 'vendas-manuais') { // NOVO
+        } else if (view === 'vendas-manuais') {
             vendasManuaisSection.classList.add('active');
             navVendasManuais.classList.add('active');
             fetchVendasManuais();
@@ -354,7 +360,31 @@ document.addEventListener('DOMContentLoaded', async () => {
          }
     }
 
-    // --- FUNÇÕES DE VENDAS MANUAIS (NOVO) ---
+    // --- FUNÇÕES DE VENDAS MANUAIS ---
+
+    // Adicionar múltiplos campos de itens no modal
+    if (btnAddItemVenda) {
+        btnAddItemVenda.addEventListener('click', () => {
+            const row = document.createElement('div');
+            row.className = 'venda-item-row';
+            row.style = 'display: flex; gap: 10px; margin-bottom: 10px;';
+            row.innerHTML = `
+                <input type="text" class="venda-produto-input" required placeholder="Outro item (Ex: Camiseta Trapstar)" style="flex: 1;">
+                <button type="button" class="btn btn-danger btn-sm remove-item-btn"><i class="fas fa-trash"></i></button>
+            `;
+            itemsContainer.appendChild(row);
+        });
+    }
+
+    // Remover campo de item
+    if (itemsContainer) {
+        itemsContainer.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-item-btn')) {
+                e.target.closest('.venda-item-row').remove();
+            }
+        });
+    }
+
     async function fetchVendasManuais() {
         try {
             const res = await apiClient.get('/vendas-manuais');
@@ -370,24 +400,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         let totalPendentes = 0;
 
         vendasManuaisTableBody.innerHTML = vendas.map(v => {
-            // Matemática dos Cards no topo
             totalLucro += v.lucroLivre;
             if (!v.fornecedorPago) totalPendentes += v.custoFornecedor;
             if (!v.fretePago) totalPendentes += v.custoFrete;
 
             const formatMoney = (val) => `R$ ${val.toFixed(2).replace('.', ',')}`;
+            
+            // Separa a lista de itens usando o separador e coloca quebra de linha visual (<br>)
+            const listaProdutosVisual = v.nomeProduto.replace(/ \| /g, '<br>• ');
 
             return `
             <tr>
-                <td>${new Date(v.dataVenda).toLocaleDateString('pt-BR')}</td>
-                <td><strong>${v.nomeProduto}</strong></td>
-                <td style="color: #28a745; font-weight: bold;">${formatMoney(v.valorVenda)}</td>
-                <td style="color: #dc3545;">${formatMoney(v.custoFornecedor)}</td>
-                <td style="color: #dc3545;">${formatMoney(v.custoFrete)}</td>
-                <td style="font-weight: bold; color: #007bff; background: rgba(0, 123, 255, 0.1);">
+                <td data-label="Data">${new Date(v.dataVenda).toLocaleDateString('pt-BR')}</td>
+                <td data-label="Produtos"><strong>• ${listaProdutosVisual}</strong></td>
+                <td data-label="Recebido" style="color: #28a745; font-weight: bold;">${formatMoney(v.valorVenda)}</td>
+                <td data-label="Custo Prod." style="color: #dc3545;">${formatMoney(v.custoFornecedor)}</td>
+                <td data-label="Frete" style="color: #dc3545;">${formatMoney(v.custoFrete)}</td>
+                <td data-label="Lucro Limpo" style="font-weight: bold; color: #007bff; background: rgba(0, 123, 255, 0.1); border-radius:4px;">
                     ${formatMoney(v.lucroLivre)}
                 </td>
-                <td>
+                <td data-label="Status Pagamentos">
                     <div style="display: flex; gap: 5px; flex-direction: column;">
                         <button class="btn btn-sm ${v.fornecedorPago ? 'btn-success' : 'btn-secondary'} toggle-fornecedor-btn" data-id="${v.id}" data-pago="${v.fornecedorPago}">
                             <i class="fas ${v.fornecedorPago ? 'fa-check' : 'fa-times'}"></i> Fornec.
@@ -397,7 +429,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </button>
                     </div>
                 </td>
-                <td>
+                <td data-label="Ação">
                     <button class="btn btn-danger btn-sm delete-venda-btn" data-id="${v.id}" title="Excluir Lançamento"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
@@ -408,7 +440,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             vendasManuaisTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Nenhuma venda lançada ainda.</td></tr>';
         }
 
-        // Atualiza os cartões de resumo
         totalLucroLivreEl.textContent = `R$ ${totalLucro.toFixed(2).replace('.', ',')}`;
         totalCustosPendentesEl.textContent = `R$ ${totalPendentes.toFixed(2).replace('.', ',')}`;
     }
@@ -602,15 +633,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target === trackingModal) closeTrackingModal(); 
     });
 
-    // EVENT LISTENERS VENDAS MANUAIS (NOVO)
+    // EVENT LISTENERS VENDAS MANUAIS
     addVendaBtn.addEventListener('click', () => vendaManualModal.classList.add('active'));
     closeVendaModalBtn.addEventListener('click', closeVendaModal);
     vendaManualModal.addEventListener('click', (e) => { if (e.target === vendaManualModal) closeVendaModal(); });
 
+    // SUBMISSÃO DO PACOTE DE VENDAS
     vendaManualForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // Pega todos os inputs de itens gerados dinamicamente e junta com " | "
+        const inputs = document.querySelectorAll('.venda-produto-input');
+        const produtosArray = Array.from(inputs).map(inp => inp.value.trim()).filter(val => val !== '');
+        const stringPacote = produtosArray.join(' | ');
+
+        if(produtosArray.length === 0) {
+            alert('Adicione pelo menos um produto!');
+            return;
+        }
+
         const novaVenda = {
-            nomeProduto: document.getElementById('venda-produto').value,
+            nomeProduto: stringPacote, // O Java vai receber a string completa
             valorVenda: parseFloat(document.getElementById('venda-valor').value),
             custoFornecedor: parseFloat(document.getElementById('venda-fornecedor').value),
             custoFrete: parseFloat(document.getElementById('venda-frete').value)
@@ -626,10 +669,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // Cliques nos botões da tabela de Vendas Manuais
     vendasManuaisTableBody.addEventListener('click', async (e) => {
         const target = e.target.closest('button');
         if (!target) return;
-
         const id = target.dataset.id;
 
         if (target.classList.contains('delete-venda-btn')) {
@@ -857,7 +900,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     navPedidos.addEventListener('click', (e) => { e.preventDefault(); switchView('pedidos'); });
     navProdutos.addEventListener('click', (e) => { e.preventDefault(); switchView('produtos'); });
     navMensagens.addEventListener('click', (e) => { e.preventDefault(); switchView('mensagens'); });
-    // NOVO: Evento da aba de vendas manuais
     navVendasManuais.addEventListener('click', (e) => { e.preventDefault(); switchView('vendas-manuais'); });
 
     if (toggleBtn && sidebar && overlay) {

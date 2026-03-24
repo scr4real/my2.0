@@ -303,31 +303,40 @@
         </div>
     </div>
 
-    <div id="venda-manual-modal" class="modal-overlay">
-        <div class="modal-content">
+<div id="venda-manual-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
                 <h3>Lançar Nova Venda Manual</h3>
                 <button id="close-venda-modal-btn" class="close-modal">&times;</button>
             </div>
             <form id="venda-manual-form">
+                
                 <div class="form-group">
-                    <label>Nome do Produto (Ex: Nocta Glide Preto Tam 41)</label>
-                    <input type="text" id="venda-produto" required>
+                    <label>Produtos do Pacote</label>
+                    <div id="venda-items-container">
+                        <div class="venda-item-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" class="venda-produto-input" required placeholder="Ex: Nocta Glide Preto Tam 41" style="flex: 1;">
+                        </div>
+                    </div>
+                    <button type="button" id="btn-add-item-venda" class="btn btn-secondary btn-sm" style="width: 100%; margin-top: 5px;">
+                        <i class="fas fa-plus"></i> Adicionar outro item
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>Valor Total Recebido pelo Pacote (R$)</label>
+                    <input type="number" step="0.01" id="venda-valor" required placeholder="0.00">
                 </div>
                 <div class="form-group">
-                    <label>Valor Total Pago pelo Cliente (R$)</label>
-                    <input type="number" step="0.01" id="venda-valor" required>
+                    <label>Custo Total das Mercadorias (R$)</label>
+                    <input type="number" step="0.01" id="venda-fornecedor" required placeholder="0.00">
                 </div>
                 <div class="form-group">
-                    <label>Custo no Fornecedor (R$)</label>
-                    <input type="number" step="0.01" id="venda-fornecedor" required>
-                </div>
-                <div class="form-group">
-                    <label>Custo de Frete/Envio (R$)</label>
-                    <input type="number" step="0.01" id="venda-frete" required>
+                    <label>Custo Total do Frete/Envio (R$)</label>
+                    <input type="number" step="0.01" id="venda-frete" required placeholder="0.00">
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Salvar Lançamento</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Salvar Lançamento</button>
                 </div>
             </form>
         </div>
