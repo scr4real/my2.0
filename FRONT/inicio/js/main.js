@@ -3,6 +3,7 @@
  * - Animações suaves
  * - Carrinho completo (Adicionar, Remover, Checkout)
  * - Integração com Recentes.js
+ * - Correção de Autoplay de Vídeo (Scroll)
  */
 (function() {
     const API_BASE = window.location.hostname.includes('localhost') 
@@ -417,7 +418,6 @@
                 // Remover do Carrinho
                 window.removeFromCart = (id, size) => {
                     let currentCart = getCart();
-                    // Filtra removendo o item que bate ID e Tamanho (converte para string pra garantir)
                     currentCart = currentCart.filter(item => !(String(item.id) === String(id) && String(item.size) === String(size)));
                     saveCart(currentCart);
                     this.updateUI();
@@ -453,33 +453,39 @@
     })();
 
     /**
-     * Módulo de Vídeo
+     * Módulo de Vídeo CORRIGIDO
+     * O vídeo agora roda automaticamente ao entrar na tela.
      */
     const VideoEffectsModule = {
         init: function() {
-            setTimeout(() => { this.setupVideoObservers(); }, 1000);
+            // Dá tempo pro carregador sair e as coisas renderizarem
+            setTimeout(() => { this.setupVideoObservers(); }, 500);
         },
         setupVideoObservers: function() {
             const container = document.querySelector('.crew-video-container');
             const video = document.querySelector('.crew-video-element');
             if (!container || !video) return;
+
+            // Observador de Rolagem: Toca quando entra na tela, Pausa quando sai
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        if (video.dataset.src) {
-                            video.src = video.dataset.src;
-                            video.load();
-                            delete video.dataset.src;
-                        }
-                        this.setupVideoInteractions(container, video);
-                        observer.unobserve(container);
+                        video.play().catch(e => { console.log('Autoplay do vídeo requer interação no mobile:', e); });
+                    } else {
+                        video.pause();
                     }
                 });
-            }, { rootMargin: '50px', threshold: 0.1 });
+            }, { rootMargin: '100px', threshold: 0.1 });
+            
             observer.observe(container);
+
+            // Inicia a interação 3D (agora independente de play/pause)
+            this.setupVideoInteractions(container);
         },
-        setupVideoInteractions: function(container, video) {
+        setupVideoInteractions: function(container) {
             let animationFrame = null;
+            
+            // Efeito 3D ao mover o mouse
             container.addEventListener('mousemove', (e) => {
                 if (animationFrame) cancelAnimationFrame(animationFrame);
                 animationFrame = requestAnimationFrame(() => {
@@ -489,16 +495,11 @@
                     container.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg) translateZ(5px)`;
                 });
             });
+
+            // Reseta 3D ao sair o mouse (sem forçar pausa no vídeo)
             container.addEventListener('mouseleave', () => {
                 if (animationFrame) cancelAnimationFrame(animationFrame);
                 container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-                if (!video.paused) video.pause();
-            });
-            container.addEventListener('mouseenter', () => {
-                video.play().catch(e => { console.log('Autoplay não permitido:', e); });
-            });
-            container.addEventListener('touchstart', () => {
-                video.play().catch(e => { console.log('Autoplay não permitido:', e); });
             });
         }
     };
