@@ -1500,3 +1500,152 @@
 .remove-item-btn:hover {
     color: #ff4444; /* Fica vermelho ao passar o mouse */
 }
+
+/* ===================================================================
+   SPLASH SCREEN JAPA UNIVERSE (GLITCH HYPE)
+   =================================================================== */
+#japa-splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #050505;
+    z-index: 999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-image: radial-gradient(circle at center, #111 0%, #000 100%);
+}
+
+.splash-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    z-index: 1;
+    pointer-events: none;
+}
+
+.splash-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.glitch-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: var(--primary);
+    position: relative;
+    letter-spacing: 3px;
+    margin: 0;
+    text-transform: uppercase;
+    animation: glitch-skew 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+    will-change: transform;
+}
+
+.glitch-logo::before, .glitch-logo::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    will-change: transform, clip-path;
+}
+
+.glitch-logo::before {
+    left: 3px;
+    text-shadow: -2px 0 #00ffff;
+    background: #050505;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch-logo::after {
+    left: -3px;
+    text-shadow: -2px 0 #ff00ff;
+    background: #050505;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    animation: glitch-anim-2 2.5s infinite linear alternate-reverse;
+}
+
+.street-tags span {
+    position: absolute;
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.03);
+    text-transform: uppercase;
+    z-index: -1;
+    will-change: opacity, transform;
+}
+
+.tag-1 { top: -80px; left: -100px; animation: flash-tag 0.4s infinite; }
+.tag-2 { bottom: -60px; right: -80px; animation: flash-tag 0.6s infinite reverse; }
+.tag-3 { top: 40px; right: -120px; font-size: 4rem; animation: flash-tag 0.8s infinite; }
+
+.splash-status {
+    margin-top: 15px;
+    font-family: var(--font-mono);
+    color: #00ffff;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    height: 25px;
+}
+
+@keyframes flash-tag {
+    0%, 100% { opacity: 0; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+@keyframes glitch-anim-1 {
+    0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 2px); }
+    20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -2px); }
+    40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+    60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+    80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 2px); }
+    100% { clip-path: inset(30% 0 50% 0); transform: translate(2px, -2px); }
+}
+@keyframes glitch-anim-2 {
+    0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, 2px); }
+    20% { clip-path: inset(30% 0 20% 0); transform: translate(-2px, -2px); }
+    40% { clip-path: inset(70% 0 10% 0); transform: translate(2px, 2px); }
+    60% { clip-path: inset(20% 0 50% 0); transform: translate(-2px, -2px); }
+    80% { clip-path: inset(50% 0 30% 0); transform: translate(2px, 2px); }
+    100% { clip-path: inset(5% 0 80% 0); transform: translate(-2px, -2px); }
+}
+@keyframes glitch-skew {
+    0% { transform: skew(0deg); }
+    10% { transform: skew(-5deg); }
+    20% { transform: skew(0deg); }
+    30% { transform: skew(5deg); }
+    40% { transform: skew(0deg); }
+    100% { transform: skew(0deg); }
+}
+
+.splash-fade-out {
+    animation: tv-off 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+}
+
+@keyframes tv-off {
+    0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+    40% { opacity: 1; transform: scale(1.1) scaleY(0.01); filter: brightness(3); }
+    100% { opacity: 0; transform: scale(0) scaleY(0); filter: brightness(5); visibility: hidden; }
+}
+
+@media (min-width: 768px) {
+    .glitch-logo { font-size: 7rem; }
+    .street-tags span { font-size: 4rem; }
+    .tag-3 { font-size: 6rem; }
+}
