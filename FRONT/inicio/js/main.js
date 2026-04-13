@@ -1,5 +1,5 @@
 /**
- * JAPA UNIVERSE - MAIN JS (COM REMOÇÃO DE ITEM NO CARRINHO + SPLASH SCREEN)
+ * JAPA UNIVERSE - MAIN JS (COM REMOÇÃO DE ITEM NO CARRINHO)
  * - Animações suaves
  * - Carrinho completo (Adicionar, Remover, Checkout)
  * - Integração com Recentes.js
@@ -504,58 +504,16 @@
     };
 
     /**
-     * Inicialização Principal (MODIFICADA PARA O SPLASH SCREEN)
+     * Inicialização Principal
      */
     const init = () => {
         CartModule.init();
-        
-        // ELEMENTOS DO SPLASH SCREEN
-        const splashScreen = document.getElementById('japa-splash-screen');
-        const statusText = document.getElementById('status-text');
-        
-        // FUNÇÃO QUE RODA O RESTO DO SITE (CARREGADOR NORMAL E ANIMAÇÕES)
-        const runNormalInit = () => {
-            LoadingModule.hide();
-            setTimeout(() => {
-                if (typeof gsap !== 'undefined') ScrollAnimationsModule.init();
-                PriceAnimationsModule.init();
-            }, 800);
-            setTimeout(() => { VideoEffectsModule.init(); }, 1500);
-        };
-
-        // LÓGICA DE EXIBIÇÃO: Só mostra nas duas primeiras visitas
-        if (splashScreen) {
-            let splashCount = parseInt(localStorage.getItem('japaSplashVisits')) || 0;
-            
-            if (splashCount >= 2) {
-                splashScreen.style.display = 'none';
-                runNormalInit(); // Vai direto pro site normal
-            } else {
-                localStorage.setItem('japaSplashVisits', splashCount + 1);
-                
-                // Textos rápidos do efeito
-                const messages = ['#A_FAMILIA_TA_ON', '#GRAILS_UNLOCKED', 'JAPA IS LIVE'];
-                let msgIndex = 0;
-                
-                const typeInterval = setInterval(() => {
-                    if(statusText) statusText.textContent = messages[msgIndex];
-                    msgIndex++;
-                    if (msgIndex >= messages.length) clearInterval(typeInterval);
-                }, 700);
-
-                // Espera a animação rodar por 2.8 segundos, depois oculta com transição
-                setTimeout(() => {
-                    splashScreen.classList.add('splash-fade-out');
-                    setTimeout(() => {
-                        splashScreen.style.display = 'none';
-                        runNormalInit(); // Libera as animações do site depois que o Glitch sumir
-                    }, 500); // 500ms da animação de tv-off
-                }, 2800);
-            }
-        } else {
-            runNormalInit();
-        }
-
+        LoadingModule.hide();
+        setTimeout(() => {
+            if (typeof gsap !== 'undefined') ScrollAnimationsModule.init();
+            PriceAnimationsModule.init();
+        }, 800);
+        setTimeout(() => { VideoEffectsModule.init(); }, 1500);
         const yearEl = document.getElementById("currentYear");
         if (yearEl) yearEl.textContent = new Date().getFullYear();
         document.documentElement.classList.remove('no-js');
